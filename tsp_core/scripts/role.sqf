@@ -14,7 +14,7 @@ tsp_fnc_role = {
 	
 	tsp_role_roles = []; tsp_role_trees = []; tsp_role_pictures = []; _offset = 0.33;
 	{  //-- Create tree, picture and invisible button for each faction, hide all but the first
-		_x params ["_name", "_icon", "_side", "_children"]; if (playerSide != call compile _side) then {continue}; _offset = _offset - 0.075;
+		_x params ["_name", "_icon", "_side", "_children"]; if (playerSide != call compile _side) then {continue}; _offset = _offset - 0.0735;
 
 		_tree = _display ctrlCreate ["tsp_treeview", 9998]; _w = 0.6; _h = 1.05; _y = -0.053; _tree ctrlSetPosition [(1.0-_w)*0.5,((1.0-_h)*0.5)-_y,_w,_h];
 		_tree ctrlSetBackgroundColor [0,0,0,0.7]; if (_forEachIndex != 0) then {_tree ctrlShow false}; _tree ctrlCommit 0; tsp_role_trees pushBack _tree;
@@ -112,8 +112,8 @@ tsp_fnc_role_vehicle = {  //-- Vehicle restriction
 	}];
 };
 
-waitUntil {!isNull (findDisplay 46)};
+waitUntil {!isNull (findDisplay 46) && time > 5};
 player addEventHandler ["Take", {params ["_unit"]; if (tsp_param_roleCheck) then {[_unit] call tsp_fnc_role_check}}];
 [missionNamespace, "arsenalClosed", {if (tsp_param_roleCheck) then {[_unit] call tsp_fnc_role_check}}] call BIS_fnc_addScriptedEventHandler;
 if (isServer) then {["Initialize", [true]] call BIS_fnc_dynamicGroups};
-["InitializePlayer", [player, true]] call BIS_fnc_dynamicGroups;
+if (hasInterface) then {["InitializePlayer", [player, true]] call BIS_fnc_dynamicGroups};

@@ -1,12 +1,12 @@
-["tsp_cba_flare_altitude", "SLIDER", "Cutoff Altitude", "Kill flare when this close to the ground.", "TSP Flare", [-10, 100, 10]] call tsp_fnc_setting;
-["tsp_cba_flare_size", "SLIDER", "Size", "Size of the lens flare.", "TSP Flare", [0, 1000, 10]] call tsp_fnc_setting;
-["tsp_cba_flare_intensity", "SLIDER", "Intensity", "How intense the flare is.", "TSP Flare", [0, 1000000, 200000]] call tsp_fnc_setting;
-["tsp_cba_flare_fluctuation", "SLIDER", "Fluctuation", "How much the intensity fluctuates over time.", "TSP Flare", [0, 1000000, 100000]] call tsp_fnc_setting;
-["tsp_cba_flare_distance", "SLIDER", "Distance", "How far the lens flare can been seen from.", "TSP Flare", [0, 12000, 4000]] call tsp_fnc_setting;
-["tsp_cba_flare_time", "SLIDER", "Time", "How long the flare will last in seconds.", "TSP Flare", [0, 600, 300]] call tsp_fnc_setting;
-["tsp_cba_flare_velocity", "SLIDER", "Velocity", "How slowly the flare descends.", "TSP Flare", [0, 10, 1]] call tsp_fnc_setting;
-["tsp_cba_flare_jitter", "SLIDER", "Jitter", "Flare movement in air.", "TSP Flare", [0, 10, 1]] call tsp_fnc_setting;
-["tsp_cba_flare_sound", "CHECKBOX", "Sound", "Enables pop and burning sounds.", "TSP Flare", true] call tsp_fnc_setting;
+["tsp_cba_flare_altitude", "SLIDER", "Cutoff Altitude", "Kill flare when this close to the ground.", ["TSP Core", "Flare"], [-10, 100, 10]] call tsp_fnc_setting;
+["tsp_cba_flare_size", "SLIDER", "Size", "Size of the lens flare.", ["TSP Core", "Flare"], [0, 1000, 10]] call tsp_fnc_setting;
+["tsp_cba_flare_intensity", "SLIDER", "Intensity", "How intense the flare is.", ["TSP Core", "Flare"], [0, 1000000, 200000]] call tsp_fnc_setting;
+["tsp_cba_flare_fluctuation", "SLIDER", "Fluctuation", "How much the intensity fluctuates over time.", ["TSP Core", "Flare"], [0, 1000000, 100000]] call tsp_fnc_setting;
+["tsp_cba_flare_distance", "SLIDER", "Distance", "How far the lens flare can been seen from.", ["TSP Core", "Flare"], [0, 12000, 4000]] call tsp_fnc_setting;
+["tsp_cba_flare_time", "SLIDER", "Time", "How long the flare will last in seconds.", ["TSP Core", "Flare"], [0, 600, 300]] call tsp_fnc_setting;
+["tsp_cba_flare_velocity", "SLIDER", "Velocity", "How slowly the flare descends.", ["TSP Core", "Flare"], [0, 10, 1]] call tsp_fnc_setting;
+["tsp_cba_flare_jitter", "SLIDER", "Jitter", "Flare movement in air.", ["TSP Core", "Flare"], [0, 10, 1]] call tsp_fnc_setting;
+["tsp_cba_flare_sound", "CHECKBOX", "Sound", "Enables pop and burning sounds.", ["TSP Core", "Flare"], true] call tsp_fnc_setting;
 
 tsp_fnc_flare = {  //-- Should only be run on flare owner
 	params ["_flare", ["_timeStop", time + tsp_cba_flare_time], ["_altitudeStop", tsp_cba_flare_altitude], ["_jitter", tsp_cba_flare_jitter], ["_velocity", tsp_cba_flare_velocity], ["_sound", tsp_cba_flare_sound]];

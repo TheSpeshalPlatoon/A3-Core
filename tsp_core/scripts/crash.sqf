@@ -1,5 +1,5 @@
-["tsp_cba_crash", "CHECKBOX", "Enable Crash Landings", "Enable/disable addon.", "TSP Crash", true] call tsp_fnc_setting;
-["tsp_cba_crash_force", "SLIDER", "Survivable Impact Force", "Amount of force helicopter can endure.", "TSP Crash", [0, 10000, 3000]] call tsp_fnc_setting;
+["tsp_cba_crash", "CHECKBOX", "Enable Crash Landings", "Enable/disable addon.", ["TSP Core", "Crash"], true] call tsp_fnc_setting;
+["tsp_cba_crash_force", "SLIDER", "Survivable Impact Force", "Amount of force helicopter can endure.", ["TSP Core", "Crash"], [0, 10000, 3000]] call tsp_fnc_setting;
 
 tsp_fnc_crash_handler = {
 	params ["_vehicle"];

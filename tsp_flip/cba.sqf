@@ -1,5 +1,5 @@
-["tsp_cba_flip", "CHECKBOX", ["Enable Flipping", "Enables ace option to flip vehicle."], "TSP Flip", true, true] call CBA_fnc_addSetting;  //-- Main
-["tsp_cba_flip_upsidedown", "CHECKBOX", ["Only Unflipping", "Only unflip overturned vehicles."], "TSP Flip", true, true] call CBA_fnc_addSetting;  //-- Only Upside Down
-["tsp_cba_flip_liftable", "SLIDER", ["Liftable Mass", "How much mass a unit can flip."], "TSP Flip", [0, 10000, 1000], false] call CBA_fnc_addSetting;  //-- Liftable Mass
-["tsp_cba_flip_players", "SLIDER",	["Players Needed", "Players needed to flip any vehicle."], "TSP Flip", [0, 20, 8], false] call CBA_fnc_addSetting;  //-- Players Needed
-["tsp_cba_flip_exponent", "SLIDER", ["Player Quantity Exponent", "The more people helping, the stronger each guy will be."], "TSP Flip", [1, 2, 1.7], false] call CBA_fnc_addSetting;  //-- Player Quantity Exponent
+["tsp_cba_flip", "CHECKBOX", ["Enable Flipping", "Enables ace option to flip vehicle."], ["TSP Core", "Flip"], true, true] call CBA_fnc_addSetting;  //-- Main
+["tsp_cba_flip_upsidedown", "CHECKBOX", ["Only Unflipping", "Only unflip overturned vehicles."], ["TSP Core", "Flip"], true, true] call CBA_fnc_addSetting;  //-- Only Upside Down
+["tsp_cba_flip_liftable", "SLIDER", ["Liftable Mass", "How much mass a unit can flip."], ["TSP Core", "Flip"], [0, 10000, 1000], false] call CBA_fnc_addSetting;  //-- Liftable Mass
+["tsp_cba_flip_players", "SLIDER",	["Players Needed", "Players needed to flip any vehicle."], ["TSP Core", "Flip"], [0, 20, 8], false] call CBA_fnc_addSetting;  //-- Players Needed
+["tsp_cba_flip_exponent", "SLIDER", ["Player Quantity Exponent", "The more people helping, the stronger each guy will be."], ["TSP Core", "Flip"], [1, 2, 1.7], false] call CBA_fnc_addSetting;  //-- Player Quantity Exponent

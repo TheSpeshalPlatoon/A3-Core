@@ -9,7 +9,7 @@ tsp_fnc_flip_torque = {
 
 tsp_fnc_flip_action = {
     params ["_unit", "_veh", ["_end", time + 2], ["_og", _this#1 getVariable ["numberOfFlippers", 0] == 0]];
-    _veh setVariable ["numberOfFlippers", _veh getVariable ["numberOfFlippers", 0] + 1, true];
+    _veh setVariable ["numberOfFlippers", (_veh getVariable ["numberOfFlippers", 0]) + 1, true];
     [_unit, "tsp_flip"] remoteExec ["playMove", 0];
     waitUntil {animationState _unit == "tsp_flip" || time > _end}; sleep 1.5;  //-- Time to add more flippers
     [_unit, "amovpknlmstpsnonwnondnon"] remoteExec ["playMoveNow", 0];

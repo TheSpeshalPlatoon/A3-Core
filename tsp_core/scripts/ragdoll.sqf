@@ -1,6 +1,6 @@
-["tsp_cba_ragdoll", "CHECKBOX", "Enable Ragdolling", "Enables ragdolling on button press.", "TSP Ragdoll", true] call tsp_fnc_setting;
-["tsp_cba_ragdoll_freefall", "CHECKBOX", "Enable Free Falling", "Enables free falling when jumping from height.", "TSP Ragdoll", true] call tsp_fnc_setting;
-["tsp_cba_ragdoll_blood", "CHECKBOX", "Enable Blood", "Enables blood decal when impacting surfaces.", "TSP Ragdoll", true] call tsp_fnc_setting;
+["tsp_cba_ragdoll", "CHECKBOX", "Enable Ragdolling", "Enables ragdolling on button press.", ["TSP Core", "Ragdoll"], true] call tsp_fnc_setting;
+["tsp_cba_ragdoll_freefall", "CHECKBOX", "Enable Free Falling", "Enables free falling when jumping from height.", ["TSP Core", "Ragdoll"], true] call tsp_fnc_setting;
+["tsp_cba_ragdoll_blood", "CHECKBOX", "Enable Blood", "Enables blood decal when impacting surfaces.", ["TSP Core", "Ragdoll"], true] call tsp_fnc_setting;
 
 tsp_fnc_ragdoll_start = {
 	params ["_unit", ["_launch", false]];
@@ -25,7 +25,7 @@ tsp_fnc_ragdoll_stop = {
 	if (currentWeapon _unit == "") then {_out = "AmovPpneMstpSnonWnonDnon"};
 	if (_facingUp) then {_unit setDir (getDir _unit - 180); _out = "UnconsciousOutProne"};
 	[_unit, false] remoteExec ["setUnconscious", 0]; sleep 0.1; [_unit, _out] remoteExec ["switchMove", 0]; 
-	if (!isServer) then {sleep 2; [_unit, animationState _unit] remoteExec ["switchMove", -clientOwner]};
+	if (!isServer) then {sleep 3; [_unit, animationState _unit] remoteExec ["switchMove", -clientOwner]};
 };
 
 tsp_fnc_ragdoll_collision = {

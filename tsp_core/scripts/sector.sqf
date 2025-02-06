@@ -87,7 +87,7 @@ tsp_fnc_sector_loadEntity = {
 	_entity setVectorDirAndUp _direction;
 	_entity setPosWorld _position; //-- So That We Get That 100% Placement Accuracy Boii
 	{_entity setHitPointDamage [_x, (_hitpoints#2) select _forEachIndex]} forEach (_hitpoints#0);  //-- Set health
-	[_entity, _loadout] spawn {sleep 0.1; _this#0 setUnitLoadout _this#1};  //-- So that this loadout overwrites any other script that sets loadout (like faction.sqf)
+	[_entity, _loadout] spawn {sleep 0.5; _this#0 setUnitLoadout _this#1};  //-- So that this loadout overwrites any other script that sets loadout (like faction.sqf)
 	_entity enableSimulation _simulation;	
 	_entity allowDamage _damage;
 	if (_varName != "") then {missionNamespace setVariable [_varName, _entity, true]};
@@ -111,7 +111,7 @@ tsp_fnc_sector_loadEntity = {
 tsp_fnc_sector_variable = {if (missionNameSpace getVariable [_this, objNull] isEqualTo objNull) then {tsp_debug} else {missionNameSpace getVariable _this}};
 tsp_fnc_sector_check = {(tsp_sector_info select {_x#0 == _this})#0#1};
 
-waitUntil {isServer || !isNull (findDisplay 46)};
 tsp_sector_info = [];
+waitUntil {isServer || !isNull (findDisplay 46)};
 if (isServer) then {call tsp_fnc_sector_automate};  //-- Only server can create sectors
 player addEventHandler ["GetInMan", {params ["_unit", "_role", "_vehicle", "_turret"]; _vehicle setVariable ["layer", nil, true]}];  //-- Legitimate salvage

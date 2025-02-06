@@ -30,12 +30,12 @@ tsp_fnc_spawn_map = {
 		_name = _x getVariable ["name", ([_unit, true] call BIS_fnc_getRespawnPositions) select _forEachIndex];
 		_desc = _x getVariable ["description", ""];
 		_code = _x getVariable ["code", {_this#9 params ["_unit", "_spawn"]; _unit attachTo [_spawn, [0,0,0]]; detach _unit;}];
-		_spawns pushBack [getPos _x, _code, _name, _desc, "", "", 1, [_unit, _x]];
+		_cond = _x getVariable ["condition", {true}];
+		if (_x call _cond) then {_spawns pushBack [getPos _x, _code, _name, _desc, "", "", 1, [_unit, _x]]};
 	} forEach ([_unit] call BIS_fnc_getRespawnPositions) + ((entities [["Respawn_TentDome_F", "B_Patrol_Respawn_tent_F"], []]) select {side (_x getVariable "group") == side _unit});
 	[call bis_fnc_displayMission, position _center, _spawns, [], [], [], overcast, if (daytime > 19.5 || daytime < 4.75) then {true} else {false}, 2, true, "Spawns"] call bis_fnc_map_mod;  //-- Create map
 	if (_force) then {findDisplay 506 displayAddEventHandler ["KeyDown", {_this#1 == 1 && !(_this#3)}]};  //-- prevent using ESC button, ctrl, ESC will close it though
 	if (_force) then {findDisplay 506 displayCtrl 2 ctrlEnable false};  //-- Disable close button
-	
 };
 
 tsp_fnc_spectate = {
