@@ -2,4 +2,5 @@ tsp_identity/
 tsp_menu/snd
 *.pbo
 tsp_core/data/pinup.xcf
+tsp_core/data/pinup_wear.xcf
 tsp_core/data/pinup.paa

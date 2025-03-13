@@ -96,7 +96,8 @@ tsp_fnc_pause_sector = {
 	_save ctrlAddEventHandler ["buttonClick", {{[_x] remoteExec ["tsp_fnc_sector_save", 2]} forEach tsp_sectorsSelected}];    
 };
 
-while {tsp_cba_core_pause} do {  //-- Add interface when escape menu is opened
+sleep 5;  //-- Sleep for some sort of race condition that happens in some missions
+while {tsp_cba_core_pause} do {  //-- Add interface when escape menu is opened, 
 	waitUntil {!isNull (findDisplay 49)};  //-- Wait for pause screen to open
 	call tsp_fnc_pause_view;  //-- View distance button
 	if (!isNil "BIS_EGSpectatorCamera_camera") then {((findDisplay 49) displayCtrl 1010) ctrlEnable false};  //-- Disable respawn button

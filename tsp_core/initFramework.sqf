@@ -13,8 +13,8 @@ if (fileExists (tsp_path+'scripts\utility.sqf')) then {[] call compileScript [ts
 if (fileExists (tsp_path+'scripts\action.sqf')) then {[] call compileScript [tsp_path+'scripts\action.sqf']};
 if (fileExists (tsp_path+'scripts\butter.sqf')) then {[] call compileScript [tsp_path+'scripts\butter.sqf']};
 if (fileExists (tsp_path+'scripts\chvd.sqf')) then {[] call compileScript [tsp_path+'scripts\chvd.sqf']};
-if (fileExists (tsp_path+'scripts\faction.sqf')) then {[] call compileScript [tsp_path+'scripts\faction.sqf']};
 if (fileExists (tsp_path+'scripts\pause.sqf')) then {[] spawn compileScript [tsp_path+'scripts\pause.sqf']};
+if (fileExists (tsp_path+'scripts\faction.sqf')) then {[] call compileScript [tsp_path+'scripts\faction.sqf']};
 
 if (tsp_mission && fileExists (tsp_path+'scripts\environment.sqf')) then {[] spawn compileScript [tsp_path+'scripts\environment.sqf']};
 if (tsp_mission && fileExists (tsp_path+'scripts\role.sqf')) then {[] spawn compileScript [tsp_path+'scripts\role.sqf']};

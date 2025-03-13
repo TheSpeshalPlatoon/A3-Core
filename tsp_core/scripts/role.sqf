@@ -62,8 +62,8 @@ tsp_fnc_role_poll = {  //-- Select role if available and selected, also poll stu
 		missionNameSpace setVariable [missionNameSpace getVariable ["role", "doesntmatterwhatshere"], nil, true];
 		missionNameSpace setVariable [_roleId, player, true]; missionNameSpace setVariable ["role", _roleId];
 		[player, _loadout, true] spawn tsp_fnc_faction; tsp_arsenal = [player, _arsenal] call tsp_fnc_role_arsenal;
-		_groups = allGroups select {groupId _x == _parentName};
-		if (count _groups > 0) exitWith {[player] join (_groups#0); ["AddGroupMember", [_groups#0, player]] remoteExec ["BIS_fnc_dynamicGroups", 0]};	
+		_groups = allGroups select {groupId _x == _parentName}; if (count _groups > 0) exitWith {[player] join (_groups#0); 
+		["AddGroupMember", [_groups#0, player]] remoteExec ["BIS_fnc_dynamicGroups", 0]};	
 		_group = createGroup [playerSide, true]; _group setGroupId [_parentName]; [player] join _group;
 		["RegisterGroup", [_group, leader _group, [nil, _parentName, false]]] remoteExec ["BIS_fnc_dynamicGroups", 0];
 	};
