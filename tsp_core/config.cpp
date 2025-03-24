@@ -1,11 +1,11 @@
 class CfgPatches {
     class tsp_core {requiredAddons[] = {"cba_common"}; units[] = {"tsp_WeaponHolderSimulated"};};
-    //class tsp_earplug {requiredAddons[] = {}; units[] = {};};
-    //class tsp_crash {requiredAddons[] = {}; units[] = {};};
-    //class tsp_flare {requiredAddons[] = {"A3_Weapons_F"}; units[] = {}; ammo[] = {"FlareBase", "F_40mm_White", "Flare_82mm_AMOS_White", "Sh_155mm_AMOS"};};
-    //class tsp_ragdoll {requiredAddons[] = {}; units[] = {};};
-    //class tsp_immerse {requiredAddons[] = {}; units[] = {};};
-	//class tsp_faction {requiredAddons[] = {}; units[] = {};};
+    class tsp_earplug {requiredAddons[] = {}; units[] = {};};
+    class tsp_crash {requiredAddons[] = {}; units[] = {};};
+    class tsp_flare {requiredAddons[] = {"A3_Weapons_F"}; units[] = {}; ammo[] = {"FlareBase", "F_40mm_White", "Flare_82mm_AMOS_White", "Sh_155mm_AMOS"};};
+    class tsp_ragdoll {requiredAddons[] = {}; units[] = {};};
+    class tsp_immerse {requiredAddons[] = {}; units[] = {};};
+	class tsp_faction {requiredAddons[] = {}; units[] = {};};
 };
 
 #include "\a3\ui_f\hpp\definecommongrids.inc"
@@ -24,7 +24,7 @@ class CfgVehicles {  //-- Weapon holder that doesn't act as shield, used by thro
 			class ACE_Equipment	{
 				class tsp_ace_earplug_insert {
 					displayName = "Use Hearing Protection"; icon = "tsp_core\data\headset.paa";
-					condition = "soundVolume == 1 && [player] call tsp_fnc_earplug_has";
+					condition = "call {soundVolume == 1 && !isNil 'tsp_fnc_earplug_has' && [player] call tsp_fnc_earplug_has}";
 					statement = "call tsp_fnc_earplug_toggle"; exceptions[] = {"isNotInside", "isNotSitting"};
 				};
 				class tsp_ace_earplug_remove: tsp_ace_earplug_insert {displayName = "Remove Hearing Protection"; condition = "soundVolume < 1 && !isNil 'tsp_fnc_earplug_has'";};

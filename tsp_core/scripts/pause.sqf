@@ -22,8 +22,9 @@ tsp_fnc_pause_leave = {
 tsp_fnc_pause_teleport = {
 	params ["_unit", "_to", ["_cursor", false]];
 	[false] remoteExec ["tsp_fnc_spectate", _unit];  //-- Leave spectate
-	if (vehicle _unit != _unit) then {moveOut _unit; sleep 1};       //-- Dismount
-	if (_cursor) exitWith {_unit setpos screenToWorld [0.5, 0.5]};  //-- If cursor - do it and exit
+	if (vehicle _unit != _unit) then {moveOut _unit; sleep 1};  //-- Dismount
+	_intersect = lineIntersectsSurfaces [AGLToASL positionCameraToWorld [0,0,0], AGLToASL positionCameraToWorld [0,0,1000], player];
+	if (_cursor) exitWith {if (count _intersect == 0) then {_unit setpos screenToWorld [0.5, 0.5]} else {_unit setPosASL (_intersect#0#0)}};  //-- If cursor - do it and exit
 	if (vehicle _to != _to) then {_unit moveInAny vehicle _to};    //-- Teleport into vehicle
 	_unit attachTo [_to, [0, 0, 0]]; _unit setVelocity [0,0,0]; detach _unit;  //-- Attach, prevent fall damage, detach
 };
