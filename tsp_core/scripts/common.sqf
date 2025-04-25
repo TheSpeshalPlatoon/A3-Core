@@ -118,6 +118,15 @@
         tsp_object = _object; sleep 0.3; waitUntil _exit; deleteVehicle _object;
 		if (gestureState _unit in [[_unit, _in] call tsp_fnc_gesture_variant, [_unit, _loop] call tsp_fnc_gesture_variant]) then {[_unit] call tsp_fnc_gesture_stop}; 
     };
+	tsp_fnc_gesture_weapon = {  //-- Custom hold gesute for weapons
+		params ["_unit", "_weapons", "_rest", "_cba"]; _cba params ["_unit", "_new", "_old"];	
+		if !(_new in _weapons) exitWith {};
+		waitUntil {[gestureState _unit] call tsp_fnc_gesture_sanitize == ""};
+		while {alive _unit && currentWeapon _unit == _new} do {
+			if ([gestureState _unit] call tsp_fnc_gesture_sanitize == "") then {[_unit, "", _rest, "tsp_common_stop", true, true] spawn tsp_fnc_gesture_play};
+			sleep 0.2;
+		};
+	};
 
 //-- Damage
 	tsp_fnc_hitpoint_get = {
@@ -233,17 +242,6 @@
 	};
 
 //-- Legussy
-	tsp_fnc_weaponGesture = {  //-- Custom hold gesute for weapons
-		params ["_unit", "_weapons", "_restAnim", "_cba"];
-		_cba params ["_unit", "_new", "_old"];	
-		if (_new in _weapons) then {
-			waitUntil {_unit getVariable ["tsp_gestureState", ""] == ""};
-			while {alive _unit && currentWeapon _unit == _new} do {
-				if (_unit getVariable ["tsp_gestureState", ""] == "") then {[_unit, "", 0, _restAnim, "tsp_common_stop"] spawn tsp_fnc_gesture_play};
-				sleep 0.2;
-			};
-		};
-	};
 	tsp_fnc_lookAt = {
 		params ["_unit", "_targetDir", ["_duration", 1], ["_step", 4]];
 		[_targetDir - getDir _unit, (360 - _targetDir) + getDir _unit] params ["_clockwise", "_counterClockwise"];

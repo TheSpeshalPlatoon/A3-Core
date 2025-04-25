@@ -166,7 +166,7 @@ tsp_fnc_lights = {  //-- Toggle lights on/off
 	params ["_lights", ["_sleep", 1], ["_distance", 550], ["_path", if (isNil "tsp_path") then {""} else {tsp_path}]]; 
 	tsp_fnc_lights_wait = true;
 	{
-		_x hideObjectGlobal !isObjectHidden _x;
+		_x hideObjectGlobal !(isObjectHidden _x);
 		if (_path == "") then {playSound3D [if (isObjectHidden _x) then {getMissionPath "data\sounds\off.ogg"} else {getMissionPath "data\sounds\on.ogg"}, _x, false, getPosASL _x, 5, random 2 max 0.5 min 2, _distance]};
 		if (_path != "") then {playSound3D [if (isObjectHidden _x) then {_path + "data\sounds\off.ogg"} else {_path + "data\sounds\on.ogg"}, _x, false, getPosASL _x, 5, random 2 max 0.5 min 2, _distance]};
 		sleep (random _sleep + (_sleep/2));
@@ -221,10 +221,10 @@ tsp_fnc_task = {  //-- Custom task framework, see below
 };
 
 tsp_fnc_simple = {  //-- Create simple objects (Used for hidden arma models)
-    params ["_base", "_model", ["_scale", 1]]; if (canSuspend) then {sleep 1};
-    _obj = createSimpleObject [_model, getPosASL _base, true]; 
-    _obj setPosASL (getPosASL _base); _obj setObjectScale _scale;
-    _obj setVectorDirAndUp [vectorDir _base, vectorUp _base];
+    params ["_base", "_model", ["_scale", 1]]; 
+	if (canSuspend) then {sleep 1}; _obj = createSimpleObject [_model, getPosASL _base, true]; 
+    _obj setPosASL (getPosASL _base); _obj setVectorDirAndUp [vectorDir _base, vectorUp _base];
+	if (canSuspend) then {sleep 1};	_obj setObjectScale _scale;
 };
 
 tsp_fnc_replace = {
@@ -237,11 +237,10 @@ tsp_fnc_replace = {
 };
 
 tsp_fnc_heal = {  //-- Can i get a healy wealy pls mr zeusy
-	params ["_unit"];
-	if (!isNil "ACE_medical_fnc_treatmentAdvanced_fullHeal") then {[_unit, _unit] call ACE_medical_fnc_treatmentAdvanced_fullHeal};
-	if (!isNil "ACE_medical_treatment_fullHealLocal") then {[_unit, _unit] call ACE_medical_treatment_fullHealLocal};
-	if (!isNil "ace_medical_treatment_fnc_fullHeal") then {[_unit, _unit] call ace_medical_treatment_fnc_fullHeal};
-	_unit setDamage 0;
+	params ["_unit"]; _unit setDamage 0;
+	if (!isNil "ace_medical_treatment_fnc_fullHeal") exitWith {[_unit, _unit] call ace_medical_treatment_fnc_fullHeal};
+	if (!isNil "ACE_medical_treatment_fullHealLocal") exitWith {[_unit, _unit] call ACE_medical_treatment_fullHealLocal};
+	if (!isNil "ACE_medical_fnc_treatmentAdvanced_fullHeal") exitWith {[_unit, _unit] call ACE_medical_fnc_treatmentAdvanced_fullHeal};
 };
 
 tsp_fnc_wake = {  //-- https://www.youtube.com/watch?v=7vObEK3Lbp4

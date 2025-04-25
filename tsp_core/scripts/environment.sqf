@@ -74,7 +74,7 @@ tsp_fnc_environment_weather = {
 	if (_instant) then {sleep 0.1; forceWeatherChange};	
 };
 
-[] call tsp_fnc_environment_bright;
+[] spawn {waitUntil {!isNull (findDisplay 46) && time > 5}; [] call tsp_fnc_environment_bright};
 [] spawn {while {sleep (tsp_param_weatherTime*60); isServer && !is3DEN && tsp_param_weather} do {[] spawn tsp_fnc_environment_weather}};
 
 (date call BIS_fnc_sunriseSunsetTime) params ["_sunrise", "_sunset"];

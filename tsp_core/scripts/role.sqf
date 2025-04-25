@@ -37,7 +37,7 @@ tsp_fnc_role = {
 	_button ctrlSetText "CONTINUE"; _button ctrlSetFont "PuristaLight"; _button ctrlEnable false; _button ctrlCommit 0;
 	_button setVariable ["display", _display]; _button ctrlAddEventHandler ["buttonClick", {params ["_control"]; _control getVariable "display" closeDisplay 1}];
 
-	while {_display isNotEqualTo displayNull} do {{_x call tsp_fnc_role_poll} forEach tsp_role_roles; if (missionNameSpace getVariable ["role", ""] != "") then {_button ctrlEnable true}};
+	while {_display isNotEqualTo displayNull} do {{_x call tsp_fnc_role_poll} forEach tsp_role_roles; if (player getVariable ["role", ""] != "") then {_button ctrlEnable true}};
 	if (_force) then {titleCut ["", "BLACK IN", 3]};
 };
 
@@ -59,8 +59,9 @@ tsp_fnc_role_recursive = {
 tsp_fnc_role_poll = {  //-- Select role if available and selected, also poll stuff
 	params ["_tree", "_leaf", "_name", "_loadout", "_arsenal", "_roleId", "_leadId", "_parentName"];
 	if (tvCurSel _tree isEqualTo _leaf && [_roleId, _leadId] call tsp_fnc_role_available) then {  //-- If selected and available
-		missionNameSpace setVariable [missionNameSpace getVariable ["role", "doesntmatterwhatshere"], nil, true];
-		missionNameSpace setVariable [_roleId, player, true]; missionNameSpace setVariable ["role", _roleId];
+		missionNameSpace setVariable [player getVariable ["role", "doesntmatterwhatshere"], nil, true];  //-- Set current role (if any) to unnoccupied
+		missionNameSpace setVariable [_roleId, player, true];  //-- Assign role
+		player setVariable ["role", _roleId];  //-- Just for reference to get player role
 		[player, _loadout, true] spawn tsp_fnc_faction; tsp_arsenal = [player, _arsenal] call tsp_fnc_role_arsenal;
 		_groups = allGroups select {groupId _x == _parentName}; if (count _groups > 0) exitWith {[player] join (_groups#0); 
 		["AddGroupMember", [_groups#0, player]] remoteExec ["BIS_fnc_dynamicGroups", 0]};	
