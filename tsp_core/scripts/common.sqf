@@ -26,8 +26,8 @@
 		_object setVectorDirAndUp [[_dirX, _dirY, _dirZ],[_upX, _upY, _upZ]];
 	};
 	tsp_fnc_height = {  //-- Gets distance from ground
-		params ["_unit"]; 
-		_intersect = lineIntersectsSurfaces [getPosASL _unit vectorAdd [0,0,1], getPosASL _unit vectorAdd [0,0,-5], _unit, objNull, true, 1, "ROADWAY", "GEOM"];
+		params ["_unit", ["_ignore", objNull]]; 
+		_intersect = lineIntersectsSurfaces [getPosASL _unit vectorAdd [0,0,1], getPosASL _unit vectorAdd [0,0,-5], _unit, _ignore, true, 1, "VIEW"], "VIEW";
 		if (count _intersect > 0) exitWith {(_intersect#0#0) distance getPosASL _unit};   //-- If line intersects something below, return that
 		getPosATL _unit#2  //-- else, just give height from ground
 	};
@@ -74,7 +74,9 @@
 		if ("laut" in _gesture) then {
 			if ("lhig" in gestureState _unit) exitWith {_gesture = _gesture regexReplace ["laut", "lhig"]}; 
 			if ("llow" in gestureState _unit) exitWith {_gesture = _gesture regexReplace ["laut", "llow"]};
-			if (isClass (configFile >> "CfgGesturesMale" >> "States" >> _gesture regexReplace ["laut", "lnon"])) exitWith {_gesture = _gesture regexReplace ["laut", "lnon"]};
+			if (isClass (configFile >> "CfgGesturesMale" >> "States" >> _gesture regexReplace ["laut", "lnon"] regexReplace ["wnon", "wnon"])) exitWith {_gesture = _gesture regexReplace ["laut", "lnon"]};
+			if (isClass (configFile >> "CfgGesturesMale" >> "States" >> _gesture regexReplace ["laut", "lnon"] regexReplace ["wnon", "wrfl"])) exitWith {_gesture = _gesture regexReplace ["laut", "lnon"]};
+			if (isClass (configFile >> "CfgGesturesMale" >> "States" >> _gesture regexReplace ["laut", "lnon"] regexReplace ["wnon", "wpst"])) exitWith {_gesture = _gesture regexReplace ["laut", "lnon"]};
 			_gesture = _gesture regexReplace ["laut", if ((getCameraViewDirection _unit)#2 > tsp_cba_angle) then {"lhig"} else {"llow"}]
 		};		
 		if (primaryWeapon _unit != "" && currentWeapon _unit == primaryWeapon _unit && isClass (configFile >> "CfgGesturesMale" >> "States" >> _gesture regexReplace ["wnon", "wrfl"])) then {_gesture = _gesture regexReplace ["wnon", "wrfl"]};
@@ -111,11 +113,11 @@
 		};
 	};
 	tsp_fnc_gesture_item = {  //-- tsp_object attachto [player, [0.02,0.25,0], "leftHand", true]; [tsp_object, [-90,-90,0]] remoteExec ["tsp_fnc_rotate", 0];
-        params ["_unit", ["_in", ""], ["_loop", ""], ["_object", ""], ["_pos", [-0.02,0,-0.03]], ["_rot", [50,190,-120]], ["_exit", {sleep 0.5}], ["_lower", false]];
+        params ["_unit", ["_in", ""], ["_loop", ""], ["_object", ""], ["_attach", "leftHand"], ["_pos", [-0.02,0,-0.03]], ["_rot", [50,190,-120]], ["_exit", {sleep 0.5}], ["_lower", false]];
         [_unit, _in, _loop, "tsp_common_stop", "tsp" in gestureState _unit || "ainv" in gestureState _unit, true, true, false, false, _lower] spawn tsp_fnc_gesture_play;
-        _object = createSimpleObject [_object, [0,0,0]]; [vehicle _unit, _object] remoteExec ["disableCollisionWith", 0]; sleep 0.2; 
-		if !(vehicle _unit isKindOf "Helicopter") then {_object attachto [_unit, _pos, "leftHand", true]}; [_object, _rot] remoteExec ["tsp_fnc_rotate", 0]; 
-        tsp_object = _object; sleep 0.3; waitUntil _exit; deleteVehicle _object;
+        _object = createSimpleObject [_object, [0,0,0]]; tsp_object = _object; [vehicle _unit, _object] remoteExec ["disableCollisionWith", 0]; sleep 0.2; 
+		if !(vehicle _unit isKindOf "Helicopter") then {_object attachto [_unit, _pos, _attach, true]}; [_object, _rot] remoteExec ["tsp_fnc_rotate", 0]; 
+        sleep 0.3; waitUntil _exit; deleteVehicle _object;
 		if (gestureState _unit in [[_unit, _in] call tsp_fnc_gesture_variant, [_unit, _loop] call tsp_fnc_gesture_variant]) then {[_unit] call tsp_fnc_gesture_stop}; 
     };
 	tsp_fnc_gesture_weapon = {  //-- Custom hold gesute for weapons
@@ -139,10 +141,10 @@
 	tsp_fnc_hitpoint_damage = {
 		params ["_unit", ["_bodypart", "body"], ["_damage", 0], ["_damageType", "stab"], ["_knockout", false], ["_effects", true]];
 		if (!isDamageAllowed _unit) exitWith {}; ([_bodypart] call tsp_fnc_hitpoint_get) params ["_hitpoint", "_bodypart"];
-		if (isPlayer _unit && _effects) then {[300*_damage] call BIS_fnc_bloodEffect; [] call BIS_fnc_indicateBleeding; [5, 0.5, 5] spawn tsp_fnc_shake;};  //-- Show hit effect on victim
-		if (isNil "ace_medical_fnc_setUnconscious") exitWith {_unit setHitPointDamage [_hitPoint, (_unit getHitPointDamage _hitPoint) + _damage]};         //-- Vanilla damage   
-		["ace_medical_woundReceived", [_unit, [[_damage, _bodypart, _damage]], objNull, _damageType]] call CBA_fnc_localEvent;                            //-- ACE damage    
-		if (_knockout) then {[_unit, true, 10, true] call ace_medical_fnc_setUnconscious};                                                               //-- ACE unconscious
+		if (isPlayer _unit && _effects) then {[300*_damage] call BIS_fnc_bloodEffect; [] call BIS_fnc_indicateBleeding; [5, 0.5, 5] spawn tsp_fnc_shake};  //-- Show hit effect on victim
+		if (isNil "ace_medical_fnc_setUnconscious") exitWith {_unit setHitPointDamage [_hitPoint, (_unit getHitPointDamage _hitPoint) + _damage]};        //-- Vanilla damage   
+		["ace_medical_woundReceived", [_unit, [[_damage, _bodypart, _damage]], objNull, _damageType]] call CBA_fnc_localEvent;                           //-- ACE damage    
+		if (_knockout) then {[_unit, true, 10, true] call ace_medical_fnc_setUnconscious};                                                              //-- ACE unconscious
 	};
 	tsp_fnc_hitpoint_armor = {
 		params ["_item"];
@@ -188,10 +190,9 @@
 		if (_style == "Hint") exitWith {hint parseText ((if (_name != "") then {"<t size='1.2'>" + _name + ":</t><br/>"} else {""}) + _text)};
 		if (_style == "ACE") exitWith {[(if (_name != "") then {_name + ": "} else {""}) + _text] call ace_common_fnc_displayTextStructured};
 	};
-	tsp_fnc_visionModes = {  //-- Gets vision modes from current optic/weapon with integrated optic
+	tsp_fnc_vision = {  //-- Gets vision modes from current optic/weapon with integrated optic
 		params ["_unit", ["_return", false]];
 		_visionModesClass = ("true" configClasses (configFile >> "CfgWeapons" >> (primaryWeaponItems player)#2 >> "ItemInfo" >> "OpticsModes"))#0;
-		//if (isClass (configFile >> "CfgWeapons" >> (primaryWeaponItems _unit)#2 >> "ItemInfo" >> "OpticsModes")) exitWith {true};
 		if (!isNil "_visionModesClass") then {if (count (getArray (_visionModesClass >> "visionMode")) > 1) then {_return = true}};
 		if (isClass (configFile >> "CfgWeapons" >> currentWeapon _unit >> "OpticsModes")) then {_return = true};
 		if (isArray (configFile >> "CfgWeapons" >> currentWeapon _unit >> "VisionMode")) then {_return = true};

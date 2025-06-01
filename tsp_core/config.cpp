@@ -17,7 +17,7 @@ class CfgFunctions {class A3 {class effects {file = "tsp_core\crash";};};};  //-
 
 class CfgVehicles {  //-- Weapon holder that doesn't act as shield, used by throw func, animate sling
     class WeaponHolderSimulated;
-    class tsp_WeaponHolderSimulated: WeaponHolderSimulated {model = "tsp_core\data\holder.p3d";};
+    class tsp_WeaponHolderSimulated: WeaponHolderSimulated {class ACE_Actions {class ACE_MainActions {distance = 0; condition = "false"};}; model = "tsp_core\data\holder.p3d";};
     class Man;
 	class CAManBase: Man {
 		class ACE_SelfActions {
@@ -54,18 +54,19 @@ class CfgGesturesMale {
     skeletonName = "OFP2_ManSkeleton";
     class Default {};
     class States {
-        class GestureNo;		
-        class tsp_common_stop: GestureNo {
+        class GestureNod;		
+        class tsp_common_stop: GestureNod {
             mask = "empty";
             interpolationSpeed = 5;
             showHandGun = 0;
             rightHandIKCurve[] = {1}; 
             leftHandIKCurve[] = {1};
-            canPullTrigger = true;
-            enableBinocular = true;
-            enableMissile = true;
-            enableOptics = true;
-            disableWeapons = false;
+            canPullTrigger = 1;
+            enableBinocular = 1;
+            enableMissile = 1;
+            enableOptics = 1;
+            disableWeapons = 0;
+            disableWeaponsLong = 0;
         };	
         class tsp_common_stop_instant: tsp_common_stop {interpolationSpeed = 99999; speed = 99999; showHandGun = 1;};	
         class tsp_common_stop_right: tsp_common_stop {rightHandIKCurve[] = {0,0,0.5,1}; leftHandIKCurve[] = {1};};	
@@ -114,6 +115,21 @@ class CfgGesturesMale {
             "LeftHandRing", 1, "LeftHandRing1", 1, "LeftHandRing2", 1, "LeftHandRing3", 1, 
             "LeftHandPinky1", 1, "LeftHandPinky2", 1, "LeftHandPinky3", 1,
             "neck", 0.9, "MaskStart"
+        };
+        bothArmsSpine[] = {
+            "RightShoulder", 1, "RightArm", 1, "RightArmRoll", 1, "RightForeArm", 1, "RightForeArmRoll", 1, "RightHand", 1, 
+            "RightHandThumb1", 1, "RightHandThumb2", 1, "RightHandThumb3", 1,
+            "RightHandIndex1", 1, "RightHandIndex2", 1, "RightHandIndex3", 1, 
+            "RightHandMiddle1", 1, "RightHandMiddle2", 1, "RightHandMiddle3", 1, 
+            "RightHandRing", 1, "RightHandRing1", 1, "RightHandRing2", 1, "RightHandRing3", 1, 
+            "RightHandPinky1", 1, "RightHandPinky2", 1, "RightHandPinky3", 1,
+            "LeftShoulder", 1, "LeftArm", 1, "LeftArmRoll", 1, "LeftForeArm", 1, "LeftForeArmRoll", 1, "LeftHand", 1, 
+            "LeftHandThumb1", 1, "LeftHandThumb2", 1, "LeftHandThumb3", 1,
+            "LeftHandIndex1", 1, "LeftHandIndex2", 1, "LeftHandIndex3", 1, 
+            "LeftHandMiddle1", 1, "LeftHandMiddle2", 1, "LeftHandMiddle3", 1, 
+            "LeftHandRing", 1, "LeftHandRing1", 1, "LeftHandRing2", 1, "LeftHandRing3", 1, 
+            "LeftHandPinky1", 1, "LeftHandPinky2", 1, "LeftHandPinky3", 1,
+            "neck", 1, "neck1", 1, "head", 1, "Spine", 1, "Spine1", 1, "Spine2", 1, "Spine3", 1, "pelvis", "MaskStart"
         };
         bothArms[] = {
             "RightShoulder", 1, "RightArm", 1, "RightArmRoll", 1, "RightForeArm", 1, "RightForeArmRoll", 1, "RightHand", 1, 
@@ -192,6 +208,7 @@ class CfgEditorSubCategories {
 	class tsp_men_contractor {displayName = "Contractors";};
 	class tsp_men_guard {displayName = "Guards";}; 
 	class tsp_men_thug {displayName = "Men (Thug)";};
+	class tsp_men_para {displayName = "Men (Paramilitary)";};
     class tsp_men_chernarus {displayName = "Men (Chernarus)";}; 
     class tsp_men_sahrani {displayName = "Men (Sahrani)";};
     class tsp_men_takistan {displayName = "Men (Takistan)";};

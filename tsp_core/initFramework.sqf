@@ -2,6 +2,7 @@ if (!isNil "playa") exitWith {};  //-- So that this stuff ony runs once (race co
 
 playa = player; player addEventHandler ["Respawn", {params ["_unit", "_corpse"]; playa = _unit}];  //-- Playa variable
 if (!isNil "CBA_fnc_addPlayerEventHandler") then {["unit", {playa = _this#0}, true] call CBA_fnc_addPlayerEventHandler};  //-- CBA does it better, gets Zeus RC too
+playa addEventHandler ["GestureChanged", {params ["_unit", "_gesture"]; if ("reload" in _gesture) then {_unit setVariable ["tsp_gestureReturn", ""]}}];  //-- Reload clears return gesture memory
 
 tsp_path = if (isClass (configFile >> 'CfgPatches' >> 'tsp_core')) then {"\tsp_core\"} else {""};
 tsp_mission = (getMissionConfigValue ["tsp_param_mission", false]) isEqualTo "true";  //-- desciption.ext param to load mission scripts
@@ -14,7 +15,7 @@ if (fileExists (tsp_path+'scripts\action.sqf')) then {[] call compileScript [tsp
 if (fileExists (tsp_path+'scripts\butter.sqf')) then {[] call compileScript [tsp_path+'scripts\butter.sqf']};
 if (fileExists (tsp_path+'scripts\chvd.sqf')) then {[] call compileScript [tsp_path+'scripts\chvd.sqf']};
 if (fileExists (tsp_path+'scripts\pause.sqf')) then {[] spawn compileScript [tsp_path+'scripts\pause.sqf']};
-if (fileExists (tsp_path+'scripts\faction.sqf')) then {[] call compileScript [tsp_path+'scripts\faction.sqf']};
+if (fileExists (tsp_path+'scripts\faction.sqf')) then {[] spawn compileScript [tsp_path+'scripts\faction.sqf']};
 
 if (tsp_mission && fileExists (tsp_path+'scripts\environment.sqf')) then {[] spawn compileScript [tsp_path+'scripts\environment.sqf']};
 if (tsp_mission && fileExists (tsp_path+'scripts\role.sqf')) then {[] spawn compileScript [tsp_path+'scripts\role.sqf']};

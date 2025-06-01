@@ -7,7 +7,7 @@ tsp_fnc_faction = {  //-- Check if type exists in CfgLoadouts and apply it
 	if (getText (configFile >> "CfgLoadouts" >> _type) != "") then {_unit setUnitLoadout (_unit call compile getText (configFile >> "CfgLoadouts" >> _type))};  //-- Config
 	if (getText (missionConfigFile >> _type) != "") then {_unit setUnitLoadout (_unit call compile getText (missionConfigFile >> _type)); _goggles = goggles _unit};  //-- Description
 	if (_force && getText (missionConfigFile >> _type) == "" && getText (configFile >> "CfgLoadouts" >> _type) == "") then {_unit setUnitLoadout _type};  //-- Class
-	if (vehicle _unit == _unit && is3DEN) then {_unit switchMove _anim}; 
+	if (vehicle _unit == _unit && is3DEN) then {_unit switchMove _anim};
 	//if (_goggles != "") then {[_unit, _goggles] spawn {sleep 0.1; (_this#0) addGoggles (_this#1)}}
 	_unit spawn {sleep 0.1; _this setSpeaker "NoVoice"};
 };
@@ -15,5 +15,5 @@ tsp_fnc_faction = {  //-- Check if type exists in CfgLoadouts and apply it
 if (!tsp_param_faction) exitWith {};
 [missionNamespace, 'arsenalPreOpen', {(_this#1) set3DENAttribute ['ReceiveRemoteTargets', true]}] call BIS_fnc_addScriptedEventHandler;  //-- If loadout edited, set flag so it doesn't get changed back
 if (isServer) then {addMissionEventHandler ["EntityCreated", {params ["_unit"]; if (_unit isKindOf "CAManBase") then {[_unit, typeOf _unit] call tsp_fnc_faction}}]};
-if (isServer) then {{[_x, typeOf _x] call tsp_fnc_faction} forEach allUnits};
-[] spawn {waitUntil {!isNull (findDisplay 46) && time > 5}; [player, typeOf player] call tsp_fnc_faction};
+if (isServer) then {{[_x, typeOf _x] call tsp_fnc_faction} forEach (allUnits select {!isPlayer _x})};
+waitUntil {!isNull (findDisplay 46) && time > 1}; [player, typeOf player] call tsp_fnc_faction;

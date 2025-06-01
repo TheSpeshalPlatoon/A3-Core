@@ -61,7 +61,7 @@ tsp_fnc_role_poll = {  //-- Select role if available and selected, also poll stu
 	if (tvCurSel _tree isEqualTo _leaf && [_roleId, _leadId] call tsp_fnc_role_available) then {  //-- If selected and available
 		missionNameSpace setVariable [player getVariable ["role", "doesntmatterwhatshere"], nil, true];  //-- Set current role (if any) to unnoccupied
 		missionNameSpace setVariable [_roleId, player, true];  //-- Assign role
-		player setVariable ["role", _roleId];  //-- Just for reference to get player role
+		player setVariable ["role", _roleId, true];  //-- Just for reference to get player role
 		[player, _loadout, true] spawn tsp_fnc_faction; tsp_arsenal = [player, _arsenal] call tsp_fnc_role_arsenal;
 		_groups = allGroups select {groupId _x == _parentName}; if (count _groups > 0) exitWith {[player] join (_groups#0); 
 		["AddGroupMember", [_groups#0, player]] remoteExec ["BIS_fnc_dynamicGroups", 0]};	

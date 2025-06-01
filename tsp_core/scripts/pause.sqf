@@ -97,8 +97,8 @@ tsp_fnc_pause_sector = {
 	_save ctrlAddEventHandler ["buttonClick", {{[_x] remoteExec ["tsp_fnc_sector_save", 2]} forEach tsp_sectorsSelected}];    
 };
 
-sleep 5;  //-- Sleep for some sort of race condition that happens in some missions
-while {tsp_cba_core_pause} do {  //-- Add interface when escape menu is opened, 
+//-- Sleep for some sort of race condition that happens in some missions
+while {sleep 2; tsp_cba_core_pause} do {  //-- Add interface when escape menu is opened, 
 	waitUntil {!isNull (findDisplay 49)};  //-- Wait for pause screen to open
 	call tsp_fnc_pause_view;  //-- View distance button
 
@@ -108,3 +108,19 @@ while {tsp_cba_core_pause} do {  //-- Add interface when escape menu is opened,
 	else {(findDisplay 49 displayctrl 13184) ctrlShow false};  //-- If not admin, hide original debug console
 	waitUntil {isNull (findDisplay 49)};  //-- Wait for pause screen to close
 };
+
+/*
+waitUntil {!isNull (findDisplay 46) && time > 1};
+(findDisplay 46) displayAddEventHandler ["KeyDown", {
+	params ["_displayOrControl", "_key", "_shift", "_ctrl", "_alt"]; if !(tsp_cba_core_pause && _key isEqualTo 1) exitWith {};
+	[] spawn {
+		_timeStop = time + 1; waitUntil {!isNull (findDisplay 49) || time > _timeStop};  //-- Wait for pause screen to open
+		if (isNull (findDisplay 49)) exitWith {};
+		if (!isNil "BIS_EGSpectatorCamera_camera") then {((findDisplay 49) displayCtrl 1010) ctrlEnable false};  //-- Disable respawn button
+		if (!isNil "BIS_EGSpectatorCamera_camera" && !isNil "tsp_param_spectate") then {call tsp_fnc_pause_leave};  //-- Leave spectate button
+		if (isServer || serverCommandAvailable "#kick" || rank player == "COLONEL" || getPlayerUID player == "76561198067670327") then {call tsp_fnc_pause_admin; call tsp_fnc_pause_sector} 
+		else {(findDisplay 49 displayctrl 13184) ctrlShow false};  //-- If not admin, hide original debug console
+		call tsp_fnc_pause_view;  //-- View distance button
+	};
+}];
+*/
