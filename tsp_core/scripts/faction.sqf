@@ -16,4 +16,4 @@ if (!tsp_param_faction) exitWith {};
 [missionNamespace, 'arsenalPreOpen', {(_this#1) set3DENAttribute ['ReceiveRemoteTargets', true]}] call BIS_fnc_addScriptedEventHandler;  //-- If loadout edited, set flag so it doesn't get changed back
 if (isServer) then {addMissionEventHandler ["EntityCreated", {params ["_unit"]; if (_unit isKindOf "CAManBase") then {[_unit, typeOf _unit] call tsp_fnc_faction}}]};
 if (isServer) then {{[_x, typeOf _x] call tsp_fnc_faction} forEach (allUnits select {!isPlayer _x})};
-waitUntil {!isNull (findDisplay 46) && time > 1}; [player, typeOf player] call tsp_fnc_faction;
+[] spawn {waitUntil {!isNull (findDisplay 46) && time > 1}; [player, typeOf player] call tsp_fnc_faction};

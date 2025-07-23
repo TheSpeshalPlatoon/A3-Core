@@ -18,7 +18,7 @@ tsp_fnc_earplug_close = {
 
 tsp_fnc_earplug_toggle = {
 	if (!tsp_earplug_insert && [] call tsp_fnc_earplug_has) exitWith {["EARPLUGS INSERTED", "Hold [CTRL + TAB + SCROLL] to adjust volume"] spawn tsp_fnc_hint; tsp_earplug_insert = true; 0.1 fadeSound tsp_earplug_volume};
-	if (tsp_earplug_insert) exitWith {tsp_earplug_insert = false; 0.1 fadeSound 1; ["", "EARPLUGS REMOVED."] spawn tsp_fnc_hint};
+	if (tsp_earplug_insert) exitWith {tsp_earplug_insert = false; 0.1 fadeSound 1; ["EARPLUGS REMOVED", ""] spawn tsp_fnc_hint};
 };
 
 tsp_fnc_earplug_has = {

@@ -83,7 +83,7 @@ tsp_fnc_underground = {  //-- Underground area lighting (Use in triggers)
 tsp_fnc_intro = {  //-- Custom slideshow intro
 	params ["_timeline", ["_music", ""], ["_exit", {}]];
 	waitUntil {time > 0}; 
-	titleCut ["", "BLACK OUT", 0.01]; 0 fadeSound 0; playMusic _music; 5 fadeMusic 1; sleep 1; ["", "Press [SPACE] to Skip"] spawn BIS_fnc_showSubtitle; 
+	titleCut ["", "BLACK OUT", 0.01]; 0 fadeSound 0; playMusic _music; 5 fadeMusic 1; sleep 1; ["", "Press [SPACE] to Skip"] spawn (missionNameSpace getVariable ["tsp_fnc_hint", BIS_fnc_showSubtitle]); 
 	tsp_skipped = false; tsp_skipEH = (findDisplay 46) displayAddEventHandler ["KeyDown", "if ((_this#1) == 57) exitWith {0 fadeSound 1; playSound 'OMCameraPhoto'; tsp_skipped = true}; true"];
 	{if (tsp_skipped) exitWith {}; _x params ["_time", "_code"]; {_x call bis_fnc_animatedScreen} forEach [[1],[0,[15,5,1],1.05]]; [] spawn _code; uiSleep _time} forEach _timeline;
 	(findDisplay 46) displayRemoveEventHandler ["keyDown", tsp_skipEH];	{_x call bis_fnc_animatedScreen} forEach [[0],[1]];  //-- INIT, DESTROY
@@ -189,7 +189,7 @@ tsp_fnc_skeet = {  //-- Skeet machine
 
 tsp_fnc_cof = {  //-- Course of fire
 	params ["_unit", "_end", ["_original", []], ["_targets", []], ["_startTime", time]];
-	if (_original#0 getVariable ["cof", false]) exitWith {["", "Course is still being used."] spawn BIS_fnc_showSubtitle}; 
+	if (_original#0 getVariable ["cof", false]) exitWith {["", "Course is still being used."] spawn (missionNameSpace getVariable ["tsp_fnc_hint", BIS_fnc_showSubtitle])}; 
 	_original#0 setVariable ["cof", true, true]; playSound3D ["A3\Missions_F_Oldman\Data\sound\beep.ogg", _unit, false, getPosASL _unit, 5, 1, 100];  //-- BEEP
 	{_new = typeOf _x createVehicle [0,0,0]; _new attachTo [_x, [0,0,0]]; _new setVectorDirAndUp [vectorDir _x, vectorUp _x]; _targets pushBack _new} forEach _original;
 	_unit setVariable ["fired", 0]; _fired = _unit addEventHandler ["Fired", {player setVariable ["fired", (player getVariable "fired") + 1]}];  //-- Shot counter	

@@ -98,7 +98,7 @@ tsp_fnc_pause_sector = {
 };
 
 //-- Sleep for some sort of race condition that happens in some missions
-while {sleep 2; tsp_cba_core_pause} do {  //-- Add interface when escape menu is opened, 
+while {tsp_cba_core_pause} do {  //-- Add interface when escape menu is opened, 
 	waitUntil {!isNull (findDisplay 49)};  //-- Wait for pause screen to open
 	call tsp_fnc_pause_view;  //-- View distance button
 

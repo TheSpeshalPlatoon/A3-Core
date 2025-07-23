@@ -1,39 +1,39 @@
-["tsp_param_time_day", "SLIDER", "Time Acceleration (Day)", "", "TSP Environment", [0,120,6], {}] call tsp_fnc_setting;
-["tsp_param_time_night", "SLIDER", "Time Acceleration (Night)", "", "TSP Environment", [0,120,12], {}] call tsp_fnc_setting;
-["tsp_param_brightness", "SLIDER", "Brighter Night", "", "TSP Environment", [0,1,0.3], {if (isServer) then {[] call tsp_fnc_environment_bright}}] call tsp_fnc_setting;
+["tsp_param_time_day", "SLIDER", "Time Acceleration (Day)", "", ["TSP Core", "Environment"], [0,120,6], {}] call tsp_fnc_setting;
+["tsp_param_time_night", "SLIDER", "Time Acceleration (Night)", "", ["TSP Core", "Environment"], [0,120,12], {}] call tsp_fnc_setting;
+["tsp_param_brightness", "SLIDER", "Brighter Night", "", ["TSP Core", "Environment"], [0,10,0.3], {if (isServer) then {[] call tsp_fnc_environment_bright}}] call tsp_fnc_setting;
 
-["tsp_param_sun", "SLIDER", "Light Shafts", "", "TSP Environment", [0,5,1], {"LightShafts" ppEffectAdjust [0.1*tsp_param_sun,0.5*tsp_param_sun,0.5*tsp_param_sun,0.9*tsp_param_sun]}] call tsp_fnc_setting;
+["tsp_param_sun", "SLIDER", "Light Shafts", "", ["TSP Core", "Environment"], [0,5,1], {"LightShafts" ppEffectAdjust [0.1*tsp_param_sun,0.5*tsp_param_sun,0.5*tsp_param_sun,0.9*tsp_param_sun]}] call tsp_fnc_setting;
 
-["tsp_param_weather", "CHECKBOX", "Dynamic Weather", "Changes weather dynamically", "TSP Environment", true] call tsp_fnc_setting;
-["tsp_param_weatherTime", "SLIDER", "Dynamic Weather Time", "Measured in minutes.", "TSP Environment", [1,90,15]] call tsp_fnc_setting;
-["tsp_param_weatherChange", "CHECKBOX", "Update Weather", "Change setting to initiate weather change.", "TSP Environment", true, {if (isServer) then {[] spawn tsp_fnc_environment_weather}}] call tsp_fnc_setting;
+["tsp_param_weather", "CHECKBOX", "Dynamic Weather", "Changes weather dynamically", ["TSP Core", "Environment"], true] call tsp_fnc_setting;
+["tsp_param_weatherTime", "SLIDER", "Dynamic Weather Time", "Measured in minutes.", ["TSP Core", "Environment"], [1,90,15]] call tsp_fnc_setting;
+["tsp_param_weatherChange", "CHECKBOX", "Update Weather", "Change setting to initiate weather change.", ["TSP Core", "Environment"], true, {if (isServer) then {[] spawn tsp_fnc_environment_weather}}] call tsp_fnc_setting;
 
-["tsp_param_overcast", "SLIDER", "Overcast", "", "TSP Environment", [0,1,1]] call tsp_fnc_setting;
-["tsp_param_overcastMin", "SLIDER", "Overcast (Min)", "", "TSP Environment", [0,1,0]] call tsp_fnc_setting;
-["tsp_param_overcastMax", "SLIDER", "Overcast (Max)", "", "TSP Environment", [0,1,1]] call tsp_fnc_setting;
+["tsp_param_overcast", "SLIDER", "Overcast", "", ["TSP Core", "Environment"], [0,1,1]] call tsp_fnc_setting;
+["tsp_param_overcastMin", "SLIDER", "Overcast (Min)", "", ["TSP Core", "Environment"], [0,1,0]] call tsp_fnc_setting;
+["tsp_param_overcastMax", "SLIDER", "Overcast (Max)", "", ["TSP Core", "Environment"], [0,1,1]] call tsp_fnc_setting;
 
-["tsp_param_lightning", "SLIDER", "Lightning", "", "TSP Environment", [0,1,1]] call tsp_fnc_setting;
-["tsp_param_lightningMin", "SLIDER", "Lightning (Min)", "", "TSP Environment", [0,1,0]] call tsp_fnc_setting;
-["tsp_param_lightningMax", "SLIDER", "Lightning (Max)", "", "TSP Environment", [0,1,1]] call tsp_fnc_setting;
+["tsp_param_lightning", "SLIDER", "Lightning", "", ["TSP Core", "Environment"], [0,1,1]] call tsp_fnc_setting;
+["tsp_param_lightningMin", "SLIDER", "Lightning (Min)", "", ["TSP Core", "Environment"], [0,1,0]] call tsp_fnc_setting;
+["tsp_param_lightningMax", "SLIDER", "Lightning (Max)", "", ["TSP Core", "Environment"], [0,1,1]] call tsp_fnc_setting;
 
-["tsp_param_rain", "SLIDER", "Rain", "", "TSP Environment", [0,1,0.5]] call tsp_fnc_setting;
-["tsp_param_rainMin", "SLIDER", "Rain (Min)", "", "TSP Environment", [0,1,0]] call tsp_fnc_setting;
-["tsp_param_rainMax", "SLIDER", "Rain (Max)", "", "TSP Environment", [0,1,1]] call tsp_fnc_setting;
+["tsp_param_rain", "SLIDER", "Rain", "", ["TSP Core", "Environment"], [0,1,0.5]] call tsp_fnc_setting;
+["tsp_param_rainMin", "SLIDER", "Rain (Min)", "", ["TSP Core", "Environment"], [0,1,0]] call tsp_fnc_setting;
+["tsp_param_rainMax", "SLIDER", "Rain (Max)", "", ["TSP Core", "Environment"], [0,1,1]] call tsp_fnc_setting;
 
-["tsp_param_fog", "SLIDER", "Fog", "", "TSP Environment", [0,1,0.5]] call tsp_fnc_setting;
-["tsp_param_fogMin", "SLIDER", "Fog (Min)", "", "TSP Environment", [0,1,0]] call tsp_fnc_setting;
-["tsp_param_fogMax", "SLIDER", "Fog (Max)", "", "TSP Environment", [0,1,0.01]] call tsp_fnc_setting;
+["tsp_param_fog", "SLIDER", "Fog", "", ["TSP Core", "Environment"], [0,1,0.5]] call tsp_fnc_setting;
+["tsp_param_fogMin", "SLIDER", "Fog (Min)", "", ["TSP Core", "Environment"], [0,1,0]] call tsp_fnc_setting;
+["tsp_param_fogMax", "SLIDER", "Fog (Max)", "", ["TSP Core", "Environment"], [0,1,0.01]] call tsp_fnc_setting;
 
-["tsp_param_wave", "SLIDER", "Wave", "", "TSP Environment", [0,1,0.5]] call tsp_fnc_setting;
-["tsp_param_waveMin", "SLIDER", "Wave (Min)", "", "TSP Environment", [0,1,0]] call tsp_fnc_setting;
-["tsp_param_waveMax", "SLIDER", "Wave (Max)", "", "TSP Environment", [0,1,1]] call tsp_fnc_setting;
+["tsp_param_wave", "SLIDER", "Wave", "", ["TSP Core", "Environment"], [0,1,0.5]] call tsp_fnc_setting;
+["tsp_param_waveMin", "SLIDER", "Wave (Min)", "", ["TSP Core", "Environment"], [0,1,0]] call tsp_fnc_setting;
+["tsp_param_waveMax", "SLIDER", "Wave (Max)", "", ["TSP Core", "Environment"], [0,1,1]] call tsp_fnc_setting;
 
-["tsp_param_wind", "SLIDER", "Wind", "", "TSP Environment", [0,1,1]] call tsp_fnc_setting;
-["tsp_param_windMin", "SLIDER", "Wind (Min)", "", "TSP Environment", [0,1,0]] call tsp_fnc_setting;
-["tsp_param_windMax", "SLIDER", "Wind (Max)", "", "TSP Environment", [0,1,1]] call tsp_fnc_setting;
+["tsp_param_wind", "SLIDER", "Wind", "", ["TSP Core", "Environment"], [0,1,1]] call tsp_fnc_setting;
+["tsp_param_windMin", "SLIDER", "Wind (Min)", "", ["TSP Core", "Environment"], [0,1,0]] call tsp_fnc_setting;
+["tsp_param_windMax", "SLIDER", "Wind (Max)", "", ["TSP Core", "Environment"], [0,1,1]] call tsp_fnc_setting;
 
 tsp_fnc_environment_bright = {  //tsp_param_brightness = 1; [] call tsp_fnc_environment_bright;
-	params [["_brightness", tsp_param_brightness],["_colour", [0.5,0.7,1]]];
+	params [["_brightness", tsp_param_brightness], ["_colour", [0.5,0.7,1]]];
 	if (isNil "tsp_night_light") then {tsp_night_light = "#lightpoint" createVehicle [0,0,0]};  //-- Initial call only
 	tsp_night_light setLightAttenuation [1e+011,150,4.31918e-005,4.31918e-005];
 	tsp_night_light setLightBrightness _brightness; 

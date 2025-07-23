@@ -155,14 +155,14 @@
 
 //-- Misc
 	tsp_fnc_throw = {
-		params ["_unit", "_weapon", ["_orient", true]]; if (_weapon == "") exitWith {};
+		params ["_unit", "_weapon", ["_orient", true], ["_remove", true]]; if (_weapon == "") exitWith {};
 		_dir = vectorNormalized ((_unit weaponDirection _weapon) vectorCrossProduct [0, 0, 1]);
 		_up = _dir vectorCrossProduct (_unit weaponDirection _weapon);
 		_pos = _unit modelToWorldWorld (_unit selectionPosition "RightHand") vectorAdd (_dir vectorMultiply 0.7);
 		_holder = createVehicle ["tsp_WeaponHolderSimulated", [0, 0, 0], [], 0, "CAN_COLLIDE"];
 		_holder addWeaponWithAttachmentsCargoGlobal [weaponsItems _unit select {_x select 0 == _weapon} select 0, 1];
 		if (_orient) then {_holder setPosWorld _pos; _holder setVectorDirAndUp [_up, _dir]};
-		_unit removeWeapon _weapon; _holder
+		if (_remove) then {_unit removeWeapon _weapon}; _holder
 	};
 	tsp_fnc_decal = {
 		params ["_pos", ["_decals", ["BloodPool_01_Medium_New_F","BloodSplatter_01_Small_New_F","BloodSplatter_01_Medium_New_F","BloodSpray_01_New_F","BloodSplatter_01_Large_New_F"]], ["_radius", 2]];
@@ -184,11 +184,24 @@
 		{[name _unit, (_text regexReplace ["_x", name _x]) regexReplace ["_unit", name _unit]] remoteExec ["tsp_fnc_hint", _x]} forEach _units;
 	};
 	tsp_fnc_hint = {
-		params ["_name", "_text", ["_style", if (isNil "tsp_cba_hint") then {if (isNil "ace_common_fnc_displayTextStructured") then {"Hint"} else {"ACE"}} else {tsp_cba_hint}]]; 
+		params ["_name", "_text", ["_style", if (isNil "tsp_cba_hint") then {if (isNil "ace_common_fnc_displayTextStructured") then {"Hint"} else {"ACE"}} else {tsp_cba_hint}]]; if (_style == "None") exitWith {};
 		if (_style == "Subtitle") exitWith {[_name, _text] spawn BIS_fnc_showSubtitle};
 		if (_style == "SystemChat") exitWith {systemChat ((if (_name != "") then {_name + ": "} else {""}) + _text)};
 		if (_style == "Hint") exitWith {hint parseText ((if (_name != "") then {"<t size='1.2'>" + _name + ":</t><br/>"} else {""}) + _text)};
 		if (_style == "ACE") exitWith {[(if (_name != "") then {_name + ": "} else {""}) + _text] call ace_common_fnc_displayTextStructured};
+		if !(isNil {BIS_fnc_showSubtitle_subtitle}) then {terminate BIS_fnc_showSubtitle_subtitle};
+		BIS_fnc_showSubtitle_subtitle = [_name, _text] spawn {
+			params ["_name", "_text", "_display"];
+			"BIS_fnc_showSubtitle" cutRsc ["RscDynamicText", "PLAIN"];
+			waitUntil {_display = uiNamespace getVariable "BIS_dynamicText"; !(isNull _display)};
+			uiNamespace setVariable ["BIS_dynamicText", displayNull];
+			_ctrl = _display ctrlcreate ["RscStructuredText", -1];
+			_ctrl ctrlSetBackgroundColor (["Subtitles", "Background"] call bis_fnc_displayColorGet);
+			_ctrl ctrlSetTextColor (["Subtitles", "Text"] call bis_fnc_displayColorGet);
+			_ctrl ctrlSetPosition [(0.5 - (0.4 * safeZoneW) / 2), (safeZoneY + (0.2/8) * safeZoneH), (0.4 * safeZoneW), (safeZoneH)];
+			_ctrl ctrlSetStructuredText parseText format ["<t align='center' shadow='2' size='%3' font='RobotoCondensedBold'>%1<br />%2</t>", toupper _name, _text, (safezoneH * 0.65) max 1];
+			_ctrl ctrlcommit 0;	sleep 5; _ctrl ctrlSetFade 1; _ctrl ctrlCommit 0.5;
+		};
 	};
 	tsp_fnc_vision = {  //-- Gets vision modes from current optic/weapon with integrated optic
 		params ["_unit", ["_return", false]];
@@ -205,6 +218,16 @@
 		_suppressed = getNumber (configFile >> "CfgWeapons" >> (_unit weaponAccessories currentWeapon _unit)#0 >> "ItemInfo" >> "soundTypeIndex"); 
 		(if (_barrel > 0) then {_barrel/400} else {_inertia*1.7}) + (_suppressed*_suppressor); 
 	}; 
+	tsp_fnc_watch = {
+		if (visibleWatch) exitWith {true};
+		if (missionNameSpace getVariable ["ace_parachute_AltimeterActive", false]) exitWith {true};
+		if (missionNameSpace getVariable ["kat_watch_CavminActive", false]) exitWith {true};
+		if (missionNameSpace getVariable ["kat_watch_KatminActive", false]) exitWith {true};
+		if (missionNameSpace getVariable ["kat_watch_RangerActive", false]) exitWith {true};
+		if (missionNameSpace getVariable ["kat_watch_STSActive", false]) exitWith {true};
+		if (missionNameSpace getVariable ["kat_chemical_ChemDetectorActive", false]) exitWith {true};
+		false
+	};
 
 //-- Settings
 	tsp_fnc_setting = {  //-- _variable, _type, _name, description, _category, _setting, _script, _global
@@ -255,5 +278,5 @@
 
 ["tsp_cba_compat", "CHECKBOX", "Gesture Compatibility Mode", "Makes gesture system compatible with other gesture mods.", "TSP Core", false] call tsp_fnc_setting;
 ["tsp_cba_angle", "SLIDER", "Gesture Angle", "Used to determine high/low ready.", "TSP Core", [-1, 1, -0.1], {}, false] call tsp_fnc_setting;
-["tsp_cba_hint", "LIST", "Hint Style", "Type of hint to use.", "TSP Core", [["None","Subtitle","SystemChat","Hint","ACE"], ["None","Subtitle","SystemChat","Hint","ACE"], 0], {}, false] call tsp_fnc_setting;
-["tsp_cba_hint_distance", "SLIDER", "Hint Distance", "How close you have to be to an see hint.", "TSP Core", [0, 50, 20]] call tsp_fnc_setting;
+["tsp_cba_hint", "LIST", "Hint Style", "Type of hint to use.", "TSP Core", [["None","Subtitle","Subtitle (Top)","SystemChat","Hint","ACE"], ["None","Subtitle","Subtitle (Top)","SystemChat","Hint","ACE"], 2], {}, false] call tsp_fnc_setting;
+["tsp_cba_hint_distance", "SLIDER", "Hint Distance", "How close you have to be to see hints.", "TSP Core", [0, 50, 20]] call tsp_fnc_setting;

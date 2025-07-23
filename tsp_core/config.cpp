@@ -114,7 +114,7 @@ class CfgGesturesMale {
             "LeftHandMiddle1", 1, "LeftHandMiddle2", 1, "LeftHandMiddle3", 1, 
             "LeftHandRing", 1, "LeftHandRing1", 1, "LeftHandRing2", 1, "LeftHandRing3", 1, 
             "LeftHandPinky1", 1, "LeftHandPinky2", 1, "LeftHandPinky3", 1,
-            "neck", 0.9, "MaskStart"
+            "neck", 0.5, "MaskStart"
         };
         bothArmsSpine[] = {
             "RightShoulder", 1, "RightArm", 1, "RightArmRoll", 1, "RightForeArm", 1, "RightForeArmRoll", 1, "RightHand", 1, 
@@ -188,7 +188,7 @@ class CfgGesturesMale {
             "LeftHandMiddle1", 1, "LeftHandMiddle2", 1, "LeftHandMiddle3", 1, 
             "LeftHandRing", 1, "LeftHandRing1", 1, "LeftHandRing2", 1, "LeftHandRing3", 1, 
             "LeftHandPinky1", 1, "LeftHandPinky2", 1, "LeftHandPinky3", 1,
-            "neck", 0.9, "MaskStart"
+            "neck", 0.5, "MaskStart"
         };
         upperTorsoWeak[] = {
             "neck", 1, "neck1", 1, "Spine", 1, "Spine1", 0.1,

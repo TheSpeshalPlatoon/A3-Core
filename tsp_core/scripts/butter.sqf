@@ -100,6 +100,7 @@ tsp_fnc_butter = {
 		butter_fovZ = (findDisplay 46) displayAddEventHandler ["MouseZChanged", {if !(isNil "butter_speed_alt") exitWith {}; butter_fov_actual = (butter_fov_actual - (_this#1/60)) min 8.5 max 0.01; false}];
 
 	////-- MOUSE
+		butter_roll = 0;
 		butter_yaw_actual   = 0;  butter_yaw_chaser   = butter_yaw_actual;
 		butter_pitch_actual = 0;  butter_pitch_chaser = butter_pitch_actual;
 		butter_mouseMove = (findDisplay 46) displayAddEventHandler ["MouseMoving", {
@@ -154,7 +155,7 @@ tsp_fnc_butter = {
 			butter_pitch_chaser = butter_pitch_chaser + ((butter_pitch_actual - butter_pitch_chaser)/25);
 
 			{_x setDir (butter_yaw_chaser)} forEach [butter_tripod, butter_camera];
-			[butter_camera, butter_pitch_chaser, 0] call bis_fnc_setPitchBank;  //-- Only on camera, not tripod
+			[butter_camera, butter_pitch_chaser, butter_roll] call bis_fnc_setPitchBank;  //-- Only on camera, not tripod
 
 		//-- KEYS
 			//-- Create "chaser" camera position that trails behind where the camera should actually be if raw inputs were used (Makes the movement all lethargic and stuff)
@@ -218,11 +219,11 @@ tsp_fnc_capture = {  // [player, 60] spawn tsp_fnc_capture; // player getVariabl
     };
     _unit setVariable ["data", [_unit getVariable "_move", [], _unit getVariable "_anim", _unit getVariable "_gesture", _unit getVariable "_fire", _unit getVariable "_weap", _loadout]];
     _unit removeEventHandler ["AnimStateChanged", _anim]; _unit removeEventHandler ["GestureChanged", _gesture]; _unit removeEventHandler ["Fired", _fired];
-    systemChat "RECORDING DONE";
+    systemChat "RECORDING DONE, DATA COPIED"; copyToClipboard str (_unit getVariable "data");
 };
 
 tsp_fnc_capture_play = {
-    params ["_unit", "_data", ["_precision", 0.15]]; _data params ["_move", "_target", "_anim", "_gesture", "_fire", "_weap", "_loadout"]; _timeStart = time;  //-- Precision lower than .2 results in missing shots
+    params ["_unit", "_data", ["_precision", 0.05]]; _data params ["_move", "_target", "_anim", "_gesture", "_fire", "_weap", "_loadout"]; _timeStart = time;  //-- Precision lower than .2 results in missing shots
     _unit disableAI "MOVE"; _unit disableAI "ANIM"; _unit setUnitLoadout _loadout;
     [_unit, _move] spawn BIS_fnc_unitPlay;
 	//_enemy = "Sign_Arrow_Blue_F" createVehicle position _unit;
@@ -232,7 +233,7 @@ tsp_fnc_capture_play = {
         if ((time - _timeStart) > _anim#0#0) then {_unit playMoveNow _anim#0#1; _anim deleteAt 0};
         if ((time - _timeStart) > _gesture#0#0) then {_unit playAction _gesture#0#1; _gesture deleteAt 0};
         if ((time - _timeStart) > _weap#0#0) then {_unit selectWeapon [_weap#0#1, _weap#0#2, _weap#0#3]; _weap deleteAt 0};
-        if ((time - _timeStart) > _fire#0#0) then { _unit setvehicleammo 1; _unit forceWeaponFire [_fire#0#2, _fire#0#2]; _fire deleteAt 0}; //_fire#0#2
+        if ((time - _timeStart) > _fire#0#0) then {_unit setVehicleAmmo 1; _unit forceWeaponFire [_fire#0#1, _fire#0#2]; _fire deleteAt 0}; //_fire#0#2
     };
 	deleteVehicle _enemy;
 };

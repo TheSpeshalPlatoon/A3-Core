@@ -7,8 +7,8 @@ class CfgFunctions {class tsp_core {class functions {class init {file = "\tsp_co
 #include "\tsp_core\scripts\gui.hpp"
 #include "\tsp_core\roles.hpp"
 
-tsp_param_mission = true;               //-- Run TSP mission scripts
-tsp_param_addons = true;               //-- Run TSP addon scripts
+tsp_param_mission = true;               //-- Run mission scripts
+tsp_param_addons = true;               //-- Run addon scripts
 tsp_param_spawn = true;               //-- Show spawn map at all
 tsp_param_spawnStart = true;         //-- Show spawn screen on initial spawn
 tsp_param_spawnScale = 0.07;        //-- Spawn screen scale, smaller is closer
@@ -43,6 +43,7 @@ class Params {
 enableDebugConsole = 2; 
 saving = 0; 
 respawn = "BASE"; 
+respawnTemplates[] = {"BASE"};
 respawnDelay = 2; 
 respawnDialog = 0;
 respawnButton = 1;

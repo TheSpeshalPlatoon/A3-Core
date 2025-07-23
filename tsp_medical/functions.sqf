@@ -42,6 +42,6 @@ tsp_fnc_medical_wake = {
         if !(_key == 57 && (lifeState _x == "UNCONSCIOUS" || _x getVariable ["ACE_isUnconscious", false])) exitWith {};
         if (isNil "tsp_medical_firstTap") exitWith {[] spawn {tsp_medical_firstTap = true; sleep 0.3; tsp_medical_firstTap = nil}};  //-- Double tap
         if (time - tsp_medical_last < tsp_cba_medical_wake_spam) exitWith {}; tsp_medical_last = time; 
-        if (random 1 < tsp_cba_medical_wake_chance) then {[name playa, "Waking Up..."] spawn tsp_fnc_hint; [playa] spawn tsp_fnc_wake} else {[name playa, "Trying to wake up..."] spawn tsp_fnc_hint};
+        if (random 1 < tsp_cba_medical_wake_chance) then {["", "Waking Up..."] spawn tsp_fnc_hint; [playa] spawn tsp_fnc_wake} else {["", "Trying to wake up..."] spawn tsp_fnc_hint};
     }];
 };

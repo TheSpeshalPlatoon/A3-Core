@@ -22,17 +22,17 @@ tsp_fnc_killhouse = {
     ];
 
     //-- Check if killhouse is clear of players before generating, set reset to true to delete old killhouse
-	if (count (allPlayers select {alive _x && _x inArea _area}) > 0) exitWith {["", "Killhouse is still occupied."] spawn "BIS_fnc_showSubtitle", _x};
+	if (count (allPlayers select {alive _x && _x inArea _area}) > 0) exitWith {["", "Killhouse is still occupied."] spawn (missionNameSpace getVariable ["tsp_fnc_hint", BIS_fnc_showSubtitle]), _x};
     {{[_x,1,0] call bis_fnc_door; [_x,2,0] call bis_fnc_door} forEach ((_start nearObjects [_x, 5]) + (_end nearObjects [_x, 5]))} forEach _outerDoorTypes;  //-- Close outer doors
     _enterance = (_start nearObjects [_outerDoorTypes#0, 5])#0;
     _blocker = createSimpleObject ["A3\structures_f\data\DoorLocks\planks_1.p3d", getPosASL _start]; _blocker attachTo [_enterance, [0,-0.2,-1.3]];
     _blocker spawn {while {sleep 1; alive _this} do {playSound3D ["a3\sounds_f\vehicles\armor\noises\tank_building_0"+str (round random 3 + 1)+".wss", _this, false, getPosASL _this, 5, random 2 max 0.5 min 2, 25]}};
     playSound3D ["a3\sounds_f\ambient\quakes\earthquake"+str (round random 3 + 1)+".wss", _blocker, false, getPosASL _blocker, 5, 1, 50];
-    {["", "Generating Killhouse..."] remoteExec ["BIS_fnc_showSubtitle", _x]} forEach (allPlayers select {_x distance _start < _height});
+    {["", "Generating Killhouse..."] remoteExec [if (isNil "tsp_fnc_hint") then {"BIS_fnc_showSubtitle"} else {"tsp_fnc_hint"}, _x]} forEach (allPlayers select {_x distance _start < _height});
     _start setVariable ["reset", true, true]; _start setVariable ["generating", true, true]; sleep 2;  //-- Sleep so old killhouse has time to delete
     {deleteVehicle _x} forEach (nearestObjects [_area, [], sqrt(_width^2 + _height^2)] select {simulationEnabled _x && !(_x == _area) && (_x inArea _area)});  //-- Remove objects
     {deleteVehicle _x} forEach (allDeadMen inAreaArray _area);  //-- Remove dead bodies
-    {["", "Generating Killhouse..."] remoteExec ["BIS_fnc_showSubtitle", _x]} forEach (allPlayers select {_x distance _start < _height});
+    {["", "Generating Killhouse..."] remoteExec [if (isNil "tsp_fnc_hint") then {"BIS_fnc_showSubtitle"} else {"tsp_fnc_hint"}, _x]} forEach (allPlayers select {_x distance _start < _height});
 
     //-- Create horizontal walls
     for "_h" from 1 to _height-1 do {for "_w" from 0 to _width-1 do {sleep _sleep;
@@ -172,14 +172,14 @@ tsp_fnc_killhouse = {
 
     //-- Wait until killhouse is clear or has been replaced
     _start setVariable ["generating", false, true]; _start setVariable ["reset", false, true];
-    {["", "Killhouse Generated!"] remoteExec ["BIS_fnc_showSubtitle", _x]} forEach (allPlayers select {_x distance _start < _height}); deleteVehicle _blocker;
+    {["", "Killhouse Generated!"] remoteExec [if (isNil "tsp_fnc_hint") then {"BIS_fnc_showSubtitle"} else {"tsp_fnc_hint"}, _x]} forEach (allPlayers select {_x distance _start < _height}); deleteVehicle _blocker;
 	waitUntil {sleep 0.5; (count (allUnits select {alive _x && side _x == _enemySide && _x inArea _area}) + _targetChance == 0) || _start getVariable "reset"};  //-- Wait until killhouse is clear or new house generated
-    if !(_start getVariable "reset") then {{["", "Killhouse Clear!"] remoteExec ["BIS_fnc_showSubtitle", _x]} forEach (allPlayers select {_x distance _end < (_height*2)})};
+    if !(_start getVariable "reset") then {{["", "Killhouse Clear!"] remoteExec [if (isNil "tsp_fnc_hint") then {"BIS_fnc_showSubtitle"} else {"tsp_fnc_hint"}, _x]} forEach (allPlayers select {_x distance _end < (_height*2)})};
     if !(_start getVariable "reset") then {playSound3D ["A3\Missions_F_Oldman\Data\sound\beep.ogg", _end, false, getPosASL _end, 5, 1, 100]};  //-- BEEP	
 	waitUntil {sleep 0.5; count (allPlayers select {alive _x && _x inArea _area}) == 0 || _start getVariable "reset"};  //-- Wait until all players are out or new house generated
     {{[_x,1,0] call bis_fnc_door; [_x,2,0] call bis_fnc_door} forEach ((_start nearObjects [_x, 5]) + (_end nearObjects [_x, 5]))} forEach _outerDoorTypes;  //-- Close outer doors
     {deleteVehicle _x} forEach (_helpers + _units + _doors + _walls + _furniture);  //-- Bye bye
-    {["", "Killhouse Reset."] remoteExec ["BIS_fnc_showSubtitle", _x]} forEach (allPlayers select {_x distance _end < (_height*2)});
+    {["", "Killhouse Reset."] remoteExec [if (isNil "tsp_fnc_hint") then {"BIS_fnc_showSubtitle"} else {"tsp_fnc_hint"}, _x]} forEach (allPlayers select {_x distance _end < (_height*2)});
 };
 
 tsp_fnc_killhouse_flood = {  //-- Fucky wucky recursive stuff below
