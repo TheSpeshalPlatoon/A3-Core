@@ -36,7 +36,7 @@ tsp_fnc_immerse_suppress = {  //-- Need to use "player" in while loop cause dyin
 };
 
 tsp_fnc_immerse_poll = {
-	params ["_unit", ["_ignoreGunnerState", false], ["_blur", uiNameSpace getVariable "tsp_immerse_blur"], ["_vignette", uiNameSpace getVariable "tsp_immerse_vignette"]];
+	params ["_unit", ["_aim", false], ["_blur", uiNameSpace getVariable "tsp_immerse_blur"], ["_vignette", uiNameSpace getVariable "tsp_immerse_vignette"]];
 	[getFatigue _unit, (speed _unit min 15)/15, _unit getVariable ["suppression", 0]] params ["_fatigue", "_speed", "_suppression"];
 	_rotor = selectMax ([0] + ((getPos _unit nearEntities [["Helicopter"], 15] select {isEngineOn _x && vehicle _unit == _unit}) apply {15-(_unit distance _x)}));
 	_gogle = 1 - ([configFile >> "CfgGlasses" >> goggles _unit, "ACE_Resistance", if ("goggle" in goggles _unit || "glass" in goggles _unit) then {1} else {0}] call BIS_fnc_returnConfigEntry);
@@ -46,7 +46,7 @@ tsp_fnc_immerse_poll = {
 	_vignette ctrlSetFade ((3 - (_suppression*tsp_cba_immerse_vignette_multiplier))/3); _vignette ctrlCommit 1;
 	_blur ppEffectAdjust [(((_suppression*_bipod*tsp_cba_immerse_blur_suppression)+(_water*_gogle)+(_rotor*_gogle))/10)*tsp_cba_immerse_blur_multiplier]; _blur ppEffectCommit 1;
 	if (vehicle _unit == _unit) then {_unit setCustomAimCoef (tsp_cba_immerse_sway+((_fatigue+_suppression+_speed)*_bipod*tsp_cba_immerse_sway_multiplier))};
-	if ((_ignoreGunnerState || cameraView == "GUNNER") && isNil "tsp_shake" && vehicle _unit == _unit) then {addCamshake [tsp_cba_immerse_align+((_fatigue+_suppression+_speed)*_bipod*tsp_cba_immerse_align_multiplier), 4, 0.3+(_suppression/6)]};
+	if (isNil "tsp_shake" && vehicle _unit == _unit) then {addCamshake [tsp_cba_immerse_align+((_fatigue+_suppression+_speed)*_bipod*tsp_cba_immerse_align_multiplier), 4, 0.3+(_suppression/6)]};
 	if (!isNil "ace_common_fnc_addSwayFactor") then {["multiplier", {tsp_cba_immerse_sway+((_fatigue+_suppression+_speed)*_bipod*tsp_cba_immerse_sway_multiplier)}, "tsp_immerse"] call ace_common_fnc_addSwayFactor};
 	if (_suppression > 0) then {_unit setVariable ["suppression", (_suppression - tsp_cba_immerse_decay) max 0]};  //-- Suppression decay
 };
@@ -57,4 +57,6 @@ with uiNameSpace do {tsp_immerse_vignette = findDisplay 46 ctrlCreate ["RscPictu
 with uiNameSpace do {tsp_immerse_vignette ctrlSetTextColor [0,0,0,1]; tsp_immerse_vignette ctrlSetText ((missionNameSpace getVariable "tsp_path")+"data\vignette.paa"); tsp_immerse_vignette ctrlCommit 0};
 player addEventHandler ["OpticsSwitch", {params ["_unit", "_ads"]; if (_ads) then {[_unit, true] call tsp_fnc_immerse_poll} else {[] spawn {sleep 0.1; resetCamShake}}}];  //-- Call immediately
 player addEventHandler ["Suppressed", {_this spawn tsp_fnc_immerse_suppress}];
-while {sleep 1; tsp_cba_immerse} do {[player] call tsp_fnc_immerse_poll}; 
+player addEventHandler ["Hit", {params ["_unit", "_source", "_damage"]; [10*_damage, 2*_damage, 25*_damage] spawn tsp_fnc_shake}];
+//player addEventHandler ["Explosion", {params ["_vehicle", "_damage"]; [10*_damage, 5*_damage, 25*_damage] spawn tsp_fnc_shake}];
+[] spawn {while {sleep 1; tsp_cba_immerse} do {[player, false] call tsp_fnc_immerse_poll}};

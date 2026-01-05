@@ -65,7 +65,10 @@
 	};
 	tsp_fnc_gesture_sanitize = {
 		params ["_input"];
-		if ("reload" in _input) exitWith {"reload"}; if ("switch" in _input || "amovpercmstpsraswrfldnon" in _input || "amovpercmstpsraswpstdnon" in _input) exitWith {"switch"};
+		if ("reload" in _input) exitWith {"reload"}; 
+		if ("switch" in _input || "amovpercmstpsraswrfldnon" in _input || "amovpercmstpsraswpstdnon" in _input) exitWith {"switch"};
+		if ("switch" in _input || "amovpknlmstpsraswrfldnon" in _input || "amovpknlmstpsraswpstdnon" in _input) exitWith {"switch"};
+		if ("switch" in _input || "amovpknlmstpsraswrfldnon" in _input || "amovpknlmstpsraswlnrdnon" in _input) exitWith {"switch"};
 		if ({_x in _input} count ["stop", "<none>", "aidl", "amov", "rcc", "disable_gesture", "passenger"] > 0) exitWith {""};
 		_input
 	};
@@ -154,12 +157,13 @@
 	};
 
 //-- Misc
+	//[[], {if ("tsp_animate" in activatedAddons) then {tsp_server_holder = true; publicVariable "tsp_server_holder"}}] remoteExec ["call", 2];  //-- Dumfuk fix for dum problem
 	tsp_fnc_throw = {
-		params ["_unit", "_weapon", ["_orient", true], ["_remove", true]]; if (_weapon == "") exitWith {};
+		params ["_unit", "_weapon", ["_orient", true], ["_remove", true], ["_class", "tsp_holder"]]; if (_weapon == "") exitWith {};
 		_dir = vectorNormalized ((_unit weaponDirection _weapon) vectorCrossProduct [0, 0, 1]);
 		_up = _dir vectorCrossProduct (_unit weaponDirection _weapon);
 		_pos = _unit modelToWorldWorld (_unit selectionPosition "RightHand") vectorAdd (_dir vectorMultiply 0.7);
-		_holder = createVehicle ["tsp_WeaponHolderSimulated", [0, 0, 0], [], 0, "CAN_COLLIDE"];
+		_holder = createVehicle [_class, [0, 0, 0], [], 0, "CAN_COLLIDE"];
 		_holder addWeaponWithAttachmentsCargoGlobal [weaponsItems _unit select {_x select 0 == _weapon} select 0, 1];
 		if (_orient) then {_holder setPosWorld _pos; _holder setVectorDirAndUp [_up, _dir]};
 		if (_remove) then {_unit removeWeapon _weapon}; _holder

@@ -1,5 +1,5 @@
 class CfgPatches {
-    class tsp_core {requiredAddons[] = {"cba_common"}; units[] = {"tsp_WeaponHolderSimulated"};};
+    class tsp_core {requiredAddons[] = {"cba_common"}; units[] = {"tsp_holder", "tsp_holder2"};};
     //class tsp_earplug {requiredAddons[] = {}; units[] = {};};
     //class tsp_crash {requiredAddons[] = {}; units[] = {};};
     //class tsp_flare {requiredAddons[] = {"A3_Weapons_F"}; units[] = {}; ammo[] = {"FlareBase", "F_40mm_White", "Flare_82mm_AMOS_White", "Sh_155mm_AMOS"};};
@@ -17,7 +17,8 @@ class CfgFunctions {class A3 {class effects {file = "tsp_core\crash";};};};  //-
 
 class CfgVehicles {  //-- Weapon holder that doesn't act as shield, used by throw func, animate sling
     class WeaponHolderSimulated;
-    class tsp_WeaponHolderSimulated: WeaponHolderSimulated {class ACE_Actions {class ACE_MainActions {distance = 0; condition = "false"};}; model = "tsp_core\data\holder.p3d";};
+    class tsp_holder: WeaponHolderSimulated {model = "tsp_core\data\holder.p3d";};
+    class tsp_holder2: WeaponHolderSimulated {isGround = false; class ACE_Actions {class ACE_MainActions {distance = 0; condition = "false"};}; model = "tsp_core\data\holder2.p3d";};
     class Man;
 	class CAManBase: Man {
 		class ACE_SelfActions {
