@@ -76,7 +76,7 @@ tsp_fnc_sector_loadEntity = {
 		_entity setSpeaker _voice;
 		_entity setName _name;
 		[_entity, _face] remoteExec ["setFace", 0, _entity];
-		if (_leader) then {group _entity selectLeader _entity; group _entity copyWaypoints group _entity};	
+		if (_leader) then {_entity spawn {sleep 1; group _this selectLeader _this; group _this copyWaypoints group _this}};	
 	} else {  //-- For vehicles
 		_entity = createVehicle [_classname, [0,0,0], [], 0, "CAN_COLLIDE"];		
 		[_entity, _vehicleAppearence#0, _vehicleAppearence#1] call BIS_fnc_initVehicle;

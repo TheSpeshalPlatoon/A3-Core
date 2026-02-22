@@ -19,16 +19,15 @@ class CfgVehicles {  //-- Weapon holder that doesn't act as shield, used by thro
     class WeaponHolderSimulated;
     class tsp_holder: WeaponHolderSimulated {model = "tsp_core\data\holder.p3d";};
     class tsp_holder2: WeaponHolderSimulated {isGround = false; class ACE_Actions {class ACE_MainActions {distance = 0; condition = "false"};}; model = "tsp_core\data\holder2.p3d";};
-    class Man;
-	class CAManBase: Man {
+    class Man; class CAManBase: Man {
 		class ACE_SelfActions {
 			class ACE_Equipment	{
 				class tsp_ace_earplug_insert {
-					displayName = "Use Hearing Protection"; icon = "tsp_core\data\headset.paa";
-					condition = "call {soundVolume == 1 && !isNil 'tsp_fnc_earplug_has' && [player] call tsp_fnc_earplug_has}";
+					displayName = "Use Earplugs"; icon = "\z\ace\addons\hearing\UI\ACE_earplugs_x_ca.paa";
+					condition = "!isNil 'tsp_earplug_insert' && 'ACE_EarPlugs' in items player && !(missionNameSpace getVariable ['tsp_earplug_insert', false])";
 					statement = "call tsp_fnc_earplug_toggle"; exceptions[] = {"isNotInside", "isNotSitting"};
 				};
-				class tsp_ace_earplug_remove: tsp_ace_earplug_insert {displayName = "Remove Hearing Protection"; condition = "soundVolume < 1 && !isNil 'tsp_fnc_earplug_has'";};
+				class tsp_ace_earplug_remove: tsp_ace_earplug_insert {displayName = "Remove Earplugs"; condition = "!isNil 'tsp_earplug_insert' && soundVolume < 1 && (missionNameSpace getVariable ['tsp_earplug_insert', false])";};
 			};
 		};
 	};

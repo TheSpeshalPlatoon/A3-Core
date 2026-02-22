@@ -45,3 +45,9 @@ tsp_fnc_medical_wake = {
         if (random 1 < tsp_cba_medical_wake_chance) then {["", "Waking Up..."] spawn tsp_fnc_hint; [playa] spawn tsp_fnc_wake} else {["", "Trying to wake up..."] spawn tsp_fnc_hint};
     }];
 };
+
+tsp_fnc_medical_noti = {
+    params ["_unit", "_target", "_display"]; if (_unit isEqualTo _target) exitWith {};
+    while {ace_medical_gui_menuPFH != -1} do {[name _unit, "is healing you"] remoteExec ["tsp_fnc_hint", _target]; sleep 3};
+    if (ace_medical_gui_menuPFH == -1) then {["", ""] remoteExec ["tsp_fnc_hint", _target]};
+};

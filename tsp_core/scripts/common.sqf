@@ -42,11 +42,11 @@
 		};
 		_outsideness/10
 	};
-	tsp_fnc_obstruction = {  //-- ([player, eyePos player, [0,45,90], 2, getCameraViewDirection player] call tsp_fnc_obstruction) select {_x#0 isKindOf "CAManBase"};
-		params ["_unit", "_start", "_angles", "_reach", "_vector", ["_obstructions", []]];
+	tsp_fnc_obstruction = {  //-- ([player, eyePos player, getCameraViewDirection player, 90, 10, 2] call tsp_fnc_obstruction) select {_x#0 isKindOf "CAManBase"};
+		params ["_unit", "_start", "_vector", "_reach", "_angle", ["_step", 10], ["_offset", 0], ["_obstructions", []], ["_angles", []]];
+		for "_a" from (_angle / 2) to -(_angle / 2) step -_step do {_angles pushBack (_a + _offset)};
 		{  //-- Raycast
-			[_start, _start vectorAdd (([_unit, _vector, _x] call tsp_fnc_vector) vectorMultiply _reach)] params ["_start", "_end"];  
-			//drawLine3D [ASLtoATL _start, ASLtoATL _end, [1,0,0,1]];
+			[_start, _start vectorAdd (([_unit, _vector, _x] call tsp_fnc_vector) vectorMultiply _reach)] params ["_start", "_end"];  //drawLine3D [ASLtoATL _start, ASLtoATL _end, [1,0,0,1]];
 			{
 				_x params ["_intersect", "_normal", "_object", "_parent", "_selections", "_bisurf"]; 
 				if (count (_obstructions select {_x#0 == _object}) == 0) then {_obstructions pushBack [_object, _intersect, _selections]};
@@ -73,14 +73,14 @@
 		_input
 	};
 	tsp_fnc_gesture_variant = {  //-- This function assumes input to be wnon for weapon, laut for level and perc for stance
-		params ["_unit", "_gesture"];
+		params ["_unit", "_gesture", ["_angle", if (isNil "tsp_cba_angle") then {-0.1} else {tsp_cba_angle}]];
 		if ("laut" in _gesture) then {
 			if ("lhig" in gestureState _unit) exitWith {_gesture = _gesture regexReplace ["laut", "lhig"]}; 
 			if ("llow" in gestureState _unit) exitWith {_gesture = _gesture regexReplace ["laut", "llow"]};
 			if (isClass (configFile >> "CfgGesturesMale" >> "States" >> _gesture regexReplace ["laut", "lnon"] regexReplace ["wnon", "wnon"])) exitWith {_gesture = _gesture regexReplace ["laut", "lnon"]};
 			if (isClass (configFile >> "CfgGesturesMale" >> "States" >> _gesture regexReplace ["laut", "lnon"] regexReplace ["wnon", "wrfl"])) exitWith {_gesture = _gesture regexReplace ["laut", "lnon"]};
 			if (isClass (configFile >> "CfgGesturesMale" >> "States" >> _gesture regexReplace ["laut", "lnon"] regexReplace ["wnon", "wpst"])) exitWith {_gesture = _gesture regexReplace ["laut", "lnon"]};
-			_gesture = _gesture regexReplace ["laut", if ((getCameraViewDirection _unit)#2 > tsp_cba_angle) then {"lhig"} else {"llow"}]
+			_gesture = _gesture regexReplace ["laut", if ((getCameraViewDirection _unit)#2 > _angle) then {"lhig"} else {"llow"}]
 		};		
 		if (primaryWeapon _unit != "" && currentWeapon _unit == primaryWeapon _unit && isClass (configFile >> "CfgGesturesMale" >> "States" >> _gesture regexReplace ["wnon", "wrfl"])) then {_gesture = _gesture regexReplace ["wnon", "wrfl"]};
 		if (secondaryWeapon _unit != "" && currentWeapon _unit == secondaryWeapon _unit && isClass (configFile >> "CfgGesturesMale" >> "States" >> _gesture regexReplace ["wnon", "wlnr"])) then {_gesture = _gesture regexReplace ["wnon", "wlnr"]};
@@ -118,8 +118,8 @@
 	tsp_fnc_gesture_item = {  //-- tsp_object attachto [player, [0.02,0.25,0], "leftHand", true]; [tsp_object, [-90,-90,0]] remoteExec ["tsp_fnc_rotate", 0];
         params ["_unit", ["_in", ""], ["_loop", ""], ["_object", ""], ["_attach", "leftHand"], ["_pos", [-0.02,0,-0.03]], ["_rot", [50,190,-120]], ["_exit", {sleep 0.5}], ["_lower", false]];
         [_unit, _in, _loop, "tsp_common_stop", "tsp" in gestureState _unit || "ainv" in gestureState _unit, true, true, false, false, _lower] spawn tsp_fnc_gesture_play;
-        _object = createSimpleObject [_object, [0,0,0]]; tsp_object = _object; [vehicle _unit, _object] remoteExec ["disableCollisionWith", 0]; sleep 0.2; 
-		if !(vehicle _unit isKindOf "Helicopter") then {_object attachto [_unit, _pos, _attach, true]}; [_object, _rot] remoteExec ["tsp_fnc_rotate", 0]; 
+        _object = createSimpleObject [_object, [0,0,0], vehicle _unit != _unit]; tsp_object = _object; [vehicle _unit, _object] remoteExec ["disableCollisionWith"]; 
+		sleep 0.2; if !(vehicle _unit isKindOf "Helicopter") then {_object attachto [_unit, _pos, _attach, true]}; [_object, _rot] remoteExec ["tsp_fnc_rotate", 0]; 
         sleep 0.3; waitUntil _exit; deleteVehicle _object;
 		if (gestureState _unit in [[_unit, _in] call tsp_fnc_gesture_variant, [_unit, _loop] call tsp_fnc_gesture_variant]) then {[_unit] call tsp_fnc_gesture_stop}; 
     };
@@ -156,83 +156,6 @@
 		getNumber (configFile >> "CfgWeapons" >> _item >> "itemInfo" >> "armor");
 	};
 
-//-- Misc
-	//[[], {if ("tsp_animate" in activatedAddons) then {tsp_server_holder = true; publicVariable "tsp_server_holder"}}] remoteExec ["call", 2];  //-- Dumfuk fix for dum problem
-	tsp_fnc_throw = {
-		params ["_unit", "_weapon", ["_orient", true], ["_remove", true], ["_class", "tsp_holder"]]; if (_weapon == "") exitWith {};
-		_dir = vectorNormalized ((_unit weaponDirection _weapon) vectorCrossProduct [0, 0, 1]);
-		_up = _dir vectorCrossProduct (_unit weaponDirection _weapon);
-		_pos = _unit modelToWorldWorld (_unit selectionPosition "RightHand") vectorAdd (_dir vectorMultiply 0.7);
-		_holder = createVehicle [_class, [0, 0, 0], [], 0, "CAN_COLLIDE"];
-		_holder addWeaponWithAttachmentsCargoGlobal [weaponsItems _unit select {_x select 0 == _weapon} select 0, 1];
-		if (_orient) then {_holder setPosWorld _pos; _holder setVectorDirAndUp [_up, _dir]};
-		if (_remove) then {_unit removeWeapon _weapon}; _holder
-	};
-	tsp_fnc_decal = {
-		params ["_pos", ["_decals", ["BloodPool_01_Medium_New_F","BloodSplatter_01_Small_New_F","BloodSplatter_01_Medium_New_F","BloodSpray_01_New_F","BloodSplatter_01_Large_New_F"]], ["_radius", 2]];
-		if (count ((ASLtoATL _pos nearObjects _radius) select {_x getVariable ["tsp_decal", false]}) > 0) exitWith {}; 
-		_decal = (selectRandom _decals) createVehicle [0,0,0]; _decal setDir (random 360); _decal setPosASL (_pos vectorAdd [0,0,3]); 
-		_decal setVehiclePosition [_decal, [], 0, "CAN_COLLIDE"]; _decal setVariable ["tsp_decal", true]; 
-		_decal
-	};
-	tsp_fnc_undrop = {  //-- Remove item from container if dropped
-		params ["_unit", "_container", "_item", "_blacklist", ["_condition", {false}], ["_replace", true]];
-		if !(_item in _blacklist || _item call _condition) exitWith {};
-		if (_replace) then {_unit addPrimaryWeaponItem _item}; 
-		[_container, _item] call cba_fnc_removeItemCargo; _unit removeItems _item;
-	};
-	tsp_fnc_shake = {params ["_power", "_duration", "_frequency"]; resetCamShake; tsp_shake = true; addCamShake _this; sleep (_duration+0.1); tsp_shake = nil};
-	tsp_fnc_notify = {
-		params ["_unit", "_text", ["_distance", tsp_cba_hint_distance]];
-		_units = allPlayers select {[side _x, side _unit] call BIS_fnc_sideIsFriendly && _x distance2D _unit < tsp_cba_hint_distance && count lineIntersectsSurfaces [eyePos _x, eyePos _unit, _x, _unit, true, -1] == 0};
-		{[name _unit, (_text regexReplace ["_x", name _x]) regexReplace ["_unit", name _unit]] remoteExec ["tsp_fnc_hint", _x]} forEach _units;
-	};
-	tsp_fnc_hint = {
-		params ["_name", "_text", ["_style", if (isNil "tsp_cba_hint") then {if (isNil "ace_common_fnc_displayTextStructured") then {"Hint"} else {"ACE"}} else {tsp_cba_hint}]]; if (_style == "None") exitWith {};
-		if (_style == "Subtitle") exitWith {[_name, _text] spawn BIS_fnc_showSubtitle};
-		if (_style == "SystemChat") exitWith {systemChat ((if (_name != "") then {_name + ": "} else {""}) + _text)};
-		if (_style == "Hint") exitWith {hint parseText ((if (_name != "") then {"<t size='1.2'>" + _name + ":</t><br/>"} else {""}) + _text)};
-		if (_style == "ACE") exitWith {[(if (_name != "") then {_name + ": "} else {""}) + _text] call ace_common_fnc_displayTextStructured};
-		if !(isNil {BIS_fnc_showSubtitle_subtitle}) then {terminate BIS_fnc_showSubtitle_subtitle};
-		BIS_fnc_showSubtitle_subtitle = [_name, _text] spawn {
-			params ["_name", "_text", "_display"];
-			"BIS_fnc_showSubtitle" cutRsc ["RscDynamicText", "PLAIN"];
-			waitUntil {_display = uiNamespace getVariable "BIS_dynamicText"; !(isNull _display)};
-			uiNamespace setVariable ["BIS_dynamicText", displayNull];
-			_ctrl = _display ctrlcreate ["RscStructuredText", -1];
-			_ctrl ctrlSetBackgroundColor (["Subtitles", "Background"] call bis_fnc_displayColorGet);
-			_ctrl ctrlSetTextColor (["Subtitles", "Text"] call bis_fnc_displayColorGet);
-			_ctrl ctrlSetPosition [(0.5 - (0.4 * safeZoneW) / 2), (safeZoneY + (0.2/8) * safeZoneH), (0.4 * safeZoneW), (safeZoneH)];
-			_ctrl ctrlSetStructuredText parseText format ["<t align='center' shadow='2' size='%3' font='RobotoCondensedBold'>%1<br />%2</t>", toupper _name, _text, (safezoneH * 0.65) max 1];
-			_ctrl ctrlcommit 0;	sleep 5; _ctrl ctrlSetFade 1; _ctrl ctrlCommit 0.5;
-		};
-	};
-	tsp_fnc_vision = {  //-- Gets vision modes from current optic/weapon with integrated optic
-		params ["_unit", ["_return", false]];
-		_visionModesClass = ("true" configClasses (configFile >> "CfgWeapons" >> (primaryWeaponItems player)#2 >> "ItemInfo" >> "OpticsModes"))#0;
-		if (!isNil "_visionModesClass") then {if (count (getArray (_visionModesClass >> "visionMode")) > 1) then {_return = true}};
-		if (isClass (configFile >> "CfgWeapons" >> currentWeapon _unit >> "OpticsModes")) then {_return = true};
-		if (isArray (configFile >> "CfgWeapons" >> currentWeapon _unit >> "VisionMode")) then {_return = true};
-		_return
-	};
-	tsp_fnc_length = { 
-		params ["_unit", ["_suppressor", 0.3]]; 
-		_barrel = getNumber (configFile >> "CfgWeapons" >> currentWeapon _unit >> "ACE_barrelLength"); 
-		_inertia = getNumber (configFile >> "CfgWeapons" >> currentWeapon _unit >> "inertia"); 
-		_suppressed = getNumber (configFile >> "CfgWeapons" >> (_unit weaponAccessories currentWeapon _unit)#0 >> "ItemInfo" >> "soundTypeIndex"); 
-		(if (_barrel > 0) then {_barrel/400} else {_inertia*1.7}) + (_suppressed*_suppressor); 
-	}; 
-	tsp_fnc_watch = {
-		if (visibleWatch) exitWith {true};
-		if (missionNameSpace getVariable ["ace_parachute_AltimeterActive", false]) exitWith {true};
-		if (missionNameSpace getVariable ["kat_watch_CavminActive", false]) exitWith {true};
-		if (missionNameSpace getVariable ["kat_watch_KatminActive", false]) exitWith {true};
-		if (missionNameSpace getVariable ["kat_watch_RangerActive", false]) exitWith {true};
-		if (missionNameSpace getVariable ["kat_watch_STSActive", false]) exitWith {true};
-		if (missionNameSpace getVariable ["kat_chemical_ChemDetectorActive", false]) exitWith {true};
-		false
-	};
-
 //-- Settings
 	tsp_fnc_setting = {  //-- _variable, _type, _name, description, _category, _setting, _script, _global
 		params ["_variable", "_type", "_name", "_description", "_category", "_setting", ["_script", {}], ["_global", true]];
@@ -263,22 +186,156 @@
 		} forEach tsp_controls;
 	};
 	tsp_fnc_scroll = {  //-- Making UI events stackable ["systemChat 'AH';"] spawn tsp_fnc_scroll;
-		params [["_code", ""], ["_show", true], ["_type", "Action"], ["_first", isNil "tsp_scroll"], ["_poll", 10], ["_hud", shownHUD]];
+		params [["_code", ""], ["_show", true], ["_type", "Action"], ["_first", isNil "tsp_scroll"], ["_poll", 1], ["_hud", shownHUD]];
 		{inGameUISetEventHandler [_x, str !_show]} forEach ["PrevAction", "NextAction"]; _hud set [7, _show]; showHUD _hud;  //-- Hide scroll menu
 		tsp_scroll = (missionNameSpace getVariable ["tsp_scroll", ""]) + _code;  //-- Add new code onto variable with each call
 		if (_first) then {while {sleep _poll; true} do {inGameUISetEventHandler ["Action", "_returnVar = false;" + tsp_scroll + "_returnVar"]}};  //-- Continually add handler
 	};
 
-//-- Legussy
-	tsp_fnc_lookAt = {
-		params ["_unit", "_targetDir", ["_duration", 1], ["_step", 4]];
+//-- Mobs
+	tsp_fnc_targets = {  //!([side group _x, side group _unit] call BIS_fnc_sideIsFriendly) &&          //-- Not friends
+		params ["_unit", ["_distanceAuto", 5], ["_distanceMax", 500], ["_code", {true}], ["_knowsAbout", 1], ["_addToUncon", 25], ["_addToVehicle", 5], ["_addToInvisible", 50]];
+		_targets = (_unit nearEntities [["AllVehicles"], _distanceMax]) select {            //-- Get units in _distanceMax
+			(_x distance _unit < _distanceAuto || _unit knowsAbout _x > _knowsAbout) &&    //-- Select any units in _autoDetectDistance or any units that he knowsAbout
+			(count (crew vehicle _x select {alive _x}) > 0) && (vehicle _unit !=  _x) &&  //-- Dont include empty vehicles and dont include his vehicle
+			_x !=  _unit && !(_x isKindOf "Animal") && (_x call _code)                   //-- Exclude himself, animals and others in _ignore
+		}; 
+		_targets = _targets apply {  //-- Create 2D array with distance
+			_distance = _x distance _unit;
+			if !([_unit, "VIEW"] checkVisibility [eyePos _unit, eyePos _x] > 0.5) then {_distance = _distance + _addToInvisible};  //-- If not visible, add more distance, dont prioritize
+			if (lifeState _x == "INCAPACITATED") then {_distance = _distance + _addToUncon};  //-- If uncon, add more distance, dont prioritize
+			if !(_x isKindOf "Man") then {_distance = _distance + _addToVehicle};  //-- If vehicle, add more distance, dont prioritize
+			[_distance, _x]  //-- Return
+		};
+		_targets sort true; _targets = _targets apply {_x params ["_distance", "_unit"]; _unit}; _targets  //-- Sort closest, remove distance, return
+	};
+	tsp_fnc_look = {  //[emu, (emu getReldir player) + getDir emu] call tsp_fnc_look
+		params ["_unit", "_targetDir", ["_step", 2], ["_speed", 240], ["_timeStop", time + 2]]; _unit disableAI "ANIM";
 		[_targetDir - getDir _unit, (360 - _targetDir) + getDir _unit] params ["_clockwise", "_counterClockwise"];
-		_amountToRotate = if (_clockwise > _counterClockwise) then {_counterClockwise} else {_clockwise};
-		_step = if (_clockwise > _counterClockwise) then {-_step} else {_step};	
-		_unit disableAI "ANIM";
-		for "_i" from 1 to ((abs _amountToRotate)/abs _step) do {_unit setDir ((getDir _unit) + _step); sleep (_duration/((abs _amountToRotate)/abs _step))};
-		_unit enableAI "ANIM"; 
+		_step = if (_clockwise > _counterClockwise) then {-_step} else {_step};    
+		_frame = [{params ["_args", "_pfh"]; _args params ["_unit", "_step", "_speed"]; _unit setDir (getDir _unit + (_step * diag_deltaTime * _speed))}, 0, [_unit, _step, _speed]] call CBA_fnc_addPerFrameHandler;
+		waitUntil {time > _timeStop || (abs (((getDir _unit - _targetDir) + 540) % 360 - 180)) < 10};
+		[_frame] call CBA_fnc_removePerFrameHandler;
+		//_amountToRotate = if (_clockwise > _counterClockwise) then {_counterClockwise} else {_clockwise};
+		//for "_i" from 1 to ((abs _amountToRotate)/abs _step) do {_unit setDir ((getDir _unit) + _step); sleep _duration};  //(_duration/((abs _amountToRotate)/abs _step))
+		_unit enableAI "ANIM";
 	}; 
+
+//-- Misc
+	tsp_fnc_shake = {params ["_power", "_duration", "_frequency"]; resetCamShake; tsp_shake = true; addCamShake _this; sleep (_duration+0.1); tsp_shake = nil};
+	tsp_fnc_throw = {  //[[], {if ("tsp_animate" in activatedAddons) then {tsp_server_holder = true; publicVariable "tsp_server_holder"}}] remoteExec ["call", 2];  //-- Dumfuk fix for dum problem
+		params ["_unit", "_weapon", ["_orient", true], ["_remove", true], ["_class", "tsp_holder"]]; if (_weapon == "") exitWith {};
+		_dir = vectorNormalized ((_unit weaponDirection _weapon) vectorCrossProduct [0, 0, 1]);
+		_up = _dir vectorCrossProduct (_unit weaponDirection _weapon);
+		_pos = _unit modelToWorldWorld (_unit selectionPosition "RightHand") vectorAdd (_dir vectorMultiply 0.7);
+		_holder = createVehicle [_class, [0, 0, 0], [], 0, "CAN_COLLIDE"];
+		_holder addWeaponWithAttachmentsCargoGlobal [weaponsItems _unit select {_x select 0 == _weapon} select 0, 1];
+		if (_orient) then {_holder setPosWorld _pos; _holder setVectorDirAndUp [_up, _dir]};
+		if (_remove) then {_unit removeWeapon _weapon}; _holder
+	};
+	tsp_fnc_decal = {
+		params ["_pos", ["_decals", ["BloodPool_01_Medium_New_F","BloodSplatter_01_Small_New_F","BloodSplatter_01_Medium_New_F","BloodSpray_01_New_F","BloodSplatter_01_Large_New_F"]], ["_radius", 2]];
+		if (count ((ASLtoATL _pos nearObjects _radius) select {_x getVariable ["tsp_decal", false]}) > 0) exitWith {}; 
+		_decal = (selectRandom _decals) createVehicle [0,0,0]; _decal setDir (random 360); _decal setPosASL (_pos vectorAdd [0,0,3]); 
+		_decal setVehiclePosition [_decal, [], 0, "CAN_COLLIDE"]; _decal setVariable ["tsp_decal", true]; 
+		_decal
+	};
+	tsp_fnc_undrop = {  //-- Remove item from container if dropped
+		params ["_unit", "_container", "_item", "_blacklist", ["_condition", {false}], ["_replace", true]];
+		if !(_item in _blacklist || _item call _condition) exitWith {};
+		if (_replace) then {_unit addPrimaryWeaponItem _item}; 
+		[_container, _item] call cba_fnc_removeItemCargo; _unit removeItems _item;
+	};
+	tsp_fnc_hint = {
+		params ["_name", "_text", ["_style", if (isNil "tsp_cba_hint") then {if (isNil "ace_common_fnc_displayTextStructured") then {"Hint"} else {"ACE"}} else {tsp_cba_hint}]]; if (_style == "None") exitWith {};
+		if (_style == "Subtitle") exitWith {[_name, _text] spawn BIS_fnc_showSubtitle};
+		if (_style == "SystemChat") exitWith {systemChat ((if (_name != "") then {_name + ": "} else {""}) + _text)};
+		if (_style == "Hint") exitWith {hint parseText ((if (_name != "") then {"<t size='1.2'>" + _name + ":</t><br/>"} else {""}) + _text)};
+		if (_style == "ACE") exitWith {[(if (_name != "") then {_name + ": "} else {""}) + _text] call ace_common_fnc_displayTextStructured};
+		if !(isNil {BIS_fnc_showSubtitle_subtitle}) then {terminate BIS_fnc_showSubtitle_subtitle};
+		BIS_fnc_showSubtitle_subtitle = [_name, _text] spawn {
+			params ["_name", "_text", "_display"];
+			"BIS_fnc_showSubtitle" cutRsc ["RscDynamicText", "PLAIN"];
+			waitUntil {_display = uiNamespace getVariable "BIS_dynamicText"; !(isNull _display)};
+			uiNamespace setVariable ["BIS_dynamicText", displayNull];
+			_ctrl = _display ctrlcreate ["RscStructuredText", -1];
+			_ctrl ctrlSetBackgroundColor (["Subtitles", "Background"] call bis_fnc_displayColorGet);
+			_ctrl ctrlSetTextColor (["Subtitles", "Text"] call bis_fnc_displayColorGet);
+			_ctrl ctrlSetPosition [(0.5 - (0.4 * safeZoneW) / 2), (safeZoneY + (0.2/8) * safeZoneH), (0.4 * safeZoneW), (safeZoneH)];
+			_ctrl ctrlSetStructuredText parseText format ["<t align='center' shadow='2' size='%3' font='RobotoCondensedBold'>%1<br />%2</t>", toupper _name, _text, (safezoneH * 0.65) max 1];
+			_ctrl ctrlcommit 0;	sleep 5; _ctrl ctrlSetFade 1; _ctrl ctrlCommit 0.5;
+		};
+	};
+	tsp_fnc_notify = {  //-- Targeted hint in radius
+		params ["_unit", "_text", ["_distance", tsp_cba_hint_distance]];
+		_units = allPlayers select {[side _x, side _unit] call BIS_fnc_sideIsFriendly && _x distance2D _unit < _distance && count lineIntersectsSurfaces [eyePos _x, eyePos _unit, _x, _unit, true, -1] == 0};
+		{[name _unit, (_text regexReplace ["_x", name _x]) regexReplace ["_unit", name _unit]] remoteExec ["tsp_fnc_hint", _x]} forEach _units;
+	};
+	tsp_fnc_vision = {  //-- Gets vision modes from current optic/weapon with integrated optic
+		params ["_unit", ["_return", false]];
+		_visionModesClass = ("true" configClasses (configFile >> "CfgWeapons" >> (primaryWeaponItems player)#2 >> "ItemInfo" >> "OpticsModes"))#0;
+		if (!isNil "_visionModesClass") then {if (count (getArray (_visionModesClass >> "visionMode")) > 1) then {_return = true}};
+		if (isClass (configFile >> "CfgWeapons" >> currentWeapon _unit >> "OpticsModes")) then {_return = true};
+		if (isArray (configFile >> "CfgWeapons" >> currentWeapon _unit >> "VisionMode")) then {_return = true};
+		_return
+	};
+	tsp_fnc_length = {  //-- Get weapon length
+		params ["_unit", ["_suppressor", 0.3]]; 
+		_barrel = getNumber (configFile >> "CfgWeapons" >> currentWeapon _unit >> "ACE_barrelLength"); 
+		_inertia = getNumber (configFile >> "CfgWeapons" >> currentWeapon _unit >> "inertia"); 
+		_suppressed = getNumber (configFile >> "CfgWeapons" >> (_unit weaponAccessories currentWeapon _unit)#0 >> "ItemInfo" >> "soundTypeIndex"); 
+		(if (_barrel > 0) then {_barrel/400} else {_inertia*1.7}) + (_suppressed*_suppressor); 
+	}; 
+	tsp_fnc_watch = {  //-- Check if modded watch is open
+		if (visibleWatch) exitWith {true};
+		if (missionNameSpace getVariable ["ace_parachute_AltimeterActive", false]) exitWith {true};
+		if (missionNameSpace getVariable ["kat_watch_CavminActive", false]) exitWith {true};
+		if (missionNameSpace getVariable ["kat_watch_KatminActive", false]) exitWith {true};
+		if (missionNameSpace getVariable ["kat_watch_RangerActive", false]) exitWith {true};
+		if (missionNameSpace getVariable ["kat_watch_STSActive", false]) exitWith {true};
+		if (missionNameSpace getVariable ["kat_chemical_ChemDetectorActive", false]) exitWith {true};
+		false
+	};
+	tsp_fnc_glass = {  //-- Break glass in radius
+		params ["_unit", ["_distance", 10], ["_search", 20]];
+		{
+			if (getAllHitPointsDamage _x isEqualTo []) then {continue};
+			[_x, (getAllHitPointsDamage _x)#1, (getAllHitPointsDamage _x)#2] params ["_house", "_selections", "_damage"];
+			{  //-- For all selections
+				[_x, _house modelToWorld (_house selectionPosition _x)] params ["_selection", "_selectionPos"];
+				if (_selectionPos distance (getPosASL _unit) > _distance || _damage#_forEachIndex == 1 || !("glass" in _selection || "window" in _selection)) then {continue};  //-- Skip
+				[_house, [_selection, 1]] remoteExec ["setHit", 0]; playSound3D [format ["A3\Sounds_F\arsenal\sfx\bullet_hits\glass_0%1.wss", (floor random 8) + 1], _selectionPos, false, AGLtoASL _selectionPos, 3, 1, 25];
+			} forEach _selections;
+		} forEach (nearestObjects [getPosASL _unit, ["BUILDING", "HOUSE", "CHURCH", "CHAPEL", "BUNKER", "FORTRESS", "VIEW-TOWER", "LIGHTHOUSE", "FUELSTATION", "HOSPITAL", "TOURISM"], _search]);
+	};
+	tsp_fnc_particle = {
+		params ["_unit", "_selection", "_class", ["_interval", 0.1], ["_duration", 1], ["_dispersion", 0], ["_velocity", [0,0,0]], ["_life", 0.5], ["_weight", 40], ["_size", [1,1,1]], ["_offset", [0,0,0]], 
+		["_color", [[0.2,0,0.1,1], [0.3,0,0.1,1]]], ["_model", ["\a3\Data_f\ParticleEffects\Universal\Universal", 16, 13, 1]], ["_type", "Billboard"]];
+		_particle = createVehicle ["#particlesource", position _unit, [], 0, "CAN_COLLIDE"]; _particle attachTo [_unit, _offset, _selection];
+		if (_class == "") then {_particle setParticleParams [  //-- Parameters
+			_model,                    //-- Shape 
+			"",                       //-- Animation Name 
+			_type,                   //-- Particle Type 
+			1,                      //-- Time Period 
+			_life,                 //-- Life Time 
+			[0,0,0],              //-- Position 
+			_velocity,           //-- Velocity 
+			10,                 //-- Rotation Velocity 
+			_weight,           //-- Weight 
+			1,                //-- Volume 
+			0.2,             //-- Rubbing 
+			_size,          //-- Size 
+			_color,        //-- Color 
+			[0.1],        //-- AnimationPhase 
+			0,           //-- Random Direction Period 
+			0,          //-- Random Direction Intensity 
+			"",        //-- OnTimer 
+			"",       //-- Before Destroy 
+			[0,0,0]  //-- Object 
+		]} else {_particle setParticleClass _class};
+		_particle setParticleRandom [0, [0,0,0], [_dispersion/2, _dispersion/2, _dispersion], 5, 0, [0.1, 0.1, 0.1, 0.1], 0, _dispersion*10, _dispersion*10, 0.1];  //-- Randomization (life, pos, velo, rotat, size, color, dir, dir intensity, angle, bounce)
+		_particle setDropInterval _interval; sleep _duration; deleteVehicle _particle;
+	};
 
 ["tsp_cba_compat", "CHECKBOX", "Gesture Compatibility Mode", "Makes gesture system compatible with other gesture mods.", "TSP Core", false] call tsp_fnc_setting;
 ["tsp_cba_angle", "SLIDER", "Gesture Angle", "Used to determine high/low ready.", "TSP Core", [-1, 1, -0.1], {}, false] call tsp_fnc_setting;

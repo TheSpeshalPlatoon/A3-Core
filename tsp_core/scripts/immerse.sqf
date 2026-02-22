@@ -46,7 +46,7 @@ tsp_fnc_immerse_poll = {
 	_vignette ctrlSetFade ((3 - (_suppression*tsp_cba_immerse_vignette_multiplier))/3); _vignette ctrlCommit 1;
 	_blur ppEffectAdjust [(((_suppression*_bipod*tsp_cba_immerse_blur_suppression)+(_water*_gogle)+(_rotor*_gogle))/10)*tsp_cba_immerse_blur_multiplier]; _blur ppEffectCommit 1;
 	if (vehicle _unit == _unit) then {_unit setCustomAimCoef (tsp_cba_immerse_sway+((_fatigue+_suppression+_speed)*_bipod*tsp_cba_immerse_sway_multiplier))};
-	if (isNil "tsp_shake" && vehicle _unit == _unit) then {addCamshake [tsp_cba_immerse_align+((_fatigue+_suppression+_speed)*_bipod*tsp_cba_immerse_align_multiplier), 4, 0.3+(_suppression/6)]};
+	if (isNil "tsp_shake" && vehicle _unit == _unit && cameraView == "GUNNER") then {addCamshake [tsp_cba_immerse_align+((_fatigue+_suppression+_speed)*_bipod*tsp_cba_immerse_align_multiplier), 4, 0.3+(_suppression/6)]};
 	if (!isNil "ace_common_fnc_addSwayFactor") then {["multiplier", {tsp_cba_immerse_sway+((_fatigue+_suppression+_speed)*_bipod*tsp_cba_immerse_sway_multiplier)}, "tsp_immerse"] call ace_common_fnc_addSwayFactor};
 	if (_suppression > 0) then {_unit setVariable ["suppression", (_suppression - tsp_cba_immerse_decay) max 0]};  //-- Suppression decay
 };

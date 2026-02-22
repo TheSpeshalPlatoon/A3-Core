@@ -10,6 +10,7 @@ class Extended_PreInit_EventHandlers {class tsp_medical_cba {init = "[] call com
 class Extended_PostInit_EventHandlers {
 	class tsp_medical_functions {init = "[] call compileScript ['\tsp_medical\functions.sqf']";}; 
 	class tsp_medical_init {init = "['ace_medical_woundReceived', {if (isPlayer (_this#0) && local (_this#0)) then {_this call tsp_fnc_medical_hit}}] call CBA_fnc_addEventHandler;";};
+	class tsp_medical_noti {init = "['ace_medicalMenuOpened', {if (isPlayer (_this#1)) then {_this spawn tsp_fnc_medical_noti}}] call CBA_fnc_addEventHandler;";};
 	class tsp_medical_key {init = "['ace_unconscious', {if (isPlayer (_this#0) && local (_this#0)) then {[] spawn tsp_fnc_medical_wake}}] call CBA_fnc_addEventHandler;";};
 };
 
