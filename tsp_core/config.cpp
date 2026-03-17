@@ -17,8 +17,7 @@ class CfgFunctions {class A3 {class effects {file = "tsp_core\crash";};};};  //-
 
 class CfgVehicles {  //-- Weapon holder that doesn't act as shield, used by throw func, animate sling
     class WeaponHolderSimulated;
-    class tsp_holder: WeaponHolderSimulated {model = "tsp_core\data\holder.p3d";};
-    class tsp_holder2: WeaponHolderSimulated {isGround = false; class ACE_Actions {class ACE_MainActions {distance = 0; condition = "false"};}; model = "tsp_core\data\holder2.p3d";};
+    class tsp_holder: WeaponHolderSimulated {isGround = false; class ACE_Actions {class ACE_MainActions {distance = 0; condition = "false"};}; model = "tsp_core\data\holder2.p3d";};
     class Man; class CAManBase: Man {
 		class ACE_SelfActions {
 			class ACE_Equipment	{
@@ -207,6 +206,7 @@ class CfgEditorSubCategories {
 	class tsp_inf_death {displayName = "Infantry (Death Squads)";};
 	class tsp_men_contractor {displayName = "Contractors";};
 	class tsp_men_guard {displayName = "Guards";}; 
+	class tsp_men_formal {displayName = "Formal";}; 
 	class tsp_men_thug {displayName = "Men (Thug)";};
 	class tsp_men_para {displayName = "Men (Paramilitary)";};
     class tsp_men_chernarus {displayName = "Men (Chernarus)";}; 

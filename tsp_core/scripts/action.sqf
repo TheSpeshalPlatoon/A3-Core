@@ -1,6 +1,6 @@
 tsp_fnc_action_hold = {
-	params ["_object", "_title", "_icon", "_code", ["_condition", "true"], ["_once", false], ["_duration", 0.2], ["_args", []], ["_priority", 10]];
-	[_object, _title, _icon, _icon, _condition + " && _this distance _target < 6", _condition, {}, {}, _code, {}, _args, _duration, _priority, _once, false] call BIS_fnc_holdActionAdd;
+	params ["_object", "_title", "_icon", "_code", ["_condition", "true"], ["_once", false], ["_duration", 0.2], ["_args", []], ["_priority", 10], ["_distance", 6]];
+	[_object, _title, _icon, _icon, _condition + " && _this distance _target < "+str _distance, _condition, {}, {}, _code, {}, _args, _duration, _priority, _once, false] call BIS_fnc_holdActionAdd;
 };
 
 tsp_fnc_action_arsenal = {
@@ -36,7 +36,7 @@ tsp_fnc_action_sleep = {
     if (_anim && abs (_dayTime - dayTime) > 1) then {[player, "Acts_UnconsciousStandUp_part1"] remoteExec ["switchMove", 0]};
 };
 
-tsp_fnc_action_teleport = {params ["_unit", "_location"]; cutText ["", "BLACK OUT", 1]; sleep 1; _unit attachTo [_location,[0,0,0]]; detach _unit; cutText ["", "BLACK IN", 1]};
+tsp_fnc_action_teleport = {params ["_unit", "_location"]; cutText ["", "BLACK OUT", 1]; sleep 1; _unit setPosASL (getPosASL _location); _unit attachTo [_location,[0,0,0]]; detach _unit; cutText ["", "BLACK IN", 1]};
 
 tsp_fnc_action = {  //-- Changes for public release in here
 	params ["_object", "_type", ["_conditon", "true"], ["_params", []], ["_icon", "\a3\data_f_destroyer\data\UI\IGUI\Cfg\holdactions\holdAction_loadVehicle_ca.paa"]];	

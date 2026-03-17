@@ -222,16 +222,19 @@
 	}; 
 
 //-- Misc
+	[[], {if ("tsp_animate" in activatedAddons) then {tsp_server_animate = true; publicVariable "tsp_server_animate"}}] remoteExec ["call", 2];  //-- Dumfuk fix for dum problem
 	tsp_fnc_shake = {params ["_power", "_duration", "_frequency"]; resetCamShake; tsp_shake = true; addCamShake _this; sleep (_duration+0.1); tsp_shake = nil};
-	tsp_fnc_throw = {  //[[], {if ("tsp_animate" in activatedAddons) then {tsp_server_holder = true; publicVariable "tsp_server_holder"}}] remoteExec ["call", 2];  //-- Dumfuk fix for dum problem
-		params ["_unit", "_weapon", ["_orient", true], ["_remove", true], ["_class", "tsp_holder"]]; if (_weapon == "") exitWith {};
+	tsp_fnc_throw = {
+		params ["_unit", "_weapon", ["_orient", true], ["_remove", true], ["_class", "WeaponHolderSimulated"], ["_select", true], ["_local", !isNil "tsp_server_animate"]]; if (_weapon == "") exitWith {};
 		_dir = vectorNormalized ((_unit weaponDirection _weapon) vectorCrossProduct [0, 0, 1]);
 		_up = _dir vectorCrossProduct (_unit weaponDirection _weapon);
 		_pos = _unit modelToWorldWorld (_unit selectionPosition "RightHand") vectorAdd (_dir vectorMultiply 0.7);
-		_holder = createVehicle [_class, [0, 0, 0], [], 0, "CAN_COLLIDE"];
+		_holder = if (_local) then {createVehicleLocal [_class, [0, 0, 0], [], 0, "CAN_COLLIDE"]} else {createVehicle [_class, [0, 0, 0], [], 0, "CAN_COLLIDE"]};
 		_holder addWeaponWithAttachmentsCargoGlobal [weaponsItems _unit select {_x select 0 == _weapon} select 0, 1];
+		if (_select && !isPlayer _unit) then {_unit spawn {sleep 0.5; _this selectWeapon handgunWeapon _this}};
 		if (_orient) then {_holder setPosWorld _pos; _holder setVectorDirAndUp [_up, _dir]};
-		if (_remove) then {_unit removeWeapon _weapon}; _holder
+		if (_remove) then {_unit removeWeapon [_weapon, _select]};
+		_holder
 	};
 	tsp_fnc_decal = {
 		params ["_pos", ["_decals", ["BloodPool_01_Medium_New_F","BloodSplatter_01_Small_New_F","BloodSplatter_01_Medium_New_F","BloodSpray_01_New_F","BloodSplatter_01_Large_New_F"]], ["_radius", 2]];
