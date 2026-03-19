@@ -225,7 +225,7 @@
 	[[], {if ("tsp_animate" in activatedAddons) then {tsp_server_animate = true; publicVariable "tsp_server_animate"}}] remoteExec ["call", 2];  //-- Dumfuk fix for dum problem
 	tsp_fnc_shake = {params ["_power", "_duration", "_frequency"]; resetCamShake; tsp_shake = true; addCamShake _this; sleep (_duration+0.1); tsp_shake = nil};
 	tsp_fnc_throw = {
-		params ["_unit", "_weapon", ["_orient", true], ["_remove", true], ["_class", "WeaponHolderSimulated"], ["_select", true], ["_local", !isNil "tsp_server_animate"]]; if (_weapon == "") exitWith {};
+		params ["_unit", "_weapon", ["_orient", true], ["_remove", true], ["_class", "WeaponHolderSimulated"], ["_select", true], ["_local", isNil "tsp_server_animate"]]; if (_weapon == "") exitWith {};
 		_dir = vectorNormalized ((_unit weaponDirection _weapon) vectorCrossProduct [0, 0, 1]);
 		_up = _dir vectorCrossProduct (_unit weaponDirection _weapon);
 		_pos = _unit modelToWorldWorld (_unit selectionPosition "RightHand") vectorAdd (_dir vectorMultiply 0.7);
