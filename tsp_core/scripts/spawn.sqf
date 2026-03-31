@@ -717,7 +717,6 @@ player selectDiarySubject "Diary";
 {_x setMarkerAlpha 0} forEach (allMapMarkers select {"bis" in _x && "respawn" in markerType _x});
 waitUntil {!isNull (findDisplay 46)}; [] spawn tsp_fnc_spawn; 
 {createMarkerLocal ["respawn_" + _x, player]} forEach ["west", "east", "resistance", "civilian"]; 
-{_x setMarkerAlpha 0} forEach (allMapMarkers select {"bis" in _x && "respawn" in markerType _x});
 player addEventHandler ["Respawn", {[] spawn tsp_fnc_spawn}]; 
 player addEventHandler ["Killed", {[] spawn tsp_fnc_spawn_killed}];
 player addEventHandler ["WeaponAssembled", {  //-- Respawn tents
@@ -726,3 +725,4 @@ player addEventHandler ["WeaponAssembled", {  //-- Respawn tents
 	_rally = (group _unit) getVariable ["rally", objNull]; if (_rally != objNull) then {deleteVehicle _rally}; 	(group _unit) setVariable ["rally", _tent];
 	{_x params ["_name", "_data"]; _tent setVariable [_name, _data, true]} forEach [["name", "Rally Point"], ["description", "Placed by: " + groupid group _unit], ["group", group _unit]];
 }];
+sleep 2; {_x setMarkerAlpha 0} forEach (allMapMarkers select {"bis" in _x && "respawn" in markerType _x});  //-- Double tap it

@@ -30,7 +30,7 @@ tsp_fnc_role = {
 			{_x ctrlShow false; _x tvSetCurSel [-1]} forEach tsp_role_trees; _tree ctrlShow true;                           //-- Hide/show trees
 		}];
 
-		{[_tree, _x] call tsp_fnc_role_recursive} forEach _children; tvExpandAll _tree;  //-- Populate the tree
+		{[_tree, _x, [], "", _name] call tsp_fnc_role_recursive} forEach _children; tvExpandAll _tree;  //-- Populate the tree with groups and roles
 	} forEach _roles;
 
 	_button = _display ctrlCreate ["RscButtonMenu", 9998]; _w = 0.6; _h = 0.042; _y = -0.602; _button ctrlSetPosition [(1.0-_w)*0.5,((1.0-_h)*0.5)-_y,_w,_h];
@@ -42,31 +42,32 @@ tsp_fnc_role = {
 };
 
 tsp_fnc_role_recursive = {
-	params ["_tree", "_item", ["_parent", []], ["_parentName", ""], ["_index", 0]];
+	params ["_tree", "_item", ["_parent", []], ["_parentName", ""], ["_faction", ""], ["_index", 0]];
 	if (count _item == 3) then {  //-- If item is a category
 		_item params ["_name", "_icon", "_children"];
 		_branch = _tree tvAdd [_parent, _name]; _tree tvSetPicture [_parent+[_branch], if ("marker" in _icon) then {"\A3\ui_f\data\map\"+_icon} else {_icon}]; 
 		if ("marker" in _icon) then {_tree tvSetPictureColor [_parent+[_branch], [playerSide] call BIS_fnc_sideColor]};
-		{[_tree, _x, _parent+[_branch], _name, _forEachIndex] call tsp_fnc_role_recursive} forEach _children;
+		{[_tree, _x, _parent+[_branch], _name, _faction, _forEachIndex] call tsp_fnc_role_recursive} forEach _children;
 	} else {  //-- If item is a role
-		_item params ["_name", "_loadout", "_arsenal", "_icon", ["_uid", (_parentName+(_item#0)+(str count tsp_role_roles)) regexReplace [" ",""]]]; 
+		_item params ["_name", "_loadout", "_arsenal", "_icon", ["_class", ""], ["_code", ""], ["_uid", (_faction+_parentName+(_item#0)) regexReplace [" ",""]]]; 
 		if (_index == 0) then {tsp_role_leader = _uid};  //-- Make first unit leader
 		_leaf = _tree tvAdd [_parent, _name]; _tree tvSetPicture [_parent+[_leaf], "\A3\ui_f\data\map\vehicleicons\"+_icon];
-		tsp_role_roles pushBack [_tree, _parent+[_leaf], _name, _loadout, _arsenal, _uid, tsp_role_leader, _parentName];
+		tsp_role_roles pushBack [_tree, _parent+[_leaf], _name, _loadout, _arsenal, _class, _code, _uid, tsp_role_leader, _parentName];
 	};
 };
 
 tsp_fnc_role_poll = {  //-- Select role if available and selected, also poll stuff
-	params ["_tree", "_leaf", "_name", "_loadout", "_arsenal", "_roleId", "_leadId", "_parentName"];
+	params ["_tree", "_leaf", "_name", "_loadout", "_arsenal", "_class", "_code", "_roleId", "_leadId", "_parentName"];
 	if (tvCurSel _tree isEqualTo _leaf && [_roleId, _leadId] call tsp_fnc_role_available) then {  //-- If selected and available
 		missionNameSpace setVariable [player getVariable ["role", "doesntmatterwhatshere"], nil, true];  //-- Set current role (if any) to unnoccupied
 		missionNameSpace setVariable [_roleId, player, true];  //-- Assign role
 		player setVariable ["role", _roleId, true];  //-- Just for reference to get player role
-		[player, _loadout, true] spawn tsp_fnc_faction; tsp_arsenal = [player, _arsenal] call tsp_fnc_role_arsenal;
+		[player, _loadout, true, _class] spawn tsp_fnc_faction; tsp_arsenal = [player, _arsenal] call tsp_fnc_role_arsenal;
 		_groups = allGroups select {groupId _x == _parentName}; if (count _groups > 0) exitWith {[player] join (_groups#0); 
 		["AddGroupMember", [_groups#0, player]] remoteExec ["BIS_fnc_dynamicGroups", 0]};	
-		_group = createGroup [playerSide, true]; _group setGroupId [_parentName]; [player] join _group;
+		_group = createGroup [playerSide, true]; _group setGroupIdGlobal [_parentName]; [player] join _group;
 		["RegisterGroup", [_group, leader _group, [nil, _parentName, false]]] remoteExec ["BIS_fnc_dynamicGroups", 0];
+		if (_code != "") then {player call compile _code};
 	};
 	_tree tvSetText [_leaf, _name+(if ([_roleId, _roleId] call tsp_fnc_role_available) then {""} else {" ["+name(missionNameSpace getVariable _roleId)+"]"})];  //-- If occupied
 	_tree tvSetColor [_leaf, [1,1,1, if ([_roleId, _leadId] call tsp_fnc_role_available) then {1} else {0.5}]];  //-- Opacity based on availability
@@ -80,7 +81,7 @@ tsp_fnc_role_available = {  //-- Check if fole is available
 };
 
 tsp_fnc_role_arsenal = {  //-- [player, ["soc_raider","west_leader","myGun"]] call tsp_fnc_role_arsenal;
-	params ["_unit", ["_data", []], ["_data1", []], ["_data2", []], ["_data3", []]]; if (!local _unit) exitWith {};   //-- _data1, _data2 and _data3 - poor man's recursion
+	params ["_unit", ["_data", []], ["_data1", []], ["_data2", []], ["_data3", []]];  //-- _data1, _data2 and _data3 - poor man's recursion
 	{if ("ACE" in _x) then {_data3 pushBack _x; continue}; _data1 = _data1+(missionNameSpace getVariable [_x, getMissionConfigValue [_x, [_x]]])} forEach _data;    //-- If _x is variable/config, get data, else just add the item [_x]
 	{if ("ACE" in _x) then {_data3 pushBack _x; continue}; _data2 = _data2+(missionNameSpace getVariable [_x, getMissionConfigValue [_x, [_x]]])} forEach _data1;  //-- If _x is variable/config, get data, else just add the item [_x]
 	{if ("ACE" in _x) then {_data3 pushBack _x; continue}; _data3 = _data3+(missionNameSpace getVariable [_x, getMissionConfigValue [_x, [_x]]])} forEach _data2; //-- If _x is variable/config, get data, else just add the item [_x]

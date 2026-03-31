@@ -94,13 +94,37 @@ tsp_roles_nato[] = {
 	}}
 };
 
-tsp_roles_all[] = {
-	//-- USMC
+tsp_roles_usmc[] = {
+	{"USMC - 3rd Marine Littoral Regiment", "data\3mef.paa", "west", {
+		{"Berger HQ", "markers\nato\b_hq.paa", {
+			{"Platoon Leader", "rhsusf_usmc_marpat_wd_fso", {"usmc_grunt","us_leader"}, "iconManCommander_ca.paa"},
+			{"Corpsman", "rhsusf_navy_marpat_wd_medic", {"usmc_grunt","medic"}, "iconManMedic_ca.paa"},
+			{"Engineer", "rhsusf_usmc_marpat_wd_engineer", {"usmc_grunt"}, "iconManEngineer_ca.paa"},
+			{"Explosive Specialist", "rhsusf_usmc_marpat_wd_explosives", {"usmc_grunt"}, "iconManExplosive_ca.paa"}
+		}},
+		{"Berger 1", "markers\nato\b_inf.paa", {
+			{"Squad Leader", "rhsusf_usmc_marpat_wd_squadleader", {"usmc_grunt","us_leader","usmc_grenadier"}, "iconManLeader_ca.paa"},
+			{"Team Leader", "rhsusf_usmc_marpat_wd_teamleader", {"usmc_grunt","us_leader","usmc_grenadier"}, "iconManLeader_ca.paa"},
+			{"Corpsman", "rhsusf_navy_marpat_wd_medic", {"usmc_grunt","medic"}, "iconManMedic_ca.paa"},
+			{"Rifleman", "rhsusf_usmc_marpat_wd_rifleman", {"usmc_grunt"}, "iconMan_ca.paa"},
+			{"Rifleman (AT)", "rhsusf_usmc_marpat_wd_riflemanat", {"usmc_grunt","usmc_missile","us_missile"}, "iconManAT_ca.paa"},
+			{"Grenadier", "rhsusf_usmc_marpat_wd_grenadier", {"usmc_grunt","usmc_grenadier"}, "iconMan_ca.paa"},
+			{"Autorifleman", "rhsusf_usmc_marpat_wd_autorifleman_m249", {"usmc_grunt"}, "iconManMG_ca.paa"},
+			{"Ammo Bearer", "rhsusf_usmc_marpat_wd_rifleman_m4", {"usmc_grunt"}, "iconMan_ca.paa"}
+		}},
+		{"Berger 2 (CAAT)", "markers\nato\b_art.paa", {
+			{"Team Leader", "rhsusf_usmc_marpat_wd_teamleader", {"usmc_grunt","us_leader","usmc_grenadier"}, "iconManLeader_ca.paa"},
+			{"Machine Gunner", "rhsusf_usmc_marpat_wd_machinegunner", {"usmc_grunt"}, "iconManMG_ca.paa"},
+			{"Ammo Bearer", "rhsusf_usmc_marpat_wd_machinegunner_ass", {"usmc_grunt"}, "iconMan_ca.paa"},
+			{"Anti Tank", "rhsusf_usmc_marpat_wd_javelin", {"usmc_grunt","usmc_missile","us_missile"}, "iconManAT_ca.paa"},
+			{"AT Assistant", "rhsusf_usmc_marpat_wd_javelin_assistant", {"usmc_grunt","usmc_missile","us_missile"}, "iconMan_ca.paa"}
+		}}
+	}},
 	{"USMC - 1st Force Reconnaissance", "\tsp_core\data\insignia\1recon.paa", "west", {
 		{"Raider HQ", "markers\nato\b_hq.paa", {
 			{"Platoon Leader", "rhsusf_usmc_recon_marpat_wd_officer", {"usmc_recon","us_leader"}, "iconManCommander_ca.paa"},
 			{"Medic", "rhsusf_navy_sarc_w_fast", {"usmc_recon","medic"}, "iconManMedic_ca.paa"},
-			{"Engineer", "tsp_usmc_engineer", {"usmc_recon"}, "iconManEngineer_ca.paa"}
+			{"Engineer", "tsp_usmc_engineer", {"usmc_recon"}, "iconManEngineer_ca.paa", "rhsusf_usmc_marpat_wd_explosives"}
 		}},
 		{"Raider 1", "markers\nato\b_inf.paa", {
 			{"Squad Leader", "rhsusf_usmc_recon_marpat_wd_teamleader", {"usmc_recon","us_leader"}, "iconManLeader_ca.paa"},
@@ -108,15 +132,15 @@ tsp_roles_all[] = {
 			{"Scout", "rhsusf_usmc_recon_marpat_wd_rifleman", {"usmc_recon"}, "iconManRecon_ca.paa"},
 			{"Scout (AT)", "rhsusf_usmc_recon_marpat_wd_rifleman_at", {"usmc_recon","usa_missile"}, "iconManAT_ca.paa"},
 			{"Autorifleman", "rhsusf_usmc_recon_marpat_wd_machinegunner_m249", {"usmc_recon","us_autorifle","usmc_recon_autorifle"}, "iconManMG_ca.paa"},
-			{"Breacher", "tsp_usmc_breacher", {"usmc_recon"}, "iconManExplosive_ca.paa"}
+			{"Breacher", "tsp_usmc_breacher", {"usmc_recon"}, "iconManExplosive_ca.paa", "rhsusf_usmc_marpat_wd_rifleman_m590"}
 		}},
 		{"Raider 2 (Weapons)", "markers\nato\b_inf.paa", {
 			{"Squad Leader", "rhsusf_usmc_recon_marpat_wd_teamleader", {"usmc_recon","us_leader"}, "iconManLeader_ca.paa"},
 			{"Medic", "rhsusf_navy_sarc_w", {"usmc_recon","medic"}, "iconManMedic_ca.paa"},
 			{"Scout", "rhsusf_usmc_recon_marpat_wd_rifleman", {"usmc_recon"}, "iconManRecon_ca.paa"},
-			{"Anti Tank", "tsp_usmc_antitank", {"usmc_recon","usa_missile"}, "iconManAT_ca.paa"},
+			{"Anti Tank", "tsp_usmc_antitank", {"usmc_recon","usa_missile"}, "iconManAT_ca.paa", "rhsusf_usmc_recon_marpat_wd_rifleman_at"},
 			{"Machine Gunner", "rhsusf_usmc_recon_marpat_wd_machinegunner_fast", {"usmc_recon","us_autorifle","usmc_recon_autorifle"}, "iconManMG_ca.paa"},
-			{"Breacher", "tsp_usmc_breacher", {"usmc_recon"}, "iconManExplosive_ca.paa"}
+			{"Breacher", "tsp_usmc_breacher", {"usmc_recon"}, "iconManExplosive_ca.paa", "rhsusf_usmc_marpat_wd_rifleman_m590"}
 		}},
 		{"Hitman (Scout Snipers)", "markers\nato\b_art.paa", {
 			{"Spotter", "rhsusf_usmc_recon_marpat_wd_teamleader", {"usmc_recon","us_leader"}, "iconManLeader_ca.paa"},
@@ -134,7 +158,7 @@ tsp_roles_all[] = {
 			{"Medic", "rhsusf_socom_marsoc_sarc", {"soc_raider","medic"}, "iconManMedic_ca.paa"},
 			{"Operator", "rhsusf_socom_marsoc_cso", {"soc_raider"}, "iconManRecon_ca.paa"},
 			{"Operator (M203)", "rhsusf_socom_marsoc_cso_grenadier", {"soc_raider","usa_missile"}, "iconManAT_ca.paa"},
-			{"Autorifleman", "tsp_army_sf_autorifleman", {"soc_raider","us_autorifle","soc_autorifle"}, "iconManMG_ca.paa"},
+			{"Autorifleman", "rhsusf_socom_marsoc_cso_light", {"soc_raider","us_autorifle","soc_autorifle"}, "iconManMG_ca.paa"},
 			{"Breacher", "rhsusf_socom_marsoc_cso_breacher", {"soc_raider"}, "iconManExplosive_ca.paa"}
 		}},
 		{"Gambler 2 (Weapons)", "markers\nato\b_inf.paa", {
@@ -142,7 +166,7 @@ tsp_roles_all[] = {
 			{"Medic", "rhsusf_socom_marsoc_sarc", {"soc_raider","medic"}, "iconManMedic_ca.paa"},
 			{"Operator (MK17)", "rhsusf_socom_marsoc_cso_mk17", {"soc_raider"}, "iconManRecon_ca.paa"},
 			{"Operator (AT)", "rhsusf_socom_marsoc_cso", {"soc_raider","usa_missile"}, "iconManAT_ca.paa"},
-			{"Machine Gunner", "tsp_army_sf_machinegunner", {"soc_raider","us_autorifle","soc_autorifle"}, "iconManMG_ca.paa"},
+			{"Machine Gunner", "rhsusf_socom_marsoc_cso_mk17_light", {"soc_raider","us_autorifle","soc_autorifle"}, "iconManMG_ca.paa"},
 			{"Marksman", "rhsusf_socom_marsoc_sniper", {"soc_raider","soc_sniper","usa_sniper"}, "iconMan_ca.paa"}
 		}}
 	}},
@@ -183,9 +207,33 @@ tsp_roles_all[] = {
 			{"Helicopter Pilot", "tsp_usn_helipilot", {"us_all","us_weapons","us_ammo","usmc_all","us_heli","us_leader"}, "iconManOfficer_ca.paa"},
 			{"Helicopter Crew", "tsp_usn_helipilot", {"us_all","us_weapons","us_ammo","usmc_all","us_heli","us_leader"}, "iconManOfficer_ca.paa"}
 		}}
-	}},
+	}}
+};
 
-	//-- US Navy
+tsp_roles_usn[] = {
+	{"USN - Seal Team 2", "\tsp_core\data\insignia\2seal.paa", "west", {
+		{"Neptune HQ", "markers\nato\b_hq.paa", {
+			{"Platoon Leader", "tsp_usn_sailor", {"soc_seal","us_leader"}, "iconManCommander_ca.paa", "rhsusf_socom_swcc_crewman"},
+			{"Medic", "tsp_usn_sailor", {"soc_seal","medic"}, "iconManMedic_ca.paa", "rhsusf_socom_swcc_crewman"},
+			{"Engineer", "tsp_usn_sailor", {"soc_seal"}, "iconManEngineer_ca.paa", "rhsusf_socom_swcc_crewman"}
+		}},
+		{"Neptune 1", "markers\nato\b_inf.paa", {
+			{"Squad Leader", "tsp_usn_sailor", {"soc_seal","us_leader"}, "iconManLeader_ca.paa", "rhsusf_socom_swcc_crewman"},
+			{"Medic", "tsp_usn_sailor", {"soc_seal","medic"}, "iconManMedic_ca.paa", "rhsusf_socom_swcc_crewman"},
+			{"Operator", "tsp_usn_sailor", {"soc_seal"}, "iconManRecon_ca.paa", "rhsusf_socom_swcc_crewman"},
+			{"Operator (AT)", "tsp_usn_sailor", {"soc_seal","usa_missile"}, "iconManAT_ca.paa", "rhsusf_socom_swcc_crewman"},
+			{"Autorifleman", "tsp_usn_sailor", {"soc_seal","us_autorifle","soc_autorifle"}, "iconManMG_ca.paa", "rhsusf_socom_swcc_crewman"},
+			{"Breacher", "tsp_usn_sailor", {"soc_seal"}, "iconManExplosive_ca.paa", "rhsusf_socom_swcc_crewman"}
+		}},
+		{"Neptune 2 (Weapons)", "markers\nato\b_inf.paa", {
+			{"Squad Leader", "tsp_usn_sailor", {"soc_seal","us_leader"}, "iconManLeader_ca.paa", "rhsusf_socom_swcc_crewman"},
+			{"Medic", "tsp_usn_sailor", {"soc_seal","medic"}, "iconManMedic_ca.paa", "rhsusf_socom_swcc_crewman"},
+			{"Operator", "tsp_usn_sailor", {"soc_seal"}, "iconManRecon_ca.paa", "rhsusf_socom_swcc_crewman"},
+			{"Operator (AT)", "tsp_usn_sailor", {"soc_seal","usa_missile"}, "iconManAT_ca.paa", "rhsusf_socom_swcc_crewman"},
+			{"Machine Gunner", "tsp_usn_sailor", {"soc_seal","us_autorifle","soc_autorifle"}, "iconManMG_ca.paa", "rhsusf_socom_swcc_crewman"},
+			{"Marksman", "tsp_usn_sailor", {"soc_seal","soc_sniper"}, "iconMan_ca.paa", "rhsusf_socom_swcc_crewman"}
+		}}
+	}},
 	{"USN - Rotor Wing Squadron 51", "\tsp_core\data\insignia\hsm51.paa", "west", {
 		{"Whiplash 1", "markers\nato\b_air.paa", {
 			{"Helicopter Pilot", "tsp_usn_helipilot", {"us_all","us_weapons","us_ammo","usmc_all","usn_heli","us_leader"}, "iconManOfficer_ca.paa"},
@@ -199,67 +247,97 @@ tsp_roles_all[] = {
 	{"USN - Carrier Strike Group 192", "\tsp_core\data\insignia\vfa192.paa", "west", {
 		{"Shark 1", "markers\nato\b_plane.paa", {{"Jet Pilot", "B_Pilot_F", {}, "iconManOfficer_ca.paa"}}},
 		{"Shark 2", "markers\nato\b_plane.paa", {{"Jet Pilot", "B_Pilot_F", {}, "iconManOfficer_ca.paa"}}}
-	}},
-	{"USN - Seal Team 2", "\tsp_core\data\insignia\2seal.paa", "west", {
-		{"Neptune HQ", "markers\nato\b_hq.paa", {
-			{"Platoon Leader", "tsp_usn_sailor", {"soc_seal","us_leader"}, "iconManCommander_ca.paa"},
-			{"Medic", "tsp_usn_sailor", {"soc_seal","medic"}, "iconManMedic_ca.paa"},
-			{"Engineer", "tsp_usn_sailor", {"soc_seal"}, "iconManEngineer_ca.paa"}
+	}}
+};
+
+tsp_roles_usa[] = {
+	{"USA - 2nd Infantry Brigade Combat Team (Airborne)", "data\501bct.paa", "west", {
+		{"Trooper HQ", "markers\nato\b_hq.paa", {
+			{"Platoon Leader", "rhsusf_army_ocp_officer", {"usa_grunt","us_leader"}, "iconManCommander_ca.paa"},
+			{"Medic", "rhsusf_army_ocp_medic", {"usa_grunt","medic"}, "iconManMedic_ca.paa"},
+			{"Engineer", "rhsusf_army_ocp_engineer", {"usa_grunt"}, "iconManEngineer_ca.paa"}
 		}},
-		{"Neptune 1", "markers\nato\b_inf.paa", {
-			{"Squad Leader", "tsp_usn_sailor", {"soc_seal","us_leader"}, "iconManLeader_ca.paa"},
-			{"Medic", "tsp_usn_sailor", {"soc_seal","medic"}, "iconManMedic_ca.paa"},
-			{"Operator", "tsp_usn_sailor", {"soc_seal"}, "iconManRecon_ca.paa"},
-			{"Operator (AT)", "tsp_usn_sailor", {"soc_seal","usa_missile"}, "iconManAT_ca.paa"},
-			{"Autorifleman", "tsp_usn_sailor", {"soc_seal","us_autorifle","soc_autorifle"}, "iconManMG_ca.paa"},
-			{"Breacher", "tsp_usn_sailor", {"soc_seal"}, "iconManExplosive_ca.paa"}
+		{"Trooper 1", "markers\nato\b_inf.paa", {
+			{"Squad Leader", "rhsusf_army_ocp_squadleader", {"usa_grunt","us_leader"}, "iconManLeader_ca.paa"},
+			{"Team Leader", "rhsusf_army_ocp_teamleader", {"usa_grunt"}, "iconManLeader_ca.paa"},
+			{"Medic", "rhsusf_army_ocp_medic", {"usa_grunt","medic"}, "iconManMedic_ca.paa"},
+			{"Rifleman", "rhsusf_army_ocp_rifleman", {"usa_grunt"}, "iconMan_ca.paa"},
+			{"Rifleman (AT)", "rhsusf_army_ocp_riflemanat", {"usa_grunt","usa_missile","us_missile"}, "iconManAT_ca.paa"},
+			{"Grenadier", "rhsusf_army_ocp_grenadier", {"usa_grunt"}, "iconMan_ca.paa"},
+			{"Autorifleman", "rhsusf_army_ocp_autorifleman", {"usa_grunt","us_autorifle"}, "iconManMG_ca.paa"},
+			{"Breacher", "rhsusf_army_ocp_rifleman_m590", {"usa_grunt"}, "iconManExplosive_ca.paa"}
 		}},
-		{"Neptune 2 (Weapons)", "markers\nato\b_inf.paa", {
-			{"Squad Leader", "tsp_usn_sailor", {"soc_seal","us_leader"}, "iconManLeader_ca.paa"},
-			{"Medic", "tsp_usn_sailor", {"soc_seal","medic"}, "iconManMedic_ca.paa"},
-			{"Operator", "tsp_usn_sailor", {"soc_seal"}, "iconManRecon_ca.paa"},
-			{"Operator (AT)", "tsp_usn_sailor", {"soc_seal","usa_missile"}, "iconManAT_ca.paa"},
-			{"Machine Gunner", "tsp_usn_sailor", {"soc_seal","us_autorifle","soc_autorifle"}, "iconManMG_ca.paa"},
-			{"Marksman", "tsp_usn_sailor", {"soc_seal","soc_sniper"}, "iconMan_ca.paa"}
+		{"Trooper 2", "markers\nato\b_inf.paa", {
+			{"Squad Leader", "rhsusf_army_ocp_squadleader", {"usa_grunt","us_leader"}, "iconManLeader_ca.paa"},
+			{"Team Leader", "rhsusf_army_ocp_teamleader", {"usa_grunt"}, "iconManLeader_ca.paa"},
+			{"Medic", "rhsusf_army_ocp_medic", {"usa_grunt","medic"}, "iconManMedic_ca.paa"},
+			{"Rifleman", "rhsusf_army_ocp_rifleman", {"usa_grunt"}, "iconMan_ca.paa"},
+			{"Rifleman (AT)", "rhsusf_army_ocp_riflemanat", {"usa_grunt","usa_missile","us_missile"}, "iconManAT_ca.paa"},
+			{"Grenadier", "rhsusf_army_ocp_grenadier", {"usa_grunt"}, "iconMan_ca.paa"},
+			{"Autorifleman", "rhsusf_army_ocp_autorifleman", {"usa_grunt","us_autorifle"}, "iconManMG_ca.paa"},
+			{"Marksman", "rhsusf_army_ocp_marksman", {"usa_grunt","us_sniper","usa_sniper"}, "iconMan_ca.paa"}
+		}},
+		{"Trooper 3 (Weapons)", "markers\nato\b_art.paa", {
+			{"Squad Leader", "rhsusf_army_ocp_squadleader", {"usa_grunt","us_leader"}, "iconManLeader_ca.paa"},
+			{"Team Leader", "rhsusf_army_ocp_teamleader", {"usa_grunt"}, "iconManLeader_ca.paa"},
+			{"Machine Gunner", "rhsusf_army_ocp_machinegunner", {"usa_grunt","us_autorifle"}, "iconManMG_ca.paa"},
+			{"Ammo Bearer", "rhsusf_army_ocp_machinegunnera", {"usa_grunt","us_autorifle"}, "iconMan_ca.paa"},
+			{"Missile Specialist", "rhsusf_army_ocp_javelin", {"usa_grunt","usa_missile","us_missile"}, "iconManAT_ca.paa"},
+			{"Assistant Missile Specialist", "rhsusf_army_ocp_javelin_assistant", {"usa_grunt","usa_missile","us_missile"}, "iconMan_ca.paa"}
+		}},
+		{"USA - 40th Cavalry Regiment", "data\40cav.paa", "west", {
+			{"Talon 1", "markers\nato\b_mech_inf.paa", {
+				{"Crewman", "rhsusf_army_ocp_crewman", {"usa_grunt","us_crew","us_leader"}, "iconManLeader_ca.paa"},
+				{"Crewman", "rhsusf_army_ocp_combatcrewman", {"usa_grunt","us_crew","us_leader"}, "iconManLeader_ca.paa"},
+				{"Crewman", "rhsusf_army_ocp_combatcrewman", {"usa_grunt","us_crew","us_leader"}, "iconManLeader_ca.paa"}
+			}}
 		}}
 	}},
-
-	//-- US Army
 	{"USA - 7th Stryker Infantry", "\tsp_core\data\army_7id.paa", "west", {
 		{"Platoon HQ", "markers\nato\b_hq.paa", {
-			{"Platoon Leader", "B_officer_F", {"usa_grunt","us_leader"}, "iconManCommander_ca.paa"},
-			{"Medic", "B_medic_F", {"usa_grunt","medic"}, "iconManMedic_ca.paa"},
-			{"Engineer", "B_engineer_F", {"usa_grunt"}, "iconManEngineer_ca.paa"}
+			{"Platoon Leader", "rhsusf_army_ocp_officer", {"usa_grunt","us_leader"}, "iconManCommander_ca.paa"},
+			{"Medic", "rhsusf_army_ocp_medic", {"usa_grunt","medic"}, "iconManMedic_ca.paa"},
+			{"Engineer", "rhsusf_army_ocp_engineer", {"usa_grunt"}, "iconManEngineer_ca.paa"}
 		}},
 		{"Alpha", "markers\nato\b_inf.paa", {
-			{"Squad Leader", "B_Soldier_SL_F", {"usa_grunt","us_leader"}, "iconManLeader_ca.paa"},
-			{"Team Leader", "B_Soldier_TL_F", {"usa_grunt"}, "iconManLeader_ca.paa"},
-			{"Medic", "B_medic_F", {"usa_grunt","medic"}, "iconManMedic_ca.paa"},
-			{"Rifleman", "B_Soldier_F", {"usa_grunt"}, "iconMan_ca.paa"},
-			{"Rifleman (AT)", "B_soldier_LAT_F", {"usa_grunt"}, "iconManAT_ca.paa"},
-			{"Grenadier", "B_Soldier_GL_F", {"usa_grunt"}, "iconMan_ca.paa"},
-			{"Autorifleman", "B_soldier_AR_F", {"usa_grunt","us_autorifle"}, "iconManMG_ca.paa"},
-			{"Breacher", "B_soldier_exp_F", {"usa_grunt"}, "iconManExplosive_ca.paa"}
+			{"Squad Leader", "rhsusf_army_ocp_squadleader", {"usa_grunt","us_leader"}, "iconManLeader_ca.paa"},
+			{"Team Leader", "rhsusf_army_ocp_teamleader", {"usa_grunt"}, "iconManLeader_ca.paa"},
+			{"Medic", "rhsusf_army_ocp_medic", {"usa_grunt","medic"}, "iconManMedic_ca.paa"},
+			{"Rifleman", "rhsusf_army_ocp_rifleman", {"usa_grunt"}, "iconMan_ca.paa"},
+			{"Rifleman (AT)", "rhsusf_army_ocp_riflemanat", {"usa_grunt"}, "iconManAT_ca.paa"},
+			{"Grenadier", "rhsusf_army_ocp_grenadier", {"usa_grunt"}, "iconMan_ca.paa"},
+			{"Autorifleman", "rhsusf_army_ocp_autorifleman", {"usa_grunt","us_autorifle"}, "iconManMG_ca.paa"},
+			{"Breacher", "rhsusf_army_ocp_rifleman_m590", {"usa_grunt"}, "iconManExplosive_ca.paa"}
 		}},
 		{"Bravo", "markers\nato\b_inf.paa", {
-			{"Squad Leader", "B_Soldier_SL_F", {"usa_grunt","us_leader"}, "iconManLeader_ca.paa"},
-			{"Team Leader", "B_Soldier_TL_F", {"usa_grunt"}, "iconManLeader_ca.paa"},
-			{"Medic", "B_medic_F", {"usa_grunt","medic"}, "iconManMedic_ca.paa"},
-			{"Rifleman", "B_Soldier_F", {"usa_grunt"}, "iconMan_ca.paa"},
-			{"Rifleman", "B_Soldier_F", {"usa_grunt"}, "iconMan_ca.paa"},
-			{"Rifleman (AT)", "B_soldier_LAT_F", {"usa_grunt"}, "iconManAT_ca.paa"},
-			{"Grenadier", "B_Soldier_GL_F", {"usa_grunt"}, "iconMan_ca.paa"},
-			{"Autorifleman", "B_soldier_AR_F", {"usa_grunt","us_autorifle"}, "iconManMG_ca.paa"},
+			{"Squad Leader", "rhsusf_army_ocp_squadleader", {"usa_grunt","us_leader"}, "iconManLeader_ca.paa"},
+			{"Team Leader", "rhsusf_army_ocp_teamleader", {"usa_grunt"}, "iconManLeader_ca.paa"},
+			{"Medic", "rhsusf_army_ocp_medic", {"usa_grunt","medic"}, "iconManMedic_ca.paa"},
+			{"Rifleman", "rhsusf_army_ocp_rifleman", {"usa_grunt"}, "iconMan_ca.paa"},
+			{"Rifleman", "rhsusf_army_ocp_rifleman", {"usa_grunt"}, "iconMan_ca.paa"},
+			{"Rifleman (AT)", "rhsusf_army_ocp_riflemanat", {"usa_grunt"}, "iconManAT_ca.paa"},
+			{"Grenadier", "rhsusf_army_ocp_grenadier", {"usa_grunt"}, "iconMan_ca.paa"},
+			{"Autorifleman", "rhsusf_army_ocp_autorifleman", {"usa_grunt","us_autorifle"}, "iconManMG_ca.paa"},
 		}},
 		{"Charlie (Weapons)", "markers\nato\b_art.paa", {
-			{"Squad Leader", "B_Soldier_SL_F", {"usa_grunt","us_leader"}, "iconManLeader_ca.paa"},
-			{"Team Leader", "B_Soldier_TL_F", {"usa_grunt"}, "iconManLeader_ca.paa"},
-			{"Machine Gunner", "B_HeavyGunner_F", {"usa_grunt"}, "iconManMG_ca.paa"},
-			{"Ammo Bearer", "B_Soldier_A_F", {"usa_grunt"}, "iconMan_ca.paa"},
-			{"Missile Specialist", "B_soldier_AT_F", {"usa_grunt","usa_missile"}, "iconManAT_ca.paa"},
-			{"Assistant Missile Specialist", "B_soldier_AAT_F", {"usa_grunt","usa_missile"}, "iconMan_ca.paa"},
-			{"Marksman", "B_soldier_M_F", {"usa_grunt","us_sniper","usa_sniper"}, "iconMan_ca.paa"}
+			{"Squad Leader", "rhsusf_army_ocp_squadleader", {"usa_grunt","us_leader"}, "iconManLeader_ca.paa"},
+			{"Team Leader", "rhsusf_army_ocp_teamleader", {"usa_grunt"}, "iconManLeader_ca.paa"},
+			{"Machine Gunner", "rhsusf_army_ocp_machinegunner", {"usa_grunt"}, "iconManMG_ca.paa"},
+			{"Ammo Bearer", "rhsusf_army_ocp_machinegunnera", {"usa_grunt"}, "iconMan_ca.paa"},
+			{"Missile Specialist", "rhsusf_army_ocp_javelin", {"usa_grunt","usa_missile"}, "iconManAT_ca.paa"},
+			{"Assistant Missile Specialist", "rhsusf_army_ocp_javelin_assistant", {"usa_grunt","usa_missile"}, "iconMan_ca.paa"},
+			{"Marksman", "rhsusf_army_ocp_marksman", {"usa_grunt","us_sniper","usa_sniper"}, "iconMan_ca.paa"}
 		}}
+	}},
+	{"USA - Opposing Force", "\tsp_core\data\insignia\opfor.paa", "west", {
+		{"Squad Leader", "rhsusf_army_ucp_squadleader", {"usa_grunt","us_leader","usa_opfor"}, "iconManLeader_ca.paa", "", "_items = uniformItems _this; _this forceAddUniform 'rhs_uniform_g3_blk'; {_this addItemToUniform _x} forEach _items"},
+		{"Team Leader", "rhsusf_army_ucp_teamleader", {"usa_grunt","usa_opfor"}, "iconManLeader_ca.paa", "", "_items = uniformItems _this; _this forceAddUniform 'rhs_uniform_g3_blk'; {_this addItemToUniform _x} forEach _items"},
+		{"Medic", "rhsusf_army_ucp_medic", {"usa_grunt","medic","usa_opfor"}, "iconManMedic_ca.paa", "", "_items = uniformItems _this; _this forceAddUniform 'rhs_uniform_g3_blk'; {_this addItemToUniform _x} forEach _items"},
+		{"Rifleman", "rhsusf_army_ucp_rifleman", {"usa_grunt","usa_opfor"}, "iconMan_ca.paa", "", "_items = uniformItems _this; _this forceAddUniform 'rhs_uniform_g3_blk'; {_this addItemToUniform _x} forEach _items"},
+		{"Rifleman (AT)", "rhsusf_army_ucp_riflemanat", {"usa_grunt","usa_opfor"}, "iconManAT_ca.paa", "", "_items = uniformItems _this; _this forceAddUniform 'rhs_uniform_g3_blk'; {_this addItemToUniform _x} forEach _items"},
+		{"Grenadier", "rhsusf_army_ucp_grenadier", {"usa_grunt","usa_opfor"}, "iconMan_ca.paa", "", "_items = uniformItems _this; _this forceAddUniform 'rhs_uniform_g3_blk'; {_this addItemToUniform _x} forEach _items"},
+		{"Autorifleman", "rhsusf_army_ucp_autorifleman", {"usa_grunt","us_autorifle","usa_opfor"}, "iconManMG_ca.paa", "", "_items = uniformItems _this; _this forceAddUniform 'rhs_uniform_g3_blk'; {_this addItemToUniform _x} forEach _items"},
+		{"Breacher", "rhsusf_army_ucp_rifleman_m590", {"usa_grunt","usa_opfor"}, "iconManExplosive_ca.paa", "", "_items = uniformItems _this; _this forceAddUniform 'rhs_uniform_g3_blk'; {_this addItemToUniform _x} forEach _items"}
 	}},
 	{"USA - 1st Armored", "\tsp_core\data\army_1a.paa", "west", {
 		{"Iron 1", "markers\nato\b_mech_inf.paa", {
@@ -293,58 +371,58 @@ tsp_roles_all[] = {
 	}},
 	{"USA - 3rd Special Forces Group", "\tsp_core\data\insignia\sf.paa", "west", {
 		{"Sabre HQ", "markers\nato\b_hq.paa", {
-			{"Platoon Leader", "tsp_army_sf_teamlead", {"soc_special","us_leader"}, "iconManCommander_ca.paa"},
-			{"Medic", "tsp_army_sf_medic", {"soc_special","medic"}, "iconManMedic_ca.paa"},
-			{"Engineer", "tsp_army_sf_engineer", {"soc_special"}, "iconManEngineer_ca.paa"}
+			{"Platoon Leader", "tsp_army_sf_teamlead", {"soc_special","us_leader"}, "iconManCommander_ca.paa", "rhsusf_infantry_socom_armysf_rifleman"},
+			{"Medic", "tsp_army_sf_medic", {"soc_special","medic"}, "iconManMedic_ca.paa", "rhsusf_infantry_socom_armysf_rifleman"},
+			{"Engineer", "tsp_army_sf_engineer", {"soc_special"}, "iconManEngineer_ca.paa", "rhsusf_infantry_socom_armysf_rifleman"}
 		}},
 		{"Sabre 1", "markers\nato\b_inf.paa", {
-			{"Squad Leader", "tsp_army_sf_teamlead", {"soc_special","us_leader"}, "iconManLeader_ca.paa"},
-			{"Medic", "tsp_army_sf_medic", {"soc_special","medic"}, "iconManMedic_ca.paa"},
-			{"Operator", "tsp_army_sf_operator", {"soc_special"}, "iconManRecon_ca.paa"},
-			{"Operator (AT)", "tsp_army_sf_operatorat", {"soc_special","usa_missile"}, "iconManAT_ca.paa"},
-			{"Autorifleman", "tsp_army_sf_autorifleman", {"soc_special","us_autorifle","soc_autorifle"}, "iconManMG_ca.paa"},
-			{"Breacher", "tsp_army_sf_engineer", {"soc_special"}, "iconManExplosive_ca.paa"}
+			{"Squad Leader", "tsp_army_sf_teamlead", {"soc_special","us_leader"}, "iconManLeader_ca.paa", "rhsusf_infantry_socom_armysf_rifleman"},
+			{"Medic", "tsp_army_sf_medic", {"soc_special","medic"}, "iconManMedic_ca.paa", "rhsusf_infantry_socom_armysf_rifleman"},
+			{"Operator", "tsp_army_sf_operator", {"soc_special"}, "iconManRecon_ca.paa", "rhsusf_infantry_socom_armysf_rifleman"},
+			{"Operator (AT)", "tsp_army_sf_operatorat", {"soc_special","usa_missile"}, "iconManAT_ca.paa", "rhsusf_infantry_socom_armysf_rifleman"},
+			{"Autorifleman", "tsp_army_sf_autorifleman", {"soc_special","us_autorifle","soc_autorifle"}, "iconManMG_ca.paa", "rhsusf_infantry_socom_armysf_rifleman"},
+			{"Breacher", "tsp_army_sf_engineer", {"soc_special"}, "iconManExplosive_ca.paa", "rhsusf_infantry_socom_armysf_rifleman"}
 		}},
 		{"Sabre 2 (Weapons)", "markers\nato\b_inf.paa", {
-			{"Squad Leader", "tsp_army_sf_teamlead", {"soc_special","us_leader"}, "iconManLeader_ca.paa"},
-			{"Medic", "tsp_army_sf_medic", {"soc_special","medic"}, "iconManMedic_ca.paa"},
-			{"Operator", "tsp_army_sf_operator", {"soc_special"}, "iconManRecon_ca.paa"},
-			{"Operator (AT)", "B_soldier_LAT_F", {"soc_special","usa_missile"}, "iconManAT_ca.paa"},
-			{"Machine Gunner", "tsp_army_sf_machinegunner", {"soc_special","us_autorifle","soc_autorifle"}, "iconManMG_ca.paa"},
-			{"Breacher", "tsp_army_sf_engineer", {"soc_special"}, "iconManExplosive_ca.paa"}
+			{"Squad Leader", "tsp_army_sf_teamlead", {"soc_special","us_leader"}, "iconManLeader_ca.paa", "rhsusf_infantry_socom_armysf_rifleman"},
+			{"Medic", "tsp_army_sf_medic", {"soc_special","medic"}, "iconManMedic_ca.paa", "rhsusf_infantry_socom_armysf_rifleman"},
+			{"Operator", "tsp_army_sf_operator", {"soc_special"}, "iconManRecon_ca.paa", "rhsusf_infantry_socom_armysf_rifleman"},
+			{"Operator (AT)", "B_soldier_LAT_F", {"soc_special","usa_missile"}, "iconManAT_ca.paa", "rhsusf_infantry_socom_armysf_rifleman"},
+			{"Machine Gunner", "tsp_army_sf_machinegunner", {"soc_special","us_autorifle","soc_autorifle"}, "iconManMG_ca.paa", "rhsusf_infantry_socom_armysf_rifleman"},
+			{"Breacher", "tsp_army_sf_engineer", {"soc_special"}, "iconManExplosive_ca.paa", "rhsusf_infantry_socom_armysf_rifleman"}
 		}},
 		{"Sabre 3 (SNOT)", "markers\nato\b_art.paa", {
-			{"Team Leader", "tsp_army_sf_teamlead", {"soc_special","us_leader"}, "iconManLeader_ca.paa"},
-			{"Operator", "tsp_army_sf_operator", {"soc_special"}, "iconManRecon_ca.paa"},
-			{"Marksman", "tsp_army_sf_marksman", {"soc_special","soc_sniper","usa_sniper"}, "iconMan_ca.paa"}
+			{"Team Leader", "tsp_army_sf_teamlead", {"soc_special","us_leader"}, "iconManLeader_ca.paa", "rhsusf_infantry_socom_armysf_rifleman"},
+			{"Operator", "tsp_army_sf_operator", {"soc_special"}, "iconManRecon_ca.paa", "rhsusf_infantry_socom_armysf_rifleman"},
+			{"Marksman", "tsp_army_sf_marksman", {"soc_special","soc_sniper","usa_sniper"}, "iconMan_ca.paa", "rhsusf_infantry_socom_armysf_rifleman"}
 		}}
 	}},
 	{"USA - 1st Special Forces Operational Detachment Delta ", "\tsp_core\data\insignia\1sfod.paa", "west", {
 		{"Shadow HQ", "markers\nato\b_hq.paa", {
-			{"Platoon Leader", "tsp_army_sf_teamlead", {"soc_delta","us_leader"}, "iconManCommander_ca.paa"},
-			{"Medic", "tsp_army_sf_medic", {"soc_delta","medic"}, "iconManMedic_ca.paa"},
-			{"Engineer", "tsp_army_sf_engineer", {"soc_delta"}, "iconManEngineer_ca.paa"}
+			{"Platoon Leader", "tsp_army_sf_teamlead", {"soc_delta","us_leader"}, "iconManCommander_ca.paa", "rhsusf_infantry_socom_armysf_rifleman"},
+			{"Medic", "tsp_army_sf_medic", {"soc_delta","medic"}, "iconManMedic_ca.paa", "rhsusf_infantry_socom_armysf_rifleman"},
+			{"Engineer", "tsp_army_sf_engineer", {"soc_delta"}, "iconManEngineer_ca.paa", "rhsusf_infantry_socom_armysf_rifleman"}
 		}},
 		{"Shadow 1", "markers\nato\b_inf.paa", {
-			{"Squad Leader", "tsp_army_sf_teamlead", {"soc_delta","us_leader"}, "iconManLeader_ca.paa"},
-			{"Medic", "tsp_army_sf_medic", {"soc_delta","medic"}, "iconManMedic_ca.paa"},
-			{"Operator", "tsp_army_sf_operator", {"soc_delta"}, "iconManRecon_ca.paa"},
-			{"Operator (AT)", "tsp_army_sf_operatorat", {"soc_delta","usa_missile"}, "iconManAT_ca.paa"},
-			{"Autorifleman", "tsp_army_sf_autorifleman", {"soc_delta","us_autorifle","soc_autorifle"}, "iconManMG_ca.paa"},
-			{"Breacher", "tsp_army_sf_engineer", {"soc_delta"}, "iconManExplosive_ca.paa"}
+			{"Squad Leader", "tsp_army_sf_teamlead", {"soc_delta","us_leader"}, "iconManLeader_ca.paa", "rhsusf_infantry_socom_armysf_rifleman"},
+			{"Medic", "tsp_army_sf_medic", {"soc_delta","medic"}, "iconManMedic_ca.paa", "rhsusf_infantry_socom_armysf_rifleman"},
+			{"Operator", "tsp_army_sf_operator", {"soc_delta"}, "iconManRecon_ca.paa", "rhsusf_infantry_socom_armysf_rifleman"},
+			{"Operator (AT)", "tsp_army_sf_operatorat", {"soc_delta","usa_missile"}, "iconManAT_ca.paa", "rhsusf_infantry_socom_armysf_rifleman"},
+			{"Autorifleman", "tsp_army_sf_autorifleman", {"soc_delta","us_autorifle","soc_autorifle"}, "iconManMG_ca.paa", "rhsusf_infantry_socom_armysf_rifleman"},
+			{"Breacher", "tsp_army_sf_engineer", {"soc_delta"}, "iconManExplosive_ca.paa", "rhsusf_infantry_socom_armysf_rifleman"}
 		}},
 		{"Shadow 2 (Weapons)", "markers\nato\b_inf.paa", {
-			{"Squad Leader", "tsp_army_sf_teamlead", {"soc_delta","us_leader"}, "iconManLeader_ca.paa"},
-			{"Medic", "tsp_army_sf_medic", {"soc_delta","medic"}, "iconManMedic_ca.paa"},
-			{"Operator", "tsp_army_sf_operator", {"soc_delta"}, "iconManRecon_ca.paa"},
-			{"Operator (AT)", "B_soldier_LAT_F", {"soc_delta","usa_missile"}, "iconManAT_ca.paa"},
-			{"Machine Gunner", "tsp_army_sf_machinegunner", {"soc_delta","us_autorifle","soc_autorifle"}, "iconManMG_ca.paa"},
-			{"Breacher", "tsp_army_sf_engineer", {"soc_delta"}, "iconManExplosive_ca.paa"}
+			{"Squad Leader", "tsp_army_sf_teamlead", {"soc_delta","us_leader"}, "iconManLeader_ca.paa", "rhsusf_infantry_socom_armysf_rifleman"},
+			{"Medic", "tsp_army_sf_medic", {"soc_delta","medic"}, "iconManMedic_ca.paa", "rhsusf_infantry_socom_armysf_rifleman"},
+			{"Operator", "tsp_army_sf_operator", {"soc_delta"}, "iconManRecon_ca.paa", "rhsusf_infantry_socom_armysf_rifleman"},
+			{"Operator (AT)", "B_soldier_LAT_F", {"soc_delta","usa_missile"}, "iconManAT_ca.paa", "rhsusf_infantry_socom_armysf_rifleman"},
+			{"Machine Gunner", "tsp_army_sf_machinegunner", {"soc_delta","us_autorifle","soc_autorifle", "rhsusf_infantry_socom_armysf_rifleman"}, "iconManMG_ca.paa"},
+			{"Breacher", "tsp_army_sf_engineer", {"soc_delta"}, "iconManExplosive_ca.paa", "rhsusf_infantry_socom_armysf_rifleman"}
 		}},
 		{"Shadow 3 (SNOT)", "markers\nato\b_art.paa", {
-			{"Team Leader", "tsp_army_sf_teamlead", {"soc_delta","us_leader"}, "iconManLeader_ca.paa"},
-			{"Operator", "tsp_army_sf_operator", {"soc_delta"}, "iconManRecon_ca.paa"},
-			{"Marksman", "tsp_army_sf_marksman", {"soc_delta","soc_sniper","usa_sniper"}, "iconMan_ca.paa"}
+			{"Team Leader", "tsp_army_sf_teamlead", {"soc_delta","us_leader"}, "iconManLeader_ca.paa", "rhsusf_infantry_socom_armysf_rifleman"},
+			{"Operator", "tsp_army_sf_operator", {"soc_delta"}, "iconManRecon_ca.paa", "rhsusf_infantry_socom_armysf_rifleman"},
+			{"Marksman", "tsp_army_sf_marksman", {"soc_delta","soc_sniper","usa_sniper"}, "iconMan_ca.paa", "rhsusf_infantry_socom_armysf_rifleman"}
 		}}
 	}},
 	{"USA - 160th SOAR", "\tsp_core\data\insignia\160soar.paa", "west", {
@@ -364,7 +442,195 @@ tsp_roles_all[] = {
 			{"Helicopter Pilot", "rhsusf_army_ocp_helipilot", {"soc_special","us_heli","us_leader"}, "iconManOfficer_ca.paa"},
 			{"Helicopter Crew", "rhsusf_army_ocp_helicrew", {"soc_special","us_heli","us_leader"}, "iconManOfficer_ca.paa"}
 		}}
+	}},
+	{"CIA/JSOC - Task Force Delilah", "data\ciajsoc.paa", "west", {
+		{"Empire", "markers\nato\b_hq.paa", {
+			{"Element Coordinator", "tsp_ion_teamlead", {"soc_delta","us_leader"}, "iconManCommander_ca.paa"},
+			{"Medic", "tsp_ion_medic", {"soc_delta","medic"}, "iconManMedic_ca.paa"},
+			{"Engineer", "tsp_ion_engineer", {"soc_delta"}, "iconManEngineer_ca.paa"}
+		}},
+		{"Lancer (CIA)", "markers\nato\b_inf.paa", {
+			{"Element Leader", "tsp_ion_teamlead", {"soc_delta","us_leader"}, "iconManLeader_ca.paa"},
+			{"Medic", "tsp_ion_medic", {"soc_delta","medic"}, "iconManMedic_ca.paa"},
+			{"Agent (1)", "tsp_ion_contractor", {"soc_delta"}, "iconManRecon_ca.paa"},
+			{"Agent (2)", "tsp_ion_contractor", {"soc_delta"}, "iconManAT_ca.paa"},
+			{"Grenadier", "tsp_ion_grenadier", {"soc_delta","us_grenadier","soc_grenadier"}, "iconManMG_ca.paa"},
+			{"Breacher", "tsp_ion_breacher", {"soc_delta"}, "iconManExplosive_ca.paa"}
+		}},
+		{"Caster (SFOD-D)", "markers\nato\b_inf.paa", {
+			{"Element Leader", "tsp_army_sf_teamlead", {"soc_delta","us_leader"}, "iconManLeader_ca.paa"},
+			{"Medic", "tsp_army_sf_medic", {"soc_delta","medic"}, "iconManMedic_ca.paa"},
+			{"Operator", "tsp_army_sf_operator", {"soc_delta"}, "iconManRecon_ca.paa"},
+			{"Operator (AT)", "tsp_army_sf_operatorat", {"soc_delta","usa_missile","soc_missile","us_missile"}, "iconManAT_ca.paa"},
+			{"Machine Gunner", "tsp_army_sf_machinegunner", {"soc_delta","us_autorifle","soc_autorifle"}, "iconManMG_ca.paa"},
+			{"Ammo Bearer", "tsp_army_sf_operator", {"soc_delta"}, "iconManExplosive_ca.paa"}
+		}},
+		{"Archer (Snipers)", "markers\nato\b_art.paa", {
+			{"Team Leader", "tsp_army_sf_teamlead", {"soc_delta","us_leader"}, "iconManLeader_ca.paa"},
+			{"Agent", "tsp_ion_contractor", {"soc_delta"}, "iconManRecon_ca.paa"},
+			{"Marksman", "tsp_army_sf_marksman", {"soc_delta","soc_sniper","usa_sniper"}, "iconMan_ca.paa"}
+		}}
 	}}
+};
+
+tsp_roles_hidf[] = {
+	{"HIDF - Task Force Naga", "data\naga.paa", "west", {
+		{"Naga HQ", "markers\nato\b_hq.paa", {
+			{"Platoon Leader", "tsp_hidf_sf_teamlead", {"hidf_recon","hidf_leader"}, "iconManCommander_ca.paa"},
+			{"Medic", "tsp_hidf_sf_medic", {"hidf_recon","medic"}, "iconManMedic_ca.paa"},
+			{"Engineer", "tsp_hidf_sf_engineer", {"hidf_recon"}, "iconManEngineer_ca.paa"}
+		}},
+		{"Naga 1", "markers\nato\b_inf.paa", {
+			{"Squad Leader", "tsp_hidf_sf_teamlead", {"hidf_recon","hidf_leader"}, "iconManLeader_ca.paa"},
+			{"Medic", "tsp_hidf_sf_medic", {"hidf_recon","medic"}, "iconManMedic_ca.paa"},
+			{"Scout", "tsp_hidf_sf_scout", {"hidf_recon"}, "iconManRecon_ca.paa"},
+			{"Scout (AT)", "tsp_hidf_sf_scout_m72", {"hidf_recon"}, "iconManAT_ca.paa"},
+			{"Autorifleman", "tsp_hidf_sf_autorifleman", {"hidf_recon","hidf_autorifle"}, "iconManMG_ca.paa"},
+			{"Grenadier", "tsp_hidf_sf_grenadier", {"hidf_recon"}, "iconManRecon_ca.paa"}
+		}},
+		{"Naga 2", "markers\nato\b_inf.paa", {
+			{"Squad Leader", "tsp_hidf_sf_teamlead", {"hidf_recon","hidf_leader"}, "iconManLeader_ca.paa"},
+			{"Medic", "tsp_hidf_sf_medic", {"hidf_recon","medic"}, "iconManMedic_ca.paa"},
+			{"Scout", "tsp_hidf_sf_scout", {"hidf_recon"}, "iconManRecon_ca.paa"},
+			{"Scout (AT)", "tsp_hidf_sf_scout_m72", {"hidf_recon"}, "iconManAT_ca.paa"},
+			{"Autorifleman", "tsp_hidf_sf_autorifleman", {"hidf_recon","hidf_autorifle"}, "iconManMG_ca.paa"},
+			{"Marksman", "tsp_hidf_sf_grenadier", {"hidf_recon","tsp_hidf_marksman"}, "iconManRecon_ca.paa"}
+		}}
+	}},
+	{"HIDF - Air Force", "data\hidf.paa", "west", {
+		{"Python 1", "markers\nato\b_air.paa", {
+			{"Pilot", "rhsgref_hidf_helipilot", {"hidf_recon","hidf_leader", "hidf_pilot"}, "iconManOfficer_ca.paa"},
+			{"Copilot", "rhsgref_hidf_helipilot", {"hidf_recon","hidf_leader", "hidf_pilot"}, "iconManOfficer_ca.paa"}
+		}},
+		{"Cobra 1", "markers\nato\b_air.paa", {
+			{"Pilot", "rhsgref_hidf_helipilot", {"hidf_recon","hidf_leader", "hidf_pilot"}, "iconManOfficer_ca.paa"},
+			{"Copilot", "rhsgref_hidf_helipilot", {"hidf_recon","hidf_leader", "hidf_pilot"}, "iconManOfficer_ca.paa"}
+		}}
+	}}    
+};
+
+tsp_roles_russia[] = {
+	{"MSV - 2nd Guards Motor Rifle", "\tsp_core\data\insignia\2mot.paa", "east", {
+		{"Tempest 1", "markers\nato\b_mech_inf.paa", {
+			{"Crewman", "rhs_vdv_combatcrew", {"ru_vdv","ru_crew","ru_leader"}, "iconManLeader_ca.paa"},
+			{"Crewman", "rhs_vdv_combatcrew", {"ru_vdv","ru_crew","ru_leader"}, "iconManLeader_ca.paa"}
+		}},
+		{"Tempest 2", "markers\nato\b_mech_inf.paa", {
+			{"Crewman", "rhs_vdv_combatcrew", {"ru_vdv","ru_crew","ru_leader"}, "iconManLeader_ca.paa"},
+			{"Crewman", "rhs_vdv_combatcrew", {"ru_vdv","ru_crew","ru_leader"}, "iconManLeader_ca.paa"}
+		}}
+	}},
+	{"VDV - 45th Guards Spetsnaz", "\tsp_core\data\insignia\45vdv.paa", "east", {
+		{"Shapka HQ", "markers\nato\b_hq.paa", {
+			{"Platoon Leader", "rhs_vdv_officer_armored", {"ru_vdv","ru_leader"}, "iconManCommander_ca.paa"},
+			{"Medic", "rhs_vdv_medic", {"ru_vdv","medic"}, "iconManMedic_ca.paa"},
+			{"Engineer", "rhs_vdv_engineer", {"ru_vdv"}, "iconManEngineer_ca.paa"}
+		}},
+		{"Shapka 1", "markers\nato\b_inf.paa", {
+			{"Squad Leader", "rhs_vdv_sergeant", {"ru_vdv","ru_leader"}, "iconManLeader_ca.paa"},
+			{"Medic", "rhs_vdv_medic", {"ru_vdv","medic"}, "iconManMedic_ca.paa"},
+			{"Scout", "rhs_vdv_rifleman", {"ru_vdv"}, "iconManRecon_ca.paa"},
+			{"Scout (AT)", "rhs_vdv_LAT", {"ru_vdv"}, "iconManAT_ca.paa"},
+			{"Autorifleman", "rhs_vdv_arifleman_rpk", {"ru_vdv","ru_missile"}, "iconManMG_ca.paa"},
+			{"Scout (ASVAL)", "rhs_vdv_rifleman_asval", {"ru_vdv","ru_sniper"}, "iconManRecon_ca.paa"}
+		}},
+		{"Shapka 2 (Weapons)", "markers\nato\b_inf.paa", {
+			{"Squad Leader", "rhs_vdv_sergeant", {"ru_vdv","ru_leader"}, "iconManLeader_ca.paa"},
+			{"Medic", "rhs_vdv_medic", {"ru_vdv","medic"}, "iconManMedic_ca.paa"},
+			{"Scout", "rhs_vdv_rifleman", {"ru_vdv"}, "iconManRecon_ca.paa"},
+			{"Scout (AT)", "rhs_vdv_LAT", {"ru_vdv"}, "iconManAT_ca.paa"},
+			{"Machine Gunner", "rhs_vdv_machinegunner", {"ru_vdv","ru_missile"}, "iconManMG_ca.paa"},
+			{"Grenadier", "rhs_vdv_grenadier", {"ru_vdv"}, "iconManExplosive_ca.paa"}
+		}},
+		{"Sickel", "markers\nato\b_art.paa", {
+			{"Team Leader", "rhs_vdv_junior_sergeant", {"ru_vdv","ru_leader"}, "iconManLeader_ca.paa"},
+			{"Anti Tank", "rhs_vdv_LAT", {"ru_vdv"}, "iconManAT_ca.paa"},
+			{"Ammo Bearer", "rhs_vdv_strelok_rpg_assist", {"ru_vdv"}, "iconManAT_ca.paa"}
+		}}
+	}},
+	{"VMF - 11th Frogmen Spetsnaz", "\tsp_core\data\insignia\11frog.paa", "east", {
+		{"Shapka HQ", "markers\nato\b_hq.paa", {
+			{"Platoon Leader", "rhs_vdv_officer_armored", {"ru_vdv","ru_leader"}, "iconManCommander_ca.paa"},
+			{"Medic", "rhs_vdv_medic", {"ru_vdv","medic"}, "iconManMedic_ca.paa"},
+			{"Engineer", "rhs_vdv_engineer", {"ru_vdv"}, "iconManEngineer_ca.paa"}
+		}},
+		{"Shapka 1", "markers\nato\b_inf.paa", {
+			{"Squad Leader", "rhs_vdv_sergeant", {"ru_vdv","ru_leader"}, "iconManLeader_ca.paa"},
+			{"Medic", "rhs_vdv_medic", {"ru_vdv","medic"}, "iconManMedic_ca.paa"},
+			{"Scout", "rhs_vdv_rifleman", {"ru_vdv"}, "iconManRecon_ca.paa"},
+			{"Scout (AT)", "rhs_vdv_LAT", {"ru_vdv"}, "iconManAT_ca.paa"},
+			{"Autorifleman", "rhs_vdv_arifleman_rpk", {"ru_vdv","ru_missile"}, "iconManMG_ca.paa"},
+			{"Scout (ASVAL)", "rhs_vdv_rifleman_asval", {"ru_vdv","ru_sniper"}, "iconManRecon_ca.paa"}
+		}},
+		{"Shapka 2 (Weapons)", "markers\nato\b_inf.paa", {
+			{"Squad Leader", "rhs_vdv_sergeant", {"ru_vdv","ru_leader"}, "iconManLeader_ca.paa"},
+			{"Medic", "rhs_vdv_medic", {"ru_vdv","medic"}, "iconManMedic_ca.paa"},
+			{"Scout", "rhs_vdv_rifleman", {"ru_vdv"}, "iconManRecon_ca.paa"},
+			{"Scout (AT)", "rhs_vdv_LAT", {"ru_vdv"}, "iconManAT_ca.paa"},
+			{"Machine Gunner", "rhs_vdv_machinegunner", {"ru_vdv","ru_missile"}, "iconManMG_ca.paa"},
+			{"Grenadier", "rhs_vdv_grenadier", {"ru_vdv"}, "iconManExplosive_ca.paa"}
+		}},
+		{"Voron", "markers\nato\b_art.paa", {
+			{"Team Leader", "rhs_vdv_junior_sergeant", {"ru_vdv","ru_leader"}, "iconManLeader_ca.paa"},
+			{"Anti Tank", "rhs_vdv_LAT", {"ru_vdv"}, "iconManAT_ca.paa"},
+			{"Ammo Bearer", "rhs_vdv_strelok_rpg_assist", {"ru_vdv"}, "iconManAT_ca.paa"}
+		}}
+	}},
+	{"VMF - 3rd Mechanized Naval Infantry", "\tsp_core\data\insignia\vmf.paa", "east", {
+		{"Frog 1", "markers\nato\b_mech_inf.paa", {
+			{"Crewman", "rhs_vdv_combatcrew", {"ru_vdv","ru_crew","ru_leader"}, "iconManLeader_ca.paa"},
+			{"Crewman", "rhs_vdv_combatcrew", {"ru_vdv","ru_crew","ru_leader"}, "iconManLeader_ca.paa"}
+		}},
+		{"Frog 2", "markers\nato\b_mech_inf.paa", {
+			{"Crewman", "rhs_vdv_combatcrew", {"ru_vdv","ru_crew","ru_leader"}, "iconManLeader_ca.paa"},
+			{"Crewman", "rhs_vdv_combatcrew", {"ru_vdv","ru_crew","ru_leader"}, "iconManLeader_ca.paa"}
+		}},
+		{"Frog 3", "markers\nato\b_mech_inf.paa", {
+			{"Crewman", "rhs_vdv_combatcrew", {"ru_vdv","ru_crew","ru_leader"}, "iconManLeader_ca.paa"},
+			{"Crewman", "rhs_vdv_combatcrew", {"ru_vdv","ru_crew","ru_leader"}, "iconManLeader_ca.paa"}
+		}}
+	}},
+	{"VMF - 3rd Naval Aviation", "\tsp_core\data\insignia\vmfaviation.paa", "east", {
+		{"Vortex 1", "markers\nato\b_air.paa", {
+			{"Helicopter Pilot", "rhs_pilot_combat_heli", {"vdv_spetsnaz_all","east_heli","everyone_leader"}, "iconManOfficer_ca.paa"},
+			{"Helicopter Crew", "rhs_pilot_combat_heli", {"vdv_spetsnaz_all","east_heli","everyone_leader"}, "iconManOfficer_ca.paa"}
+		}},
+		{"Vortex 2", "markers\nato\b_air.paa", {
+			{"Helicopter Pilot", "rhs_pilot_combat_heli", {"vdv_spetsnaz_all","east_heli","everyone_leader"}, "iconManOfficer_ca.paa"},
+			{"Helicopter Crew", "rhs_pilot_combat_heli", {"vdv_spetsnaz_all","east_heli","everyone_leader"}, "iconManOfficer_ca.paa"}
+		}}
+	}}
+};
+
+tsp_roles_ion[] = {
+	{"IoN - Task Force Red", "\tsp_core\data\insignia\1recon.paa", "west", {
+		{"Sword 1", "markers\nato\b_inf.paa", {
+			{"Team Leader", "rhsusf_usmc_recon_marpat_wd_teamleader", {"usmc_recon","us_leader"}, "iconManLeader_ca.paa"},
+			{"Medic", "rhsusf_navy_sarc_w", {"usmc_recon","medic"}, "iconManMedic_ca.paa"},
+			{"Contractor", "rhsusf_usmc_recon_marpat_wd_rifleman", {"usmc_recon"}, "iconManRecon_ca.paa"},
+			{"Contractor (AT)", "rhsusf_usmc_recon_marpat_wd_rifleman_at", {"usmc_recon","usa_missile"}, "iconManAT_ca.paa"},
+			{"Autorifleman", "rhsusf_usmc_recon_marpat_wd_machinegunner_m69", {"usmc_recon","us_autorifle","usmc_recon_autorifle"}, "iconManMG_ca.paa"},
+			{"Breacher", "tsp_usmc_breacher", {"usmc_recon"}, "iconManExplosive_ca.paa"}
+		}},
+		{"Sword 2 (Weapons)", "markers\nato\b_inf.paa", {
+			{"Team Leader", "rhsusf_usmc_recon_marpat_wd_teamleader", {"usmc_recon","us_leader"}, "iconManLeader_ca.paa"},
+			{"Medic", "rhsusf_navy_sarc_w", {"usmc_recon","medic"}, "iconManMedic_ca.paa"},
+			{"Contractor", "rhsusf_usmc_recon_marpat_wd_rifleman", {"usmc_recon"}, "iconManRecon_ca.paa"},
+			{"Contractor (AT)", "rhsusf_usmc_recon_marpat_wd_rifleman_at", {"usmc_recon","usa_missile"}, "iconManAT_ca.paa"},
+			{"Machine Gunner", "rhsusf_usmc_recon_marpat_wd_machinegunner_fast", {"usmc_recon","us_autorifle","usmc_recon_autorifle"}, "iconManMG_ca.paa"},
+			{"Marksman", "tsp_usmc_breacher", {"usmc_recon"}, "iconManExplosive_ca.paa"}
+		}}
+	}},
+	{"ION - Aviation Branch", "\tsp_core\data\insignia\2aviation.paa", "west", {
+		{"Arrow 1", "markers\nato\b_air.paa", {
+			{"Helicopter Pilot", "tsp_usn_helipilot", {"west_all","us_all","us_weapons","us_ammo","usmc_all","us_heli","west_leader"}, "iconManOfficer_ca.paa"},
+			{"Helicopter Crew", "tsp_usn_helipilot", {"west_all","us_all","us_weapons","us_ammo","usmc_all","us_heli","west_leader"}, "iconManOfficer_ca.paa"}
+		}},
+		{"Arrow 2", "markers\nato\b_air.paa", {
+			{"Helicopter Pilot", "tsp_usn_helipilot", {"west_all","us_all","us_weapons","us_ammo","usmc_all","us_heli","west_leader"}, "iconManOfficer_ca.paa"},
+			{"Helicopter Crew", "tsp_usn_helipilot", {"west_all","us_all","us_weapons","us_ammo","usmc_all","us_heli","west_leader"}, "iconManOfficer_ca.paa"}
+		}}
+	}},
 };
 
 eyewear[] = {"G_Aviator","G_Lady_Blue","G_Shades_Black","G_Shades_Blue","G_Shades_Green","G_Shades_Red","G_Spectacles","G_Sport_Red","G_Sport_Blackyellow","G_Sport_BlackWhite","G_Sport_Checkered","G_Sport_Blackred","G_Sport_Greenblack","G_Squares_Tinted","G_Squares","G_Spectacles_Tinted"};
@@ -372,7 +638,7 @@ medic[] = {"ACE_adenosine","ACE_bloodIV","ACE_bloodIV_250","ACE_bloodIV_500","AC
 camera[] = {"Launch_Camera","Bro_Camcorder","amtgopro2","amtgopro1","Hate_Smartphone","Old_Camera","Bino_HandyCam","Nikon_DSLR","tsp_dyson","tsp_acoustic","tsp_acoustic_dino"};
 
 us_leader[] = {"tsp_trijatta","tsp_track24","tsp_fbcb2","B_UavTerminal","ACE_microDAGR","hgun_Pistol_Signal_F","6Rnd_GreenSignal_F","6Rnd_RedSignal_F","ItemGPS","Binocular","rhsusf_bino_lerca_1200_black","rhsusf_bino_lerca_1200_tan","rhsusf_bino_leopold_mk4","rhsusf_bino_m24","rhsusf_bino_m24_ARD","ACE_VectorDay","ACE_Vector","ACE_Yardage450"};
-us_all[] = {"ACE_ATragMX","ACE_fieldDressing","ACE_elasticBandage","ACE_packingBandage","ACE_artilleryTable","ACE_quikclot","ACE_bodyBag","ACE_bodyBag_blue","ACE_bodyBag_white","ACE_CableTie","ACE_Canteen","ACE_Canteen_Empty","ACE_Canteen_Half","ACE_DefusalKit","ACE_DAGR","ACE_EarPlugs","ACE_EntrenchingTool","ACE_Fortify","ACE_HuntIR_monitor","tsp_ifak","ACE_Kestrel4500","tsp_lockpick","ACE_M26_Clacker","ACE_Clacker","tsp_gear_manta","ACE_MapTools","Medikit","MineDetector","ACE_MRE_ChickenTikkaMasala","ACE_MRE_ChickenHerbDumplings","ACE_MRE_BeefStew","ACE_MRE_CreamChickenSoup","ACE_MRE_CreamTomatoSoup","ACE_MRE_LambCurry","ACE_MRE_MeatballsPasta","ACE_MRE_SteakVegetables","acex_intelitems_notepad","ACE_painkillers","tsp_paperclip","ACE_PlottingBoard","ACE_RangeCard","ACE_rope12","ACE_rope15","ACE_rope18","ACE_rope27","ACE_rope3","ACE_rope36","ACE_rope6","ACE_salineIV","ACE_salineIV_250","ACE_salineIV_500","tsp_breach_shock","tsp_sling","ACE_SpareBarrel","ACE_splint","ACE_SpottingScope","ACE_Tripod","ACE_tourniquet","ACE_UAVBattery","ACE_WaterBottle","ACE_WaterBottle_Empty","ACE_WaterBottle_Half","ACE_wirecutter","G_Bandanna_khk","G_Bandanna_tan","ACRE_VHF30108SPIKE","ACRE_VHF30108","ACRE_VHF30108MAST","ACE_gunbag","ACE_gunbag_Tan","ACE_TacticalLadder_Pack","ACE_Altimeter","ItemWatch","ChemicalDetector_01_watch_F","ItemCompass","ItemMap","rhsusf_bino_m24","rhsusf_bino_m24_ARD","rhsusf_bino_leopold_mk4","Binocular","tsp_gear_peltor_green_g","tsp_gear_peltor_tan_g","rhsusf_ANPVS_14","rhsusf_Rhino","ACRE_PRC117F","ACRE_PRC152","ACRE_PRC343","rhs_googles_black","rhs_googles_clear","rhs_googles_orange","rhs_googles_yellow","rhs_ess_black","G_Bandanna_khk","G_Bandanna_tan","rhsusf_oakley_goggles_blk","rhsusf_oakley_goggles_clr","rhsusf_oakley_goggles_ylw","rhsusf_shemagh2_gogg_tan","rhsusf_shemagh_gogg_tan","rhsusf_shemagh2_gogg_od","rhsusf_shemagh_gogg_od","rhsusf_shemagh2_gogg_grn","rhsusf_shemagh_gogg_grn","shemagh_tight_od","shemagh_loose","shemagh_loosetan","shemagh_looseod","rhsusf_shemagh2_tan","rhsusf_shemagh_tan","rhsusf_shemagh2_od","rhsusf_shemagh_od","rhsusf_shemagh2_grn","rhsusf_shemagh_grn","ACE_UAVBattery","ToolKit","rhsusf_Rhino_alt","rhsusf_ANPVS_14_alt2","rhsusf_ANPVS_14_alt","rhsusf_ANPVS_14_hide","JCA_G_AirPurifyingRespirator_03_black_clear_F","JCA_G_AirPurifyingRespirator_03_black_tinted_F","JCA_G_AirPurifyingRespirator_03_olive_clear_F","JCA_G_AirPurifyingRespirator_03_olive_tinted_F","JCA_G_AirPurifyingRespirator_03_sand_clear_F","JCA_G_AirPurifyingRespirator_03_sand_tinted_F"};
+us_all[] = {"ACE_ATragMX","ACE_fieldDressing","ACE_elasticBandage","ACE_packingBandage","ACE_artilleryTable","ACE_quikclot","ACE_bodyBag","ACE_bodyBag_blue","ACE_bodyBag_white","ACE_CableTie","ACE_Canteen","ACE_Canteen_Empty","ACE_Canteen_Half","ACE_DefusalKit","ACE_DAGR","ACE_EarPlugs","ACE_EntrenchingTool","ACE_Fortify","ACE_HuntIR_monitor","tsp_ifak","ACE_Kestrel4500","tsp_lockpick","ACE_M26_Clacker","ACE_Clacker","tsp_gear_manta","ACE_MapTools","Medikit","MineDetector","ACE_MRE_ChickenTikkaMasala","ACE_MRE_ChickenHerbDumplings","ACE_MRE_BeefStew","ACE_MRE_CreamChickenSoup","ACE_MRE_CreamTomatoSoup","ACE_MRE_LambCurry","ACE_MRE_MeatballsPasta","ACE_MRE_SteakVegetables","acex_intelitems_notepad","ACE_painkillers","tsp_paperclip","ACE_PlottingBoard","ACE_RangeCard","ACE_rope12","ACE_rope15","ACE_rope18","ACE_rope27","ACE_rope3","ACE_rope36","ACE_rope6","ACE_salineIV","ACE_salineIV_250","ACE_salineIV_500","tsp_breach_shock","tsp_sling","tsp_sling_1point","tsp_sling_lanyard","ACE_SpareBarrel","ACE_splint","ACE_SpottingScope","ACE_Tripod","ACE_tourniquet","ACE_UAVBattery","ACE_WaterBottle","ACE_WaterBottle_Empty","ACE_WaterBottle_Half","ACE_wirecutter","G_Bandanna_khk","G_Bandanna_tan","ACRE_VHF30108SPIKE","ACRE_VHF30108","ACRE_VHF30108MAST","ACE_gunbag","ACE_gunbag_Tan","ACE_TacticalLadder_Pack","ACE_Altimeter","ItemWatch","ChemicalDetector_01_watch_F","ItemCompass","ItemMap","rhsusf_bino_m24","rhsusf_bino_m24_ARD","rhsusf_bino_leopold_mk4","Binocular","tsp_gear_peltor_green_g","tsp_gear_peltor_tan_g","rhsusf_ANPVS_14","rhsusf_Rhino","ACRE_PRC117F","ACRE_PRC152","ACRE_PRC343","rhs_googles_black","rhs_googles_clear","rhs_googles_orange","rhs_googles_yellow","rhs_ess_black","G_Bandanna_khk","G_Bandanna_tan","rhsusf_oakley_goggles_blk","rhsusf_oakley_goggles_clr","rhsusf_oakley_goggles_ylw","rhsusf_shemagh2_gogg_tan","rhsusf_shemagh_gogg_tan","rhsusf_shemagh2_gogg_od","rhsusf_shemagh_gogg_od","rhsusf_shemagh2_gogg_grn","rhsusf_shemagh_gogg_grn","shemagh_tight_od","shemagh_loose","shemagh_loosetan","shemagh_looseod","rhsusf_shemagh2_tan","rhsusf_shemagh_tan","rhsusf_shemagh2_od","rhsusf_shemagh_od","rhsusf_shemagh2_grn","rhsusf_shemagh_grn","ACE_UAVBattery","ToolKit","rhsusf_Rhino_alt","rhsusf_ANPVS_14_alt2","rhsusf_ANPVS_14_alt","rhsusf_ANPVS_14_hide","JCA_G_AirPurifyingRespirator_03_black_clear_F","JCA_G_AirPurifyingRespirator_03_black_tinted_F","JCA_G_AirPurifyingRespirator_03_olive_clear_F","JCA_G_AirPurifyingRespirator_03_olive_tinted_F","JCA_G_AirPurifyingRespirator_03_sand_clear_F","JCA_G_AirPurifyingRespirator_03_sand_tinted_F"};
 us_weapons[] = {"rhs_weap_m4","rhs_weap_m4_carryhandle","rhs_weap_m4_carryhandle_mstock","rhs_weap_m4_mstock","rhs_weap_m4a1_carryhandle","rhs_weap_m4a1_carryhandle_mstock","rhsusf_weap_m9","rhs_weap_M136","rhs_weap_M136_hedp","rhs_weap_M136_hp","rhs_weap_m72a7","rhs_weap_m4a1_wd_mstock","rhs_weap_m4a1_wd","rhs_weap_m4a1_mstock","rhs_weap_m4a1_d_mstock","rhs_weap_m4a1_d","rhs_weap_m4a1","rhsusf_acc_ACOG2_USMC","rhsusf_acc_ACOG3_USMC","rhsusf_acc_ACOG_USMC","rhsusf_acc_ACOG","rhsusf_acc_ACOG2","rhsusf_acc_ACOG3","rhsusf_acc_ACOG_anpvs27","rhsusf_acc_eotech_552","rhsusf_acc_eotech_552_d","rhsusf_acc_eotech_552_wd","rhsusf_acc_compm4","tsp_meleeWeapon_training","ACE_VMH3","ACE_VMM3","Tier1_LA5_Top","Tier1_145_LA5_Side","Tier1_Mk48Mod1_LA5","Tier1_M110_LA5_Side","Tier1_416_LA5_Side","Tier1_MW_LA5_Side","Tier1_LA5_Side","Tier1_RAHG_LA5_Side","Tier1_Mk46Mod0_LA5","Tier1_10_LA5_Side","Tier1_MCX_LA5_Side","Tier1_URX4_LA5_Side","Tier1_Mk46Mod1_LA5","Tier1_SR25_LA5_Side","Tier1_M110_LA5_Top","Tier1_145_LA5_Top","Tier1_SR25_LA5_Top","Tier1_416_LA5_Top","Tier1_URX4_LA5_Top","Tier1_10_LA5_Top","Tier1_RAHG_LA5_Top","Tier1_MCX_LA5_Top","Tier1_MW_LA5_Top","Tier1_RAHG_LA5_M300C_Black","Tier1_MW_LA5_M300C_Black","Tier1_URX4_LA5_M300C_Black","Tier1_MCX_LA5_M300C_Black","Tier1_416_LA5_M300C_Black","Tier1_MW_LA5_M300C_Black_FL","Tier1_416_LA5_M300C_Black_FL","Tier1_URX4_LA5_M300C_Black_FL","Tier1_RAHG_LA5_M300C_Black_FL","Tier1_MCX_LA5_M300C_Black_FL","Tier1_URX4_LA5_M300C","Tier1_416_LA5_M300C","Tier1_RAHG_LA5_M300C","Tier1_MCX_LA5_M300C","Tier1_145_LA5_M300C","Tier1_10_LA5_M300C","Tier1_MW_LA5_M300C","Tier1_10_LA5_M300C_FL","Tier1_145_LA5_M300C_FL","Tier1_URX4_LA5_M300C_FL","Tier1_RAHG_LA5_M300C_FL","Tier1_MW_LA5_M300C_FL","Tier1_MCX_LA5_M300C_FL","Tier1_416_LA5_M300C_FL","Tier1_Mk46Mod0_LA5_M600V_Black","Tier1_Mk46Mod1_LA5_M600V_Black","Tier1_MW_LA5_M600V_Black","Tier1_MCX_LA5_M600V_Black","Tier1_Mk48Mod1_LA5_M600V_Black","Tier1_URX4_LA5_M600V_Black","Tier1_RAHG_LA5_M600V_Black","Tier1_Mk48Mod0_LA5_M600V_Black","Tier1_416_LA5_M600V_Black","Tier1_Mk46Mod0_LA5_M600V_Black_FL","Tier1_RAHG_LA5_M600V_Black_FL","Tier1_Mk46Mod1_LA5_M600V_Black_FL","Tier1_416_LA5_M600V_Black_FL","Tier1_MCX_LA5_M600V_Black_FL","Tier1_Mk48Mod0_LA5_M600V_Black_FL","Tier1_MW_LA5_M600V_Black_FL","Tier1_URX4_LA5_M600V_Black_FL","Tier1_Mk48Mod1_LA5_M600V_Black_FL","Tier1_RAHG_LA5_M600V_alt_Black","Tier1_416_LA5_M600V_alt_Black","Tier1_URX4_LA5_M600V_alt_Black","Tier1_MW_LA5_M600V_alt_Black","Tier1_RAHG_LA5_M600V_alt_Black_FL","Tier1_MW_LA5_M600V_alt_Black_FL","Tier1_URX4_LA5_M600V_alt_Black_FL","Tier1_416_LA5_M600V_alt_Black_FL","Tier1_Mk46Mod1_LA5_M600V","Tier1_URX4_LA5_M600V","Tier1_Mk46Mod0_LA5_M600V","Tier1_Mk48Mod1_LA5_M600V","Tier1_MCX_LA5_M600V","Tier1_416_LA5_M600V","Tier1_RAHG_LA5_M600V","Tier1_10_LA5_M600V","Tier1_145_LA5_M600V","Tier1_Mk48Mod0_LA5_M600V","Tier1_MW_LA5_M600V","Tier1_MCX_LA5_M600V_FL","Tier1_Mk46Mod0_LA5_M600V_FL","Tier1_416_LA5_M600V_FL","Tier1_URX4_LA5_M600V_FL","Tier1_145_LA5_M600V_FL","Tier1_Mk46Mod1_LA5_M600V_FL","Tier1_MW_LA5_M600V_FL","Tier1_Mk48Mod1_LA5_M600V_FL","Tier1_RAHG_LA5_M600V_FL","Tier1_Mk48Mod0_LA5_M600V_FL","Tier1_10_LA5_M600V_FL","Tier1_RAHG_LA5_M600V_alt","Tier1_145_LA5_M600V_alt","Tier1_URX4_LA5_M600V_alt","Tier1_MW_LA5_M600V_alt","Tier1_10_LA5_M600V_alt","Tier1_416_LA5_M600V_alt","Tier1_416_LA5_M600V_alt_FL","Tier1_URX4_LA5_M600V_alt_FL","Tier1_10_LA5_M600V_alt_FL","Tier1_145_LA5_M600V_alt_FL","Tier1_MW_LA5_M600V_alt_FL","Tier1_RAHG_LA5_M600V_alt_FL","Tier1_Mk48Mod0_LA5_M603V","Tier1_MW_LA5_M603V","Tier1_416_LA5_M603V","Tier1_Mk46Mod0_LA5_M603V","Tier1_RAHG_LA5_M603V","Tier1_Mk48Mod1_LA5_M603V","Tier1_145_LA5_M603V","Tier1_10_LA5_M603V","Tier1_URX4_LA5_M603V","Tier1_Mk46Mod1_LA5_M603V","Tier1_MCX_LA5_M603V","Tier1_Mk46Mod1_LA5_M603V_FL","Tier1_Mk48Mod0_LA5_M603V_FL","Tier1_MCX_LA5_M603V_FL","Tier1_Mk48Mod1_LA5_M603V_FL","Tier1_MW_LA5_M603V_FL","Tier1_URX4_LA5_M603V_FL","Tier1_145_LA5_M603V_FL","Tier1_10_LA5_M603V_FL","Tier1_RAHG_LA5_M603V_FL","Tier1_Mk46Mod0_LA5_M603V_FL","Tier1_416_LA5_M603V_FL","Tier1_M300C_Black","Tier1_M300C","Tier1_M600V_Black","Tier1_M600V","rhsusf_acc_M952V","rhsusf_acc_wmx","rhsusf_acc_wmx_bk","rhsusf_acc_grip2","rhsusf_acc_grip2_tan","rhsusf_acc_grip2_wd","Tier1_GripPod_Tan","Tier1_GripPod_Black","rhsusf_acc_grip_m203_blk","rhsusf_acc_grip_m203_d","Tier1_KAC_VFG_Black","Tier1_KAC_VFG_DE","rhsusf_acc_grip_m203_wd","RHS_M2_Tripod_Bag","RHS_M2_Gun_Bag","rhs_M252_Gun_Bag","rhs_M252_Bipod_Bag","RHS_M2_MiniTripod_Bag","RHS_Mk19_Gun_Bag","RHS_Mk19_Tripod_Bag","rhs_Tow_Gun_Bag","rhs_TOW_Tripod_Bag","Tier1_M4BII_LA5_Side","Tier1_M4BII_LA5_Top","Tier1_M4BII_LA5_M300C_Black","Tier1_M4BII_LA5_M300C_Black_FL","Tier1_M4BII_LA5_M300C","Tier1_M4BII_LA5_M300C_FL","Tier1_M4BII_LA5_M600V_Black","Tier1_M4BII_LA5_M600V_Black_FL","Tier1_M4BII_LA5_M600V","Tier1_M4BII_LA5_M600V_FL","Tier1_M4BII_LA5_M603V","Tier1_M4BII_LA5_M603V_FL","Tier1_Mk18_LA5_Side","Tier1_Mk18_LA5_Top","Tier1_Mk18_LA5_M300C_Black","Tier1_Mk18_LA5_M300C_Black_FL","Tier1_Mk18_LA5_M300C","Tier1_Mk18_LA5_M300C_FL","Tier1_Mk18_LA5_M600V_Black","Tier1_Mk18_LA5_M600V_Black_FL","Tier1_Mk18_LA5_M600V","Tier1_Mk18_LA5_M600V_FL","Tier1_Mk18_LA5_M603V","Tier1_Mk18_LA5_M603V_FL","rhsusf_acc_ACOG_d","rhsusf_acc_ACOG_wd","rhsusf_acc_ACOG_RMR","rhs_weap_M590_8RD","rhs_weap_M590_5RD","tsp_meleeWeapon_sledge_black","tsp_meleeWeapon_sledge_red","tsp_meleeWeapon_halligan","rhsusf_acc_anpeq15side","rhsusf_acc_anpeq15_top","rhsusf_acc_anpeq15_wmx","rhsusf_acc_anpeq15side_bk","rhsusf_acc_anpeq15_bk_top","rhsusf_acc_anpeq15","rhsusf_acc_anpeq15_bk"};
 us_ammo[] = {"rhsusf_8Rnd_FRAG","rhs_mag_m662_red","rhs_mag_m661_green","rhsusf_200Rnd_556x45_M855_mixed_soft_pouch","Tier1_20Rnd_762x51_M80_ball_SR25_Mag","rhs_mag_30Rnd_556x45_Mk262_PMAG_Tan","rhsusf_100Rnd_556x45_soft_pouch","rhsusf_200Rnd_556x45_M855_soft_pouch_ucp","MRAWS_HEAT55_F","rhs_mag_M663_green_cluster","tsp_m45a1_8rnd","rhsusf_200Rnd_556x45_mixed_soft_pouch_coyote","rhs_mag_30Rnd_556x45_M855A1_Stanag","rhs_mag_30Rnd_556x45_M855A1_PMAG_Tracer_Red","gsy_mag_30Rnd_556x45_Mk262_PMAG_FDE","rhsusf_mag_6Rnd_M713_red","Tier1_250Rnd_762x51_Belt_M993_AP","rhsusf_100Rnd_556x45_M855_soft_pouch_coyote","Tier1_20Rnd_762x51_M993_SR25_Mag","rhsusf_mag_6Rnd_M716_yellow","rhsusf_20Rnd_762x51_m80_Mag","rhsusf_5Rnd_00Buck","rhs_mag_smaw_HEAA","Tier1_15Rnd_40SW_JHP","rhs_mag_20Rnd_SCAR_762x51_m62_tracer","rhs_mag_M397_HET","rhs_mag_30Rnd_556x45_M855A1_PMAG_Tan","rhsusf_5Rnd_762x51_m993_Mag","rhs_mag_maaws_HEAT","rhsusf_100Rnd_556x45_soft_pouch_ucp","rhs_mag_30Rnd_556x45_M855_PMAG_Tan","MRAWS_HEAT_F","rhsusf_mag_6Rnd_M583A1_white","rhs_mag_30Rnd_556x45_Mk318_Stanag_Pull","rhsusf_200Rnd_556x45_mixed_soft_pouch","gsy_mag_30Rnd_556x45_M855A1_PMAG_FDE","rhsusf_200rnd_556x45_M855_box","rhs_fgm148_magazine_AT","rhsusf_10Rnd_762x51_m118_special_Mag","rhs_mag_30Rnd_556x45_M855A1_PMAG","rhs_mag_30Rnd_556x45_M855_Stanag_Pull_Tracer_Red","Tier1_20Rnd_9x19_FMJ","rhs_mag_m4009","rhs_mag_m715_Green","rhsusf_200Rnd_556x45_M855_mixed_soft_pouch_ucp","MRAWS_HE_F","rhs_mag_30Rnd_556x45_M855A1_Stanag_Pull","rhs_mag_M441_HE","rhs_mag_30Rnd_556x45_M855A1_Stanag_Tracer_Red","rhs_mag_m576","rhsusf_100Rnd_762x51","rhsusf_5Rnd_300winmag_xm2010","rhsusf_5Rnd_FRAG","gsy_mag_30Rnd_556x45_M856A1_PMAG_FDE","rhsusf_10Rnd_762x51_m62_Mag","Tier1_100Rnd_762x51_Belt_M80A1_EPR","rhs_mag_m713_Red","rhsusf_200Rnd_556x45_M855_soft_pouch","rhs_mag_30Rnd_556x45_M855_PMAG_Tracer_Red","rhs_mag_M585_white_cluster","rhs_mag_30Rnd_556x45_M855A1_PMAG_Tan_Tracer_Red","Tier1_250Rnd_762x51_Belt_M62_Tracer","rhs_mag_m716_yellow","rhsusf_mag_6Rnd_M715_green","rhsusf_5Rnd_HE","rhsusf_100Rnd_556x45_M995_soft_pouch","rhsusf_100Rnd_556x45_M200_soft_pouch","rhsusf_100Rnd_556x45_mixed_soft_pouch_coyote","rhsusf_10Rnd_762x51_m993_Mag","rhs_mag_M433_HEDP","rhs_mag_M781_Practice","gsy_mag_30Rnd_556x45_M856A1_PMAG_BLK","rhsusf_mag_7x45acp_MHP","rhsusf_8Rnd_HE","rhs_mag_30Rnd_556x45_M855_PMAG","rhsusf_50Rnd_762x51_m82_blank","Tier1_20Rnd_762x51_M62_SR25_Mag","6Rnd_RedSignal_F","rhsusf_100Rnd_762x51_m61_ap","Tier1_20Rnd_9x19_JHP","rhsusf_100Rnd_762x51_m82_blank","rhsusf_mag_10Rnd_STD_50BMG_mk211","rhsusf_200rnd_556x45_mixed_box","rhsusf_100Rnd_556x45_M855_mixed_soft_pouch","rhsusf_100Rnd_556x45_M995_soft_pouch_coyote","rhsusf_200Rnd_556x45_soft_pouch","rhsusf_50Rnd_762x51","rhsusf_20Rnd_762x51_SR25_m62_Mag","rhsusf_100Rnd_556x45_soft_pouch_coyote","rhsusf_200Rnd_556x45_M855_mixed_soft_pouch_coyote","rhsusf_mag_6Rnd_m4009","rhsusf_100Rnd_556x45_M200_soft_pouch_coyote","Tier1_15Rnd_40SW_FMJ","rhsusf_mag_6Rnd_m661_green","rhsusf_mag_10Rnd_STD_50BMG_M33","rhsusf_mag_6Rnd_m662_red","Tier1_20Rnd_762x51_M61_AP_SR25_Mag","rhs_mag_maaws_HEDP","rhs_mag_30Rnd_556x45_Mk262_PMAG","rhsusf_mag_6Rnd_M397_HET","rhs_mag_maaws_HE","rhsusf_20Rnd_762x51_SR25_m118_special_Mag","Tier1_100Rnd_762x51_Belt_M62_Tracer","rhs_mag_m714_White","rhsusf_100Rnd_556x45_mixed_soft_pouch_ucp","rhsusf_mag_6Rnd_M781_Practice","rhsusf_mag_6Rnd_M433_HEDP","rhsusf_mag_17Rnd_9x19_FMJ","rhsusf_100Rnd_556x45_M855_mixed_soft_pouch_ucp","rhs_mag_30Rnd_556x45_Mk318_PMAG","rhsusf_200Rnd_556x45_box","rhsusf_100Rnd_556x45_M995_soft_pouch_ucp","rhsusf_200Rnd_556x45_mixed_soft_pouch_ucp","rhs_mag_30Rnd_556x45_Mk318_PMAG_Tan","rhs_mag_30Rnd_556x45_M196_Stanag_Tracer_Red","rhsusf_20Rnd_762x51_SR25_mk316_special_Mag","rhsusf_8Rnd_00Buck","rhsusf_100Rnd_556x45_M855_mixed_soft_pouch_coyote","rhs_mag_30Rnd_556x45_M200_Stanag","gsy_mag_30Rnd_556x45_M855A1_PMAG_BLK","rhsusf_5Rnd_762x51_AICS_m62_Mag","rhs_mag_M583A1_white","rhsusf_50Rnd_762x51_m61_ap","rhsusf_20Rnd_762x51_m62_Mag","Tier1_20Rnd_762x51_Mk316Mod0_SR25_Mag","rhs_mag_20Rnd_SCAR_762x51_mk316_special","rhs_mag_30Rnd_556x45_M855_Stanag_Pull","rhsusf_5Rnd_762x51_m118_special_Mag","rhsusf_100Rnd_762x51_m80a1epr","rhs_mag_30Rnd_556x45_M855_Stanag_Tracer_Red","rhs_mag_30Rnd_556x45_M855_Stanag","Tier1_250Rnd_762x51_Belt_M61_AP","Tier1_250Rnd_762x51_Belt_M80A1_EPR","gsy_mag_30Rnd_556x45_Mk318_PMAG_FDE","rhsusf_5Rnd_Slug","rhsusf_100Rnd_556x45_M855_soft_pouch_ucp","Tier1_20Rnd_40SW_FMJ","Tier1_20Rnd_762x51_M118_Special_SR25_Mag","rhs_mag_30Rnd_556x45_M193_Stanag","rhsusf_5Rnd_762x51_AICS_m993_Mag","gsy_mag_30Rnd_556x45_Mk262_PMAG_BLK","rhsusf_200rnd_556x45_M855_mixed_box","rhs_mag_smaw_HEDP","rhsusf_8Rnd_Slug","Tier1_100Rnd_762x51_Belt_M82_Blank","Tier1_250Rnd_762x51_Belt_M80","Tier1_20Rnd_762x51_M80A1_EPR_SR25_Mag","rhsusf_mag_6Rnd_M576_Buckshot","rhsusf_5Rnd_762x51_AICS_m118_special_Mag","rhs_fim92_mag","rhsusf_100Rnd_556x45_mixed_soft_pouch","rhsusf_100Rnd_762x51_m62_tracer","rhsusf_200Rnd_556x45_M855_soft_pouch_coyote","rhsusf_mag_17Rnd_9x19_JHP","Tier1_20Rnd_40SW_JHP","rhs_mag_30Rnd_556x45_Mk318_Stanag","rhsusf_100Rnd_556x45_M200_soft_pouch_ucp","rhsusf_50Rnd_762x51_m62_tracer","rhs_mag_20Rnd_SCAR_762x51_m80a1_epr","rhsusf_mag_40Rnd_46x30_FMJ","rhsusf_mag_40Rnd_46x30_JHP","rhsusf_mag_15Rnd_9x19_JHP","Tier1_250Rnd_762x51_Belt_M82_Blank","rhsusf_200Rnd_556x45_soft_pouch_coyote","Tier1_100Rnd_762x51_Belt_M80","rhsusf_mag_6Rnd_M714_white","rhsusf_20Rnd_762x51_m993_Mag","rhs_mag_20Rnd_SCAR_762x51_m118_special","rhsusf_mag_15Rnd_9x19_FMJ","6Rnd_GreenSignal_F","rhsusf_200Rnd_556x45_soft_pouch_ucp","rhsusf_20Rnd_762x51_m118_special_Mag","rhs_mag_30Rnd_556x45_M855A1_Stanag_Pull_Tracer_Red","rhsusf_mag_6Rnd_M441_HE","rhs_mag_20Rnd_SCAR_762x51_m80_ball","rhs_mag_20Rnd_SCAR_762x51_m61_ap","Tier1_15Rnd_9x19_JHP","rhsusf_100Rnd_556x45_M855_soft_pouch","gsy_mag_30Rnd_556x45_Mk318_PMAG_BLK","rhsusf_20Rnd_762x51_SR25_m993_Mag","rhs_mag_30Rnd_556x45_M855_PMAG_Tan_Tracer_Red","rhs_mag_smaw_SR","rhs_mag_30Rnd_556x45_Mk262_Stanag","Tier1_100Rnd_762x51_Belt_M993_AP","rhsusf_mag_40Rnd_46x30_AP","Tier1_15Rnd_9x19_FMJ","rhs_mag_M664_red_cluster","rhsusf_5Rnd_762x51_m62_Mag","rhs_mag_30Rnd_556x45_Mk262_Stanag_Pull","Tier1_100Rnd_762x51_Belt_M61_AP","rhsusf_50Rnd_762x51_m80a1epr","ACE_HuntIR_M203","3Rnd_HE_Grenade_shell","","rhs_mag_an_m14_th3","rhs_mag_an_m8hc","Chemlight_blue","Chemlight_green","Chemlight_red","Chemlight_yellow","rhs_mag_m67","rhs_mag_m18_green","rhs_mag_m18_purple","rhs_mag_m18_red","rhs_mag_m18_yellow","rhs_mag_m69","rhs_mag_m7a3_cs","ATMine_Range_Mag","tsp_breach_block_mag","tsp_breach_linear_mag","tsp_breach_silhouette_mag","DemoCharge_Remote_Mag","SatchelCharge_Remote_Mag","ClaymoreDirectionalMine_Remote_Mag","rhsusf_mine_m14_mag","rhs_mine_M19_mag","tsp_breach_dip_mag"};
 us_autorifle[] = {"rhs_weap_m249","rhs_weap_m249_pip","rhs_weap_m249_pip_L_para","rhs_weap_m249_pip_L","rhs_weap_m249_pip_ris","rhs_weap_m249_pip_S_para","rhs_weap_m249_pip_S","rhs_weap_m240B","rhs_weap_m240G","rhsusf_acc_ARDEC_M240","Tier1_M249_LA5_M600V","Tier1_M249_LA5_M600V_Black","Tier1_M249_LA5_Side","Tier1_M249_LA5_M600V_FL","Tier1_M249_LA5_M603V","Tier1_M249_LA5_M600V_Black_FL","Tier1_M249_LA5_M603V_FL","rhsusf_acc_ELCAN","rhsusf_acc_ELCAN_ard","rhsusf_acc_ACOG_MDO","Tier1_SAW_Bipod_KAC","Tier1_SAW_Bipod_2","Tier1_SAW_Bipod_2_KAC_Desert","Tier1_SAW_Bipod","rhsusf_acc_grip4_bipod","Tier1_SAW_Bipod_2_Desert","rhsusf_acc_grip4","Tier1_KAC_VFG_Black","Tier1_SAW_Bipod_Desert","Tier1_SAW_Bipod_2_KAC","Tier1_KAC_VFG_DE","Tier1_SAW_Bipod_KAC_Desert"};
@@ -387,6 +653,7 @@ usa_all[] = {"camera","rhs_weap_m4a1_m320","rhs_weap_m4_m320","rhs_uniform_acu_o
 usa_grunt[] = {"us_all","us_weapons","us_ammo","usa_all","rhsusf_ach_bare","rhsusf_ach_bare_ess","rhsusf_ach_bare_headset","rhsusf_ach_bare_headset_ess","rhsusf_ach_bare_tan","rhsusf_ach_bare_tan_ess","rhsusf_ach_bare_tan_headset","rhsusf_ach_bare_tan_headset_ess","rhsusf_ach_helmet_ocp","rhsusf_ach_helmet_ocp_alt","rhsusf_ach_helmet_ESS_ocp_alt","rhsusf_ach_helmet_ESS_ocp","rhsusf_ach_helmet_headset_ocp","rhsusf_ach_helmet_headset_ocp_alt","rhsusf_ach_helmet_headset_ess_ocp","rhsusf_ach_helmet_headset_ess_ocp_alt","rhsusf_ach_helmet_camo_ocp","rhsusf_ach_helmet_ocp_norotos","rhsusf_ach_helmet_ucp","rhsusf_ach_helmet_ucp_alt","rhsusf_ach_helmet_ESS_ucp","rhsusf_ach_helmet_ESS_ucp_alt","rhsusf_ach_helmet_headset_ucp","rhsusf_ach_helmet_headset_ucp_alt","rhsusf_ach_helmet_headset_ess_ucp","rhsusf_ach_helmet_headset_ess_ucp_alt","rhsusf_ach_helmet_ucp_norotos","rhs_beanie_green","rhs_Booniehat_ocp","rhs_Booniehat_ucp","rhs_uniform_cu_ocp","rhs_uniform_cu_ocp_101st","rhs_uniform_cu_ocp_10th","rhs_uniform_cu_ocp_1stcav","rhs_uniform_cu_ocp_82nd","rhs_uniform_cu_ucp","rhs_uniform_cu_ucp_101st","rhs_uniform_cu_ucp_10th","rhs_uniform_cu_ucp_1stcav","rhs_uniform_cu_ucp_82nd","rhsusf_spcs_ocp_sniper","rhsusf_spcs_ucp_sniper","rhsusf_spcs_ocp_squadleader","rhsusf_spcs_ucp_squadleader","rhsusf_spcs_ocp_teamleader_alt","rhsusf_spcs_ucp_teamleader_alt","rhsusf_spcs_ocp_teamleader","rhsusf_spcs_ucp_teamleader","rhsusf_spcs_ucp","rhsusf_iotv_ucp_Grenadier","rhsusf_iotv_ocp_Grenadier","rhsusf_iotv_ocp_Medic","rhsusf_iotv_ucp_Medic","rhsusf_iotv_ocp","rhsusf_iotv_ocp_Repair","rhsusf_iotv_ucp_Repair","rhsusf_iotv_ocp_Rifleman","rhsusf_iotv_ucp_Rifleman","rhsusf_iotv_ocp_SAW","rhsusf_iotv_ucp_SAW","rhsusf_iotv_ocp_Squadleader","rhsusf_iotv_ucp_Squadleader","rhsusf_iotv_ocp_Teamleader","rhsusf_iotv_ucp_Teamleader","rhsusf_iotv_ucp","rhsusf_spcs_ocp_crewman","rhsusf_spcs_ucp_crewman","rhsusf_spcs_ocp_grenadier","rhsusf_spcs_ucp_grenadier","rhsusf_spcs_ocp_machinegunner","rhsusf_spcs_ucp_machinegunner","rhsusf_spcs_ocp_medic","rhsusf_spcs_ucp_medic","rhsusf_spcs_ocp","rhsusf_spcs_ocp_rifleman_alt","rhsusf_spcs_ucp_rifleman_alt","rhsusf_spcs_ocp_rifleman","rhsusf_spcs_ucp_rifleman","rhsusf_spcs_ocp_saw","rhsusf_spcs_ucp_saw","B_rhsusf_B_BACKPACK","rhsusf_assault_eagleaiii_ocp","rhsusf_assault_eagleaiii_ucp","rhsusf_falconii_mc"};
 usa_missile[] = {"rhs_weap_maaws","rhs_optic_maaws"};
 usa_sniper[] = {"rhs_weap_m14ebrri"};
+usa_opfor[] = {"rhs_uniform_g3_blk","rhsusf_opscore_bk","rhsusf_opscore_bk_pelt"};
 
 usmc_all[] = {"USMC35_optic_VCOG_black","camera","rhs_uniform_FROG01_wd","rhs_uniform_FROG01_d","rhsusf_ach_bare","rhsusf_ach_bare_ess","rhsusf_ach_bare_tan","rhsusf_ach_bare_tan_ess","rhsusf_ach_helmet_marpatd","rhsusf_ach_helmet_ess_marpatd","rhsusf_ach_helmet_camo_marpatd","rhsusf_ach_helmet_marpatd_norotos","rhsusf_ach_helmet_marpatwd","rhsusf_ach_helmet_ess_marpatwd","rhsusf_ach_helmet_camo_marpatwd","rhsusf_ach_helmet_marpatwd_norotos","rhs_weap_m27iar","rhs_weap_m27iar_grip","rhsusf_acc_anpeq16a","rhsusf_acc_anpeq16a_top","rhsusf_mich_helmet_marpatd","rhsusf_mich_helmet_marpatd_alt","rhsusf_mich_helmet_marpatd_alt_headset","rhsusf_mich_helmet_marpatd_headset","rhsusf_mich_helmet_marpatd_norotos","rhsusf_mich_helmet_marpatd_norotos_arc","rhsusf_mich_helmet_marpatd_norotos_arc_headset","rhsusf_mich_helmet_marpatd_norotos_headset","rhsusf_mich_helmet_marpatwd","rhsusf_mich_helmet_marpatwd_alt","rhsusf_mich_helmet_marpatwd_alt_headset","rhsusf_mich_helmet_marpatwd_headset","rhsusf_mich_helmet_marpatwd_norotos","rhsusf_mich_helmet_marpatwd_norotos_arc","rhsusf_spc","rhsusf_spc_corpsman","rhsusf_spc_crewman","rhsusf_spc_iar","rhsusf_spc_light","rhsusf_spc_mg","rhsusf_spc_marksman","rhsusf_spc_patchless","rhsusf_spc_patchless_radio","rhsusf_spc_rifleman","rhsusf_spc_sniper","rhsusf_spc_squadleader","rhsusf_spc_teamleader","rhs_booniehat2_marpatwd","rhs_booniehat2_marpatd","B_Kitbag_cbr","tsp_gear_filbe_pouch","rhsusf_assault_eagleaiii_coy","M9_Backpack","rhsusf_falconii_coy","tsp_meleeWeapon_okc","mccuu_m_marpatd","mccuu_m_marpatd_gloves","mccuu_m_marpatdcoy_coat","mccuu_m_marpatd_coat","mccuu_m_marpatdcoy_shirt","mccuu_m_marpatd_shirt","mccuu_m_marpatwd","mccuu_m_marpatwd_gloves","mccuu_m_marpatwdcoy_coat","mccuu_m_marpatwd_coat","mccuu_m_marpatwdcoy_shirt","mccuu_m_marpatwd_shirt","rhs_beanie_coyote","mccuu_m_marpatwdwhite_coat","UK3CB_U_KZS_DOWN_MARPATWDSNOW"};
 usmc_grunt[] = {"us_all","us_weapons","us_ammo","usmc_all","rhs_weap_m16a4","rhs_weap_m16a4_carryhandle","rhs_weap_m16a4_imod","rhsusf_lwh_helmet_marpatd","rhsusf_lwh_helmet_marpatd_ess","rhsusf_lwh_helmet_marpatd_headset","rhsusf_lwh_helmet_marpatwd","rhsusf_lwh_helmet_marpatwd_blk_ess","rhsusf_lwh_helmet_marpatwd_headset_blk2","rhsusf_lwh_helmet_marpatwd_headset_blk","rhsusf_lwh_helmet_marpatwd_headset","rhsusf_lwh_helmet_marpatwd_ess","rhsusf_ach_helmet_marpatd","rhsusf_ach_helmet_marpatd_alt","rhsusf_ach_helmet_ess_marpatd","rhsusf_ach_helmet_ess_marpatd_alt","rhsusf_ach_helmet_headset_marpatd","rhsusf_ach_helmet_headset_marpatd_alt","rhsusf_ach_helmet_headset_ess_marpatd","rhsusf_ach_helmet_headset_ess_marpatd_alt","rhsusf_ach_helmet_camo_marpatd","rhsusf_ach_helmet_marpatd_norotos","rhsusf_ach_helmet_marpatwd","rhsusf_ach_helmet_marpatwd_alt","rhsusf_ach_helmet_ess_marpatwd","rhsusf_ach_helmet_ess_marpatwd_alt","rhsusf_ach_helmet_headset_marpatwd","rhsusf_ach_helmet_headset_marpatwd_alt","rhsusf_ach_helmet_headset_ess_marpatwd","rhsusf_ach_helmet_headset_ess_marpatwd_alt","rhsusf_ach_helmet_camo_marpatwd","rhsusf_ach_helmet_marpatwd_norotos"};

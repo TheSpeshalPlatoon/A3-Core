@@ -1,16 +1,17 @@
 ["tsp_param_faction", "CHECKBOX", "Faction", "Custom faction loadouts", "TSP Core", false] call tsp_fnc_setting;
 
 tsp_fnc_faction = {  //-- Check if type exists in CfgLoadouts and apply it
-	params ["_unit", "_type", ["_force", false], ["_anim", animationState (_this#0)], ["_goggles", ""]]; //sleep 0.01;
+	params ["_unit", "_loadout", ["_force", false], ["_class", ""], ["_anim", animationState (_this#0)], ["_goggles", ""]]; //sleep 0.01;
 	if (_unit isEqualTo (missionnamespace getvariable ["BIS_fnc_arsenal_center", objNull])) exitWith {};
 	if (_unit isEqualTo (missionnamespace getvariable ["ace_arsenal_center", objNull])) exitWith {};
-	if (!_force && (_unit get3DENAttribute 'ReceiveRemoteTargets' isEqualTo [true] || vehicleReceiveRemoteTargets _unit)) exitWith {};
-	if (getText (configFile >> "CfgLoadouts" >> _type) != "") then {_unit setUnitLoadout (_unit call compile getText (configFile >> "CfgLoadouts" >> _type))};  //-- Config
-	if (getText (missionConfigFile >> _type) != "") then {_unit setUnitLoadout (_unit call compile getText (missionConfigFile >> _type)); _goggles = goggles _unit};  //-- Description
-	if (_force && getText (missionConfigFile >> _type) == "" && getText (configFile >> "CfgLoadouts" >> _type) == "") then {_unit setUnitLoadout _type};  //-- Class
-	if (vehicle _unit == _unit && is3DEN) then {_unit switchMove _anim};
+	if (!_force && (_unit get3DENAttribute 'ReceiveRemoteTargets' isEqualTo [true] || vehicleReceiveRemoteTargets _unit)) exitWith {};  //-- Dont overwrite units with custom loadouts
+	[getText (configFile >> "CfgLoadouts" >> _loadout), getText (missionConfigFile >> _loadout)] params ["_config", "_description"];
+	if (_config != "") then {_unit setUnitLoadout (_unit call compile _config)};
+	if (_description != "") then {_unit setUnitLoadout (_unit call compile _description)};
+	if (_config + _description == "") then {_unit setUnitLoadout (if (_class != "") then {_class} else {_loadout})};  //-- Class (Used mostly for public release)
+	if (vehicle _unit == _unit && is3DEN) then {_unit switchMove _anim};  //-- Set anim as setUnitLoadout resets anim
 	//if (_goggles != "") then {[_unit, _goggles] spawn {sleep 0.1; (_this#0) addGoggles (_this#1)}}
-	_unit spawn {sleep 0.1; _this setSpeaker "NoVoice"};
+	//_unit spawn {sleep 0.1; _this setSpeaker "NoVoice"};
 };
 
 if (!tsp_param_faction) exitWith {};

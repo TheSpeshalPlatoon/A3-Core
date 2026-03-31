@@ -61,13 +61,13 @@ tsp_fnc_zombience = {  //-- Constant reinforcements
     z_zombies = _zombies; z_dist = _dist; z_max = _max; z_time = _time;  //-- So that we can change it on the fly
     while {uiSleep z_time; call _condition} do {
         if ([_unit, _zones] call tsp_fnc_zone_triggers) then {
-            if (count (units (missionNameSpace getVariable ["zGroup", group objNull])) < 1) then {zGroup = createGroup _side; zGroup setGroupId ["ZGroup"]};  //-- Create/recreate group            
-            if (count (units zGroup select {alive _x}) < z_max) then {  //-- If group not full, create new guy and give waypoint
+            if (count (units (missionNameSpace getVariable ["zGrp", group objNull])) < 1) then {zGrp = createGroup _side; zGrp setGroupIdGlobal ["Zombies ("+name _unit+")"]};  //-- Create/recreate group            
+            if (count (units zGrp select {alive _x}) < z_max) then {  //-- If group not full, create new guy and give waypoint
                 _spawnPos = [((getpos player)#0) + (sin (random 360)) * (z_dist + random z_dist), ((getpos player)#1) + (cos (random 360)) * (z_dist + random z_dist), 0];
-                _zUnit = zGroup createUnit [selectRandom z_zombies, _spawnPos, [], 1, "NONE"];  //-- Make guy
-                _zUnit spawn _init; {_x doMove position _unit} forEach (units zGroup);         //-- Custom code and waypoint
+                _zUnit = zGrp createUnit [selectRandom z_zombies, _spawnPos, [], 1, "NONE"];  //-- Make guy
+                _zUnit spawn _init; {_x doMove position _unit} forEach (units zGrp);         //-- Custom code and waypoint
             };            
-            {if ((_unit distance2D _x) > _despawnDistance) then {deletevehicle _x}} forEach units zGroup;  //-- If any member of zGroup is too far away, delete him
+            {if ((_unit distance2D _x) > _despawnDistance) then {deletevehicle _x}} forEach units zGrp;  //-- If any member of zGrp is too far away, delete him
         };
     };
 };
@@ -81,7 +81,7 @@ tsp_fnc_underground = {  //-- Underground area lighting (Use in triggers)
 };
 
 tsp_fnc_intro = {  //-- Custom slideshow intro
-	params ["_timeline", ["_music", ""], ["_exit", {}], ["_sthud", STHud_UIMode]]; 
+	params ["_timeline", ["_music", ""], ["_exit", {}], ["_sthud", if (!isNil "STHud_UIMode") then {STHud_UIMode} else {0}]]; 
 	addMissionEventHandler ["PreloadFinished", 	{tsp_intro_loaded = true}]; waitUntil {!isNil "tsp_intro_loaded"};
 	STHud_UIMode = 0; titleCut ["", "BLACK OUT", 0.01]; 0 fadeSound 0; playMusic _music; 3 fadeMusic 1; sleep 2; ["", "Press [SPACE] to Skip"] spawn BIS_fnc_showSubtitle; 
 	tsp_skipEH = (findDisplay 46) displayAddEventHandler ["KeyDown", "if ((_this#1) == 57) exitWith {0 fadeSound 1; playSound 'OMCameraPhoto'; tsp_skipped = true}; true"];
