@@ -32,24 +32,26 @@ tsp_fnc_anim = {  //-- Ambient AI animations
 	params ["_unit", ["_loops", []], ["_outs", []], ["_react", true], ["_exit", {false}], ["_loop", ""], ["_out", ""]];	
 	_unit removeAllEventHandlers "HandleDamage";
 	_unit addEventHandler ["HandleDamage", {
-		params ["_unit", "_selection", "_damage"]; group _unit setBehaviour "COMBAT";
-		if (!("amov" in animationState _unit)) then {_unit spawn {_this setUnconscious true; sleep 3; if (alive _this) then {_this setUnconscious false}}};
-		if !(isNil "ace_medical_engine_fnc_handleDamage") then {_this spawn {sleep 0.1; _this call ace_medical_engine_fnc_handleDamage}};
-		_this spawn {params ["_unit", "_selection", "_damage"]; sleep 0.1; _unit setHitPointDamage [_selection, (_unit getHitPointDamage _selection) + _damage]}; 0
+		params ["_unit", "_selection", "_damage", "_source", "_projectile", "_hitPartIndex", "_instigator", "_hitPoint", "_directHit", "_context"];
+		if (_source isNotEqualTo _unit && _source isNotEqualTo objNull) then {group _unit setBehaviour "COMBAT"};
+		if (_source isNotEqualTo _unit && _source isNotEqualTo objNull && !("amov" in animationState _unit)) then {_unit spawn {_this setUnconscious true; sleep 3; _this setUnconscious false}};
+		_this spawn {sleep 0.1; if !(isNil "ace_medical_engine_fnc_handleDamage") then {_this call ace_medical_engine_fnc_handleDamage}};
+		_this spawn {sleep 0.1; if (isNil "ace_medical_engine_fnc_handleDamage") then {_this#0 setHitPointDamage [_this#1, (_this#0 getHitPointDamage _this#1) + _this#2]}};
+		0
 	}];
 	_unit addEventHandler ["AnimDone", {params ["_unit", "_anim"]; _unit setVariable ["animDone", true]}];  //-- So we know when an anim ends
 	while {local _unit && lifeState _unit == "HEALTHY"} do {
 		_unit disableAI "ANIM"; 
         while {count _loops > 0 && lifeState _unit == "HEALTHY"} do {  //-- While chilling, loop through _loop array
-			_loop = selectRandom _loops; [_unit, _loop] remoteExec ["playMoveNow", 0]; if (animationState _unit != _out) then {[_unit, _loop] remoteExec ["switchMove", 0]};
+			_loop = selectRandom _loops; [_unit, [_loop, 0, 0]] remoteExec ["switchMove", 0];
 			_unit setVariable ["animDone", false]; waitUntil {sleep 0.1; _unit call _exit || lifeState _unit != "HEALTHY" || (_react && behaviour _unit == "COMBAT") || _unit getVariable ["animDone", true]};
 			if (_unit call _exit || lifeState _unit != "HEALTHY" || (_react && behaviour _unit == "COMBAT")) exitWith {};
         };
 		_unit enableAI "ANIM";
 		if (count _outs > 0 && lifeState _unit == "HEALTHY") then {  //-- Out animation
-			_out = selectRandom _outs; [_unit, _out] remoteExec ["playMoveNow", 0]; if (animationState _unit != _out) then {[_unit, _out] remoteExec ["switchMove", 0]};
-			sleep (abs(1/(getNumber (configFile >> "CfgMovesMaleSdr" >> "States" >> _out >> "speed"))))+0.1;
-			if (animationState _unit == _out) then {[_unit, ""] remoteExec ["switchMove", 0]};  //-- If out doesn't work
+			_out = selectRandom _outs; [_unit, [_out, 0, 0]] remoteExec ["switchMove", 0];
+			sleep (abs(1/(getNumber (configFile >> "CfgMovesMaleSdr" >> "States" >> _out >> "speed")+0.1))+0.1);
+			if (animationState _unit == _out) then {[_unit, ["", 0, 0]] remoteExec ["switchMove", 0]};  //-- If out doesn't go to actual out
 		};
 		if (_unit call _exit) exitWith {};
 		waitUntil {sleep 5; behaviour _unit != "COMBAT"};  //-- Go back to loop
@@ -83,8 +85,8 @@ tsp_fnc_underground = {  //-- Underground area lighting (Use in triggers)
 tsp_fnc_intro = {  //-- Custom slideshow intro
 	params ["_timeline", ["_music", ""], ["_exit", {}], ["_sthud", if (!isNil "STHud_UIMode") then {STHud_UIMode} else {0}]]; 
 	addMissionEventHandler ["PreloadFinished", 	{tsp_intro_loaded = true}]; waitUntil {!isNil "tsp_intro_loaded"};
-	STHud_UIMode = 0; titleCut ["", "BLACK OUT", 0.01]; 0 fadeSound 0; playMusic _music; 3 fadeMusic 1; sleep 2; ["", "Press [SPACE] to Skip"] spawn BIS_fnc_showSubtitle; 
 	tsp_skipEH = (findDisplay 46) displayAddEventHandler ["KeyDown", "if ((_this#1) == 57) exitWith {0 fadeSound 1; playSound 'OMCameraPhoto'; tsp_skipped = true}; true"];
+	STHud_UIMode = 0; titleCut ["", "BLACK OUT", 0.01]; 0 fadeSound 0; playMusic _music; 3 fadeMusic 1; sleep 2; ["", "Press [SPACE] to Skip"] spawn BIS_fnc_showSubtitle; 
 	{if (!isNil "tsp_skipped") exitWith {}; _x params ["_time", "_code"]; {_x call bis_fnc_animatedScreen} forEach [[1],[0,[15,5,1],1.05]]; [] spawn _code; uiSleep _time} forEach _timeline;
 	(findDisplay 46) displayRemoveEventHandler ["keyDown", tsp_skipEH];	{_x call bis_fnc_animatedScreen} forEach [[0],[1]];  //-- INIT, DESTROY
 	titleCut ["", "BLACK IN", 3]; 2 fadeSound 1; 5 fadeMusic 0; [] spawn _exit; STHud_UIMode = _sthud; sleep 5; playMusic "";

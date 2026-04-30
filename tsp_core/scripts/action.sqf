@@ -50,7 +50,7 @@ tsp_fnc_action = {  //-- Changes for public release in here [boks, "Arsenal"] ca
 		if (_full) then {
 			[_object, "Arsenal", "\a3\missions_f_oldman\data\img\holdactions\holdAction_box_ca.paa", {["Open", [true]] call BIS_fnc_arsenal}] call tsp_fnc_action_hold;
 			[_object, "Arsenal (ACE)", "\a3\missions_f_oldman\data\img\holdactions\holdAction_box_ca.paa", {[player, player, true] call ace_arsenal_fnc_openBox}, "!isNil 'ace_arsenal_fnc_openBox'"] call tsp_fnc_action_hold;
-		} else {				
+		} else {
 			[_object, "Arsenal", "\a3\missions_f_oldman\data\img\holdactions\holdAction_box_ca.paa", {[player] spawn tsp_fnc_action_arsenal}] call tsp_fnc_action_hold;
 			[_object, "Arsenal (ACE)", "\a3\missions_f_oldman\data\img\holdactions\holdAction_box_ca.paa", {[player, true, false] call ace_arsenal_fnc_removeVirtualItems; [player, tsp_arsenal] call ace_arsenal_fnc_addVirtualItems; [player, player] call ace_arsenal_fnc_openBox}, "!isNil 'ace_arsenal_fnc_openBox'"] call tsp_fnc_action_hold;
 		};
@@ -63,7 +63,7 @@ tsp_fnc_action = {  //-- Changes for public release in here [boks, "Arsenal"] ca
 	if (_type == "Sleep") then {
 		[
 			_object, "Sleep", "\a3\ui_f_oldman\data\IGUI\Cfg\holdactions\holdAction_sleep_ca.paa", {[] spawn tsp_fnc_action_sleep}, 
-			"{([[_x] call BIS_fnc_getRespawnPositions, _x] call BIS_fnc_nearestPosition) distance _x > 50} count allPlayers > 0"
+			"{([[_x] call BIS_fnc_getRespawnPositions, _x] call BIS_fnc_nearestPosition) distance _x > 50} count allPlayers == 0"
 		] call tsp_fnc_action_hold;
 	};	
 	if (_type == "Garage") then {[_object, "Garage", _icon, {_this#3 spawn tsp_fnc_action_garage}, _conditon, false, 1, _params] call tsp_fnc_action_hold};

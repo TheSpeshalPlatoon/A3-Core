@@ -97,7 +97,7 @@ tsp_fnc_sector_loadEntity = {
 	//-- Passengers and drivers and stuff
 	if (_seatData isNotEqualTo []) then {
 		_seatData params ["_role", "_cargoIndex", "_turretPath"];
-		if (_role == "driver") then {_entity moveInDriver _vehicle};
+		if (_role == "driver") then {_entity moveInDriver _vehicle; _entity spawn {sleep 5; _grp = group _this; _grp addWaypoint [position _this, 2, 0]; _grp copyWaypoints _grp; deleteWaypoint [_grp, 0]}};
 		if (_role == "commander") then {_entity moveInCommander _vehicle};
 		if (_role == "gunner") then {_entity moveInGunner _vehicle};
 		if (_role in ["turret", "Turret"]) then {_entity moveInTurret [_vehicle, _turretPath]};
@@ -110,6 +110,8 @@ tsp_fnc_sector_loadEntity = {
 
 tsp_fnc_sector_variable = {if (missionNameSpace getVariable [_this, objNull] isEqualTo objNull) then {tsp_debug} else {missionNameSpace getVariable _this}};
 tsp_fnc_sector_check = {(tsp_sector_info select {_x#0 == _this})#0#1};
+//tsp_fnc_sector_vehicle = {_grp = group driver _this; _grp leaveVehicle _this; sleep 5; _grp addVehicle _this; _grp copyWaypoints _grp};
+tsp_fnc_sector_vehicle = {_grp = group driver _this; _grp addWaypoint [position _this, 2, 0]; _grp copyWaypoints _grp; deleteWaypoint [_grp, 0]};
 
 tsp_sector_info = [];
 waitUntil {isServer || !isNull (findDisplay 46)};

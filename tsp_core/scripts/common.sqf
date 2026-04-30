@@ -193,7 +193,7 @@
 	};
 
 //-- Mobs
-	tsp_fnc_targets = {  //!([side group _x, side group _unit] call BIS_fnc_sideIsFriendly) &&          //-- Not friends
+	tsp_fnc_targets = {  //!([side group _x, side group _unit] call BIS_fnc_sideIsFriendly) &&  //-- Not friends
 		params ["_unit", ["_distanceAuto", 5], ["_distanceMax", 500], ["_code", {true}], ["_knowsAbout", 1], ["_addToUncon", 25], ["_addToVehicle", 5], ["_addToInvisible", 50]];
 		_targets = (_unit nearEntities [["AllVehicles"], _distanceMax]) select {            //-- Get units in _distanceMax
 			(_x distance _unit < _distanceAuto || _unit knowsAbout _x > _knowsAbout) &&    //-- Select any units in _autoDetectDistance or any units that he knowsAbout
@@ -226,7 +226,7 @@
 	tsp_fnc_shake = {params ["_power", "_duration", "_frequency"]; resetCamShake; tsp_shake = true; addCamShake _this; sleep (_duration+0.1); tsp_shake = nil};
 	tsp_fnc_throw = {
 		params ["_unit", "_weapon", ["_orient", true], ["_remove", true], ["_class", "WeaponHolderSimulated"], ["_select", true], ["_local", isNil "tsp_server_animate"]]; 
-		if (typeName _weapon == "STRING") then {_weapon = weaponsItems _unit select {_x#0 == _weapon} select 0};  //-- Convert strings to full weapon array
+		if (typeName _weapon == "STRING") then {_weapon = weaponsItems _unit select {_x#0 == _weapon} select 0}; if (isNil "_weapon") exitWith {};  //-- Convert strings to full weapon array
 		_dir = vectorNormalized ((_unit weaponDirection _weapon#0) vectorCrossProduct [0, 0, 1]);
 		_up = _dir vectorCrossProduct (_unit weaponDirection _weapon#0);
 		_pos = _unit modelToWorldWorld (_unit selectionPosition "RightHand") vectorAdd (_dir vectorMultiply 0.7);

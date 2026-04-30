@@ -17,10 +17,10 @@ tsp_fnc_role = {
 		_x params ["_name", "_icon", "_side", "_children"]; if (playerSide != call compile _side) then {continue}; _offset = _offset - 0.0735;
 
 		_tree = _display ctrlCreate ["tsp_treeview", 9998]; _w = 0.6; _h = 1.05; _y = -0.053; _tree ctrlSetPosition [(1.0-_w)*0.5,((1.0-_h)*0.5)-_y,_w,_h];
-		_tree ctrlSetBackgroundColor [0,0,0,0.7]; if (_forEachIndex != 0) then {_tree ctrlShow false}; _tree ctrlCommit 0; tsp_role_trees pushBack _tree;
+		_tree ctrlSetBackgroundColor [0,0,0,0.7]; if (count tsp_role_roles > 0) then {_tree ctrlShow false}; _tree ctrlCommit 0; tsp_role_trees pushBack _tree;
 		
 		_picture = _display ctrlCreate ["RscPicture", -1]; _w = 0.051; _h = 0.07; _y = 0.525; _picture ctrlSetPosition [((1.0-_w)*0.5)-_offset,((1.0-_h)*0.5)-_y,_w,_h];
-		_picture ctrlSetText _icon; if (_forEachIndex != 0) then {_picture ctrlSetFade 0.5}; _picture ctrlCommit 0; tsp_role_pictures pushBack _picture;
+		_picture ctrlSetText _icon; if (count tsp_role_roles > 0) then {_picture ctrlSetFade 0.5}; _picture ctrlCommit 0; tsp_role_pictures pushBack _picture;
 
 		_button = _display ctrlCreate ["tsp_invisible", 9998]; _w = 0.061; _h = 0.08; _y = 0.525; _button ctrlSetPosition [((1.0-_w)*0.5)-_offset,((1.0-_h)*0.5)-_y,_w,_h];
 		_button ctrlSetBackgroundColor [0,0,0,0]; _button ctrlSetTooltip _name; _button ctrlCommit 0; _button setVariable ["tree", _tree]; _button setVariable ["picture", _picture];
@@ -30,7 +30,7 @@ tsp_fnc_role = {
 			{_x ctrlShow false; _x tvSetCurSel [-1]} forEach tsp_role_trees; _tree ctrlShow true;                           //-- Hide/show trees
 		}];
 
-		{[_tree, _x, [], "", _name] call tsp_fnc_role_recursive} forEach _children; tvExpandAll _tree;  //-- Populate the tree with groups and roles
+		{[_tree, _x, [], _name, _name] call tsp_fnc_role_recursive} forEach _children; tvExpandAll _tree;  //-- Populate the tree with groups and roles
 	} forEach _roles;
 
 	_button = _display ctrlCreate ["RscButtonMenu", 9998]; _w = 0.6; _h = 0.042; _y = -0.602; _button ctrlSetPosition [(1.0-_w)*0.5,((1.0-_h)*0.5)-_y,_w,_h];
@@ -41,7 +41,7 @@ tsp_fnc_role = {
 	if (_force) then {titleCut ["", "BLACK IN", 3]};
 };
 
-tsp_fnc_role_recursive = {
+tsp_fnc_role_recursive = {  //-- Constucts tree & tsp_role_roles, i think
 	params ["_tree", "_item", ["_parent", []], ["_parentName", ""], ["_faction", ""], ["_index", 0]];
 	if (count _item == 3) then {  //-- If item is a category
 		_item params ["_name", "_icon", "_children"];
@@ -49,32 +49,32 @@ tsp_fnc_role_recursive = {
 		if ("marker" in _icon) then {_tree tvSetPictureColor [_parent+[_branch], [playerSide] call BIS_fnc_sideColor]};
 		{[_tree, _x, _parent+[_branch], _name, _faction, _forEachIndex] call tsp_fnc_role_recursive} forEach _children;
 	} else {  //-- If item is a role
-		_item params ["_name", "_loadout", "_arsenal", "_icon", ["_class", ""], ["_code", ""], ["_uid", (_faction+_parentName+(_item#0)) regexReplace [" ",""]]]; 
-		if (_index == 0) then {tsp_role_leader = _uid};  //-- Make first unit leader
+		_item params ["_name", "_loadout", "_arsenal", "_icon", ["_code", ""], ["_uid", (_faction+_parentName+(_item#0)+(str count tsp_role_roles)) regexReplace [" ",""]]]; 
+		if (_index == 0) then {tsp_role_leader = _uid};  //-- Make first unit leader, global var for next recursion
 		_leaf = _tree tvAdd [_parent, _name]; _tree tvSetPicture [_parent+[_leaf], "\A3\ui_f\data\map\vehicleicons\"+_icon];
-		tsp_role_roles pushBack [_tree, _parent+[_leaf], _name, _loadout, _arsenal, _class, _code, _uid, tsp_role_leader, _parentName];
+		tsp_role_roles pushBack [_tree, _parent+[_leaf], _name, _loadout, _arsenal, _code, _uid, tsp_role_leader, _parentName];
 	};
 };
 
 tsp_fnc_role_poll = {  //-- Select role if available and selected, also poll stuff
-	params ["_tree", "_leaf", "_name", "_loadout", "_arsenal", "_class", "_code", "_roleId", "_leadId", "_parentName"];
+	params ["_tree", "_leaf", "_name", "_loadout", "_arsenal", "_code", "_roleId", "_leadId", "_parentName"];
 	if (tvCurSel _tree isEqualTo _leaf && [_roleId, _leadId] call tsp_fnc_role_available) then {  //-- If selected and available
 		missionNameSpace setVariable [player getVariable ["role", "doesntmatterwhatshere"], nil, true];  //-- Set current role (if any) to unnoccupied
-		missionNameSpace setVariable [_roleId, player, true];  //-- Assign role
+		missionNameSpace setVariable [_roleId, getPlayerUID player, true];  //-- Assign new role
 		player setVariable ["role", _roleId, true];  //-- Just for reference to get player role
-		[player, _loadout, true, _class] spawn tsp_fnc_faction; tsp_arsenal = [player, _arsenal] call tsp_fnc_role_arsenal;
-		_groups = allGroups select {groupId _x == _parentName}; if (count _groups > 0) exitWith {[player] join (_groups#0); 
-		["AddGroupMember", [_groups#0, player]] remoteExec ["BIS_fnc_dynamicGroups", 0]};	
+		{[player, _x, true] call tsp_fnc_faction} forEach (if (typeName _loadout == "STRING") then {[_loadout]} else {_loadout});
+		tsp_arsenal = [player, _arsenal] call tsp_fnc_role_arsenal;
+		_groups = allGroups select {groupId _x == _parentName}; if (count _groups > 0) exitWith {[player] join (_groups#0); ["AddGroupMember", [_groups#0, player]] remoteExec ["BIS_fnc_dynamicGroups", 0]};	
 		_group = createGroup [playerSide, true]; _group setGroupIdGlobal [_parentName]; [player] join _group;
 		["RegisterGroup", [_group, leader _group, [nil, _parentName, false]]] remoteExec ["BIS_fnc_dynamicGroups", 0];
 		if (_code != "") then {player call compile _code};
 	};
-	_tree tvSetText [_leaf, _name+(if ([_roleId, _roleId] call tsp_fnc_role_available) then {""} else {" ["+name(missionNameSpace getVariable _roleId)+"]"})];  //-- If occupied
+	_tree tvSetText [_leaf, _name+(if ([_roleId, _roleId] call tsp_fnc_role_available) then {""} else {" ["+name(missionNameSpace getVariable _roleId call BIS_fnc_getUnitByUID)+"]"})];  //-- If occupied
 	_tree tvSetColor [_leaf, [1,1,1, if ([_roleId, _leadId] call tsp_fnc_role_available) then {1} else {0.5}]];  //-- Opacity based on availability
 };
 
 tsp_fnc_role_available = {  //-- Check if fole is available
-	params ["_roleId", "_leadId", ["_occupant", missionNameSpace getVariable [_this#0, objNull]], ["_leader", missionNameSpace getVariable [_this#1, objNull]]];
+	params ["_roleId", "_leadId", ["_occupant", missionNameSpace getVariable [_this#0, ""] call BIS_fnc_getUnitByUID], ["_leader", missionNameSpace getVariable [_this#1, ""] call BIS_fnc_getUnitByUID]];
 	if (_roleId != _leadId && !(_leader in (allPlayers+playableUnits))) exitWith {false};  //-- No leader
 	if (_occupant in (allPlayers+playableUnits)) exitWith {false};  //-- Occupied
 	true

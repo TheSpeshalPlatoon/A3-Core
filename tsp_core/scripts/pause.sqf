@@ -80,12 +80,13 @@ tsp_fnc_pause_sector = {
 	
 	_tree = (findDisplay 49) ctrlCreate ["tsp_treeview", -1]; _tree ctrlSetPosition [(safezoneX + safeZoneW - 0.93 * 3 / 4) - 0.025, safezoneY + 0.1,0.27,1.09];    
 	_tree ctrlSetBackgroundColor [0,0,0,0.7]; _tree ctrlCommit 0;    
+	_sectors = missionNameSpace getVariable ["tsp_sector_info", []]; _sectors sort true;
 	{  //-- Add sectors to tree   
 		_x params ["_layer", "_state"];    
 		_sector = _tree tvAdd [[], _layer];    
 		_tree tvSetData [[_sector], str _layer];   
 		_tree tvSetColor [[_sector], if (_state) then {[0,1,0,1]} else {[1,0,0,1]}];   
-	} forEach (missionNameSpace getVariable ["tsp_sector_info", []]);    
+	} forEach _sectors;
 	_tree ctrlAddEventHandler ["TreeSelChanged", {params ["_control"]; tsp_sectorsSelected = []; {tsp_sectorsSelected pushBack (call compile (_control tvData _x))} forEach tvSelection _control}];   
 	
 	_load = (findDisplay 49) ctrlCreate ["RscButtonMenu",9998]; _load ctrlSetPosition [(safezoneX + safeZoneW - 0.93 * 3 / 4) - 0.025, safezoneY + 1.195, 0.133, 0.044];    
