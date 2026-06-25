@@ -1,12 +1,13 @@
-["tsp_cba_immerse", "CHECKBOX", "Enable Immerse", "", "TSP Immerse", true] call tsp_fnc_setting;
+["tsp_cba_immerse", "CHECKBOX", "Enable", "", "TSP Immerse", true] call tsp_fnc_setting;
+["tsp_cba_immerse_sprint", "SLIDER", "Cancer Prevention", "", "TSP Immerse", [0,180,45]] call tsp_fnc_setting;
 
-["tsp_cba_immerse_vignette_multiplier", "SLIDER", "Vignette Multiplier", "", "TSP Immerse", [0,1,1]] call tsp_fnc_setting;
-["tsp_cba_immerse_blur_multiplier", "SLIDER", "Blur Multiplier", "", "TSP Immerse", [0,10,1]] call tsp_fnc_setting;
-["tsp_cba_immerse_sway", "SLIDER", "Sway Base", "", "TSP Immerse", [0,10,0.5]] call tsp_fnc_setting;
-["tsp_cba_immerse_sway_multiplier", "SLIDER", "Sway Multiplier", "", "TSP Immerse", [0,10,1]] call tsp_fnc_setting;
-["tsp_cba_immerse_align", "SLIDER", "Alignment Base", "", "TSP Immerse", [0,10,0.5]] call tsp_fnc_setting;
-["tsp_cba_immerse_align_multiplier", "SLIDER", "Alignment Multiplier", "", "TSP Immerse", [0,10,1]] call tsp_fnc_setting;
-["tsp_cba_immerse_bipod_multiplier", "SLIDER", "Bipod Multiplier", "", "TSP Immerse", [0,1,0.1]] call tsp_fnc_setting;
+["tsp_cba_immerse_vignette_multiplier", "SLIDER", "Vignette Multiplier", "", ["TSP Immerse", "Display"], [0,1,1]] call tsp_fnc_setting;
+["tsp_cba_immerse_blur_multiplier", "SLIDER", "Blur Multiplier", "", ["TSP Immerse", "Display"], [0,10,1]] call tsp_fnc_setting;
+["tsp_cba_immerse_sway", "SLIDER", "Sway Base", "", ["TSP Immerse", "Display"], [0,10,0.5]] call tsp_fnc_setting;
+["tsp_cba_immerse_sway_multiplier", "SLIDER", "Sway Multiplier", "", ["TSP Immerse", "Display"], [0,10,1]] call tsp_fnc_setting;
+["tsp_cba_immerse_align", "SLIDER", "Alignment Base", "", ["TSP Immerse", "Display"], [0,10,0.5]] call tsp_fnc_setting;
+["tsp_cba_immerse_align_multiplier", "SLIDER", "Alignment Multiplier", "", ["TSP Immerse", "Display"], [0,10,1]] call tsp_fnc_setting;
+["tsp_cba_immerse_bipod_multiplier", "SLIDER", "Bipod Multiplier", "", ["TSP Immerse", "Display"], [0,1,0.1]] call tsp_fnc_setting;
 
 ["tsp_cba_immerse_intensity", "SLIDER", "Intensity", "", ["TSP Immerse", "Suppression"], [0,1,0.3]] call tsp_fnc_setting;
 ["tsp_cba_immerse_distance", "SLIDER", "Distance", "", ["TSP Immerse", "Suppression"], [0,30,10]] call tsp_fnc_setting;
@@ -51,12 +52,23 @@ tsp_fnc_immerse_poll = {
 	if (_suppression > 0) then {_unit setVariable ["suppression", (_suppression - tsp_cba_immerse_decay) max 0]};  //-- Suppression decay
 };
 
-waitUntil {!isNull (findDisplay 46)}; if (!tsp_cba_immerse) exitWith {};
-with uiNameSpace do {tsp_immerse_blur = ppEffectCreate ["DynamicBlur", 500]; tsp_immerse_blur ppEffectEnable true};
-with uiNameSpace do {tsp_immerse_vignette = findDisplay 46 ctrlCreate ["RscPicture", -1]; tsp_immerse_vignette ctrlSetPosition [safeZoneX, safezoneY, safeZoneW, safezoneH]};
-with uiNameSpace do {tsp_immerse_vignette ctrlSetTextColor [0,0,0,1]; tsp_immerse_vignette ctrlSetText ((missionNameSpace getVariable "tsp_path")+"data\vignette.paa"); tsp_immerse_vignette ctrlCommit 0};
+tsp_fnc_immerse_sprint = {
+	_lastDir = getDirVisual player;
+	while {sleep 0.1; tsp_cba_immerse && tsp_cba_immerse_sprint > 0} do {
+		_delta = abs (getDirVisual player - _lastDir); if (_delta > 180) then {_delta = 360 - _delta};
+		if (_delta > tsp_cba_immerse_sprint && {speed player > 10}) then {_sprint = isSprintAllowed player; player allowSprint false; sleep 1; player allowSprint _sprint};
+		_lastDir = getDirVisual player;
+	};
+};
+
+waitUntil {isDedicated || !isNull (findDisplay 46)}; if (!tsp_cba_immerse) exitWith {};
+with uiNameSpace do {
+	tsp_immerse_blur = ppEffectCreate ["DynamicBlur", 500]; tsp_immerse_blur ppEffectEnable true;
+	tsp_immerse_vignette = findDisplay 46 ctrlCreate ["RscPicture", -1]; tsp_immerse_vignette ctrlSetPosition [safeZoneX, safezoneY, safeZoneW, safezoneH];
+	tsp_immerse_vignette ctrlSetTextColor [0,0,0,1]; tsp_immerse_vignette ctrlSetText ((missionNameSpace getVariable "tsp_path")+"data\vignette.paa"); tsp_immerse_vignette ctrlCommit 0;
+};
 player addEventHandler ["OpticsSwitch", {params ["_unit", "_ads"]; if (_ads) then {[_unit, true] call tsp_fnc_immerse_poll} else {[] spawn {sleep 0.1; resetCamShake}}}];  //-- Call immediately
 player addEventHandler ["Suppressed", {_this spawn tsp_fnc_immerse_suppress}];
 player addEventHandler ["Hit", {params ["_unit", "_source", "_damage"]; [10*_damage, 2*_damage, 25*_damage] spawn tsp_fnc_shake}];
 //player addEventHandler ["Explosion", {params ["_vehicle", "_damage"]; [10*_damage, 5*_damage, 25*_damage] spawn tsp_fnc_shake}];
-[] spawn {while {sleep 1; tsp_cba_immerse} do {[player, false] call tsp_fnc_immerse_poll}};
+[] spawn {while {sleep 1; tsp_cba_immerse} do {[player, false] call tsp_fnc_immerse_poll}}; [] spawn tsp_fnc_immerse_sprint;

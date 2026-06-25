@@ -238,7 +238,7 @@ tsp_fnc_capture_play = {
 	deleteVehicle _enemy;
 };
 
-if (true) exitWith {};  //-- Notes below
+/*
 [] spawn {
 	_time = 7; _allData = [];
 	{[_x, _time] spawn tsp_fnc_capture} forEach allPlayers;	sleep (_time+1);
@@ -249,3 +249,4 @@ if (true) exitWith {};  //-- Notes below
 		[_replicant, _data] spawn tsp_fnc_capture_play; [_replicant, _time] spawn {sleep ((_this#1)+2); deleteVehicle (_this#0)};
 	} forEach _allData;
 };
+*/

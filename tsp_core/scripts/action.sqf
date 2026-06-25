@@ -25,7 +25,7 @@ tsp_fnc_action_garage = {
 	{_display displayCtrl _x ctrlShow false} forEach [44151,44150,44146,44147,44148,44149,44346,44347,931,932,933,934,935];                                               //-- Remove buttons 
 	_display displayCtrl 930 ctrlSetText "\a3\Missions_F_Orange\Data\Img\Showcase_LawsOfWar\action_exit_CA.paa"; _display displayCtrl 930 ctrlSetTooltip "Vehicles";     //-- Edit button
 	while {uiNameSpace getVariable ["BIS_fnc_arsenal_cam", -1] isNotEqualTo -1 && !isNil "BIS_fnc_arsenal_center"} do {BIS_fnc_arsenal_center setPosASL _pos; BIS_fnc_arsenal_center setDir _dir};  //-- Set pos and directSay
-	_vehicle = createVehicle [typeOf BIS_fnc_garage_center, [0,0,0], [], 0, "CAN_COLLIDE"]; _vehicle attachTo [BIS_fnc_garage_center, [0,0,0]];                        //-- Create global vehicle
+	_vehicle = createVehicle [typeOf BIS_fnc_garage_center, [0,0,0], [], 0, "CAN_COLLIDE"]; _vehicle attachTo [BIS_fnc_garage_center, [0,0,0]]; player moveInAny _vehicle;  //-- Create global vehicle
 	[_vehicle, ([BIS_fnc_garage_center] call BIS_fnc_getVehicleCustomization)#0, ([BIS_fnc_garage_center] call BIS_fnc_getVehicleCustomization)#1] call BIS_fnc_initVehicle;  //-- Copy look
 	{deleteVehicle _x} forEach (allUnits select {"B_Soldier_VR_F" in typeOf _x}); deleteVehicle BIS_fnc_garage_center;                                               //-- Delete VR and local vehicle
 };
@@ -47,12 +47,12 @@ tsp_fnc_action = {  //-- Changes for public release in here [boks, "Arsenal"] ca
 	if (_type == "Role") then {[_object, "Select Role", "\a3\ui_f\data\IGUI\Cfg\holdactions\holdAction_requestLeadership_ca.paa", {[] spawn tsp_fnc_role}, "tsp_param_role"] call tsp_fnc_action_hold};
 	if (_type == "Arsenal") then {
 		_params params [["_full", false]];
-		if (_full) then {
-			[_object, "Arsenal", "\a3\missions_f_oldman\data\img\holdactions\holdAction_box_ca.paa", {["Open", [true]] call BIS_fnc_arsenal}] call tsp_fnc_action_hold;
+		if (_full) then {			
 			[_object, "Arsenal (ACE)", "\a3\missions_f_oldman\data\img\holdactions\holdAction_box_ca.paa", {[player, player, true] call ace_arsenal_fnc_openBox}, "!isNil 'ace_arsenal_fnc_openBox'"] call tsp_fnc_action_hold;
+			[_object, "Arsenal", "\a3\missions_f_oldman\data\img\holdactions\holdAction_box_ca.paa", {["Open", [true]] call BIS_fnc_arsenal}] call tsp_fnc_action_hold;
 		} else {
-			[_object, "Arsenal", "\a3\missions_f_oldman\data\img\holdactions\holdAction_box_ca.paa", {[player] spawn tsp_fnc_action_arsenal}] call tsp_fnc_action_hold;
 			[_object, "Arsenal (ACE)", "\a3\missions_f_oldman\data\img\holdactions\holdAction_box_ca.paa", {[player, true, false] call ace_arsenal_fnc_removeVirtualItems; [player, tsp_arsenal] call ace_arsenal_fnc_addVirtualItems; [player, player] call ace_arsenal_fnc_openBox}, "!isNil 'ace_arsenal_fnc_openBox'"] call tsp_fnc_action_hold;
+			[_object, "Arsenal", "\a3\missions_f_oldman\data\img\holdactions\holdAction_box_ca.paa", {[player] spawn tsp_fnc_action_arsenal}] call tsp_fnc_action_hold;
 		};
 		[_object, "Save", "\a3\ui_f\data\IGUI\Cfg\holdactions\holdAction_unloaddevice_ca.paa", {tsp_loadout_saved = getUnitLoadout player; ["", "Loadout Saved"] spawn (missionNameSpace getVariable ["tsp_fnc_hint", BIS_fnc_showSubtitle])}] call tsp_fnc_action_hold;		
 		[_object, "Load", "\a3\ui_f\data\IGUI\Cfg\holdactions\holdAction_loaddevice_ca.paa", {player setUnitLoadout tsp_loadout_saved; ["", "Loadout Loaded"] spawn (missionNameSpace getVariable ["tsp_fnc_hint", BIS_fnc_showSubtitle])}, "!isNil 'tsp_loadout_saved'"] call tsp_fnc_action_hold;

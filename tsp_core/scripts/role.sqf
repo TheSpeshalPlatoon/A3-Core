@@ -75,8 +75,8 @@ tsp_fnc_role_poll = {  //-- Select role if available and selected, also poll stu
 
 tsp_fnc_role_available = {  //-- Check if fole is available
 	params ["_roleId", "_leadId", ["_occupant", missionNameSpace getVariable [_this#0, ""] call BIS_fnc_getUnitByUID], ["_leader", missionNameSpace getVariable [_this#1, ""] call BIS_fnc_getUnitByUID]];
-	if (_roleId != _leadId && !(_leader in (allPlayers+playableUnits))) exitWith {false};  //-- No leader
-	if (_occupant in (allPlayers+playableUnits)) exitWith {false};  //-- Occupied
+	if (_occupant in (allPlayers+playableUnits) && _occupant getVariable ["role", ""] isEqualTo _roleId) exitWith {false};  //-- Occupied
+	if (_roleId != _leadId && !(_leader in (allPlayers+playableUnits) && _leader getVariable ["role", ""] isEqualTo _leadId)) exitWith {false};  //-- No leader
 	true
 };
 
@@ -114,7 +114,7 @@ tsp_fnc_role_vehicle = {  //-- Vehicle restriction
 	}];
 };
 
-waitUntil {!isNull (findDisplay 46) && time > 5};
+waitUntil {isDedicated && !isNull (findDisplay 46)};
 player addEventHandler ["Take", {params ["_unit"]; if (tsp_param_roleCheck) then {[_unit] call tsp_fnc_role_check}}];
 [missionNamespace, "arsenalClosed", {if (tsp_param_roleCheck) then {[_unit] call tsp_fnc_role_check}}] call BIS_fnc_addScriptedEventHandler;
 if (isServer) then {["Initialize", [true]] call BIS_fnc_dynamicGroups};

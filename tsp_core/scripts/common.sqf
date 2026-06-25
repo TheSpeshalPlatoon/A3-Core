@@ -271,7 +271,7 @@
 		};
 	};
 	tsp_fnc_notify = {  //-- Targeted hint in radius
-		params ["_unit", "_text", ["_distance", tsp_cba_hint_distance]];
+		params ["_unit", "_text", ["_distance", tsp_cba_hint_distance]]; if (tsp_cba_hint_distance == 0) exitWith {};
 		_units = allPlayers select {[side _x, side _unit] call BIS_fnc_sideIsFriendly && _x distance2D _unit < _distance && count lineIntersectsSurfaces [eyePos _x, eyePos _unit, _x, _unit, true, -1] == 0};
 		{[name _unit, (_text regexReplace ["_x", name _x]) regexReplace ["_unit", name _unit]] remoteExec ["tsp_fnc_hint", _x]} forEach _units;
 	};

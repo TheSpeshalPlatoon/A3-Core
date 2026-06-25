@@ -1,11 +1,12 @@
 class CfgPatches {
     class tsp_core {requiredAddons[] = {"cba_common"}; units[] = {"tsp_holder"};};
-	/*class tsp_earplug {requiredAddons[] = {}; units[] = {};};
-	class tsp_crash {requiredAddons[] = {}; units[] = {};};
-	class tsp_flare {requiredAddons[] = {"A3_Weapons_F"}; units[]={}; ammo[]= {"FlareBase", "F_40mm_White", "Flare_82mm_AMOS_White", "Sh_155mm_AMOS"};};
-	class tsp_ragdoll {requiredAddons[] = {}; units[] = {};};
-	class tsp_immerse {requiredAddons[] = {}; units[] = {};};
-	class tsp_faction {requiredAddons[] = {}; units[] = {};};*/
+	//class tsp_earplug {requiredAddons[] = {}; units[] = {};};
+	//class tsp_chvd {requiredAddons[] = {}; units[] = {};};
+	//class tsp_crash {requiredAddons[] = {}; units[] = {};};
+	//class tsp_light {requiredAddons[] = {"A3_Weapons_F"}; units[]={}; ammo[]= {"FlareBase", "F_40mm_White", "Flare_82mm_AMOS_White", "Sh_155mm_AMOS"};};
+	//class tsp_ragdoll {requiredAddons[] = {}; units[] = {};};
+	//class tsp_immerse {requiredAddons[] = {}; units[] = {};};
+	//class tsp_faction {requiredAddons[] = {}; units[] = {};};
 };
 
 #include "\a3\ui_f\hpp\definecommongrids.inc"
@@ -201,9 +202,11 @@ class CfgGesturesMale {
 class CfgEditorSubCategories {
 	class tsp_inf_sf {displayName = "Infantry (Special Forces)";};
 	class tsp_inf_navy {displayName = "Infantry (Navy)"};
+	class tsp_inf_seal {displayName = "Infantry (Seal)"};
 	class tsp_inf_crew {displayName = "Infantry (Crew)";};
 	class tsp_inf_1990 {displayName = "Infantry (1990)";};
 	class tsp_inf_death {displayName = "Infantry (Death Squads)";};
+	class tsp_inf_police {displayName = "Infantry (Police)";};
 	class tsp_men_contractor {displayName = "Contractors";};
 	class tsp_men_guard {displayName = "Guards";}; 
 	class tsp_men_formal {displayName = "Formal";}; 

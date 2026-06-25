@@ -1,4 +1,4 @@
-["tsp_cba_core_chvd", "CHECKBOX", "Enable CHVD", "Enables CHVD menu.", "TSP Core", tsp_mission] call tsp_fnc_setting;
+["tsp_cba_core_chvd", "CHECKBOX", "Enable CHVD", "Enables CHVD menu.", "TSP Core", true] call tsp_fnc_setting;
 chvd_fnc_fovViewDistance = {
 	private ["_ret"];
 	_minViewDistance = [_this, 0, 0, [0]] call BIS_fnc_param;

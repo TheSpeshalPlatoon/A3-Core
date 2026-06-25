@@ -24,10 +24,12 @@ tsp_fnc_earplug_close = {
 tsp_fnc_earplug_in = {("ACE_EarPlugs" in items player && tsp_earplug_insert) || count ([headgear player, goggles player] select {getNumber (configFile >> "CfgWeapons" >> _x>> "ace_hearing_hasEHP") > 0}) > 0};
 tsp_fnc_earplug_state = {if (call tsp_fnc_earplug_in) then {0.1 fadeSound tsp_earplug_volume} else {0.1 fadeSound 1; tsp_earplug_insert = false}};
 
-waitUntil {!isNull (findDisplay 46)}; tsp_earplug_insert = false; tsp_earplug_volume = 0.25;
+tsp_earplug_insert = false; tsp_earplug_volume = 0.25;
 ["tsp_earplug_adjust", ["TSP Core", "Earplug"], "Adjust Earplug Volume", 15, false, true, false, {[] call tsp_fnc_earplug_open}, {[] call tsp_fnc_earplug_close}] spawn tsp_fnc_keybind;
 ["tsp_earplug_insert", ["TSP Core", "Earplug"], "Insert/Remove Earplugs", 210, false, false, false, {[] call tsp_fnc_earplug_toggle}] spawn tsp_fnc_keybind;
+waitUntil {isDedicated || !isNull (findDisplay 46)};
 player addEventHandler ["AnimStateChanged", {call tsp_fnc_earplug_state}];
 player addEventHandler ["InventoryClosed", {call tsp_fnc_earplug_state}];
+player addEventHandler ["Respawn", {tsp_earplug_insert = false; 0.5 fadeSound 1}];
 ["featureCamera", {call tsp_fnc_earplug_state}] call CBA_fnc_addPlayerEventHandler;
 if !(isNil "CBA_fnc_addEventHandler") then {["ace_interactMenuClosed", {call tsp_fnc_earplug_state}] call CBA_fnc_addEventHandler};

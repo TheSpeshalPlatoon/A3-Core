@@ -16,6 +16,4 @@ tsp_fnc_skill = {
     if (random 1 < _tracer && count _magazines > 0) then {_unit reload [currentMuzzle _unit, _magazines#0]};
 };
 
-//-- SET SKILL ON EACH NEW UNIT
-{[_x] call tsp_fnc_skill} forEach allUnits; 
 addMissionEventHandler ["EntityCreated", {params ["_entity"]; if (local _entity && _entity isKindOf "CAManBase") then {[_entity] call tsp_fnc_skill}}];

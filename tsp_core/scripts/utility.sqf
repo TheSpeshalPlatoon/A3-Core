@@ -43,7 +43,7 @@ tsp_fnc_anim = {  //-- Ambient AI animations
 	while {local _unit && lifeState _unit == "HEALTHY"} do {
 		_unit disableAI "ANIM"; 
         while {count _loops > 0 && lifeState _unit == "HEALTHY"} do {  //-- While chilling, loop through _loop array
-			_loop = selectRandom _loops; [_unit, [_loop, 0, 0]] remoteExec ["switchMove", 0];
+			_loop = selectRandom _loops; [_unit, _loop] remoteExec ["switchMove", 0];
 			_unit setVariable ["animDone", false]; waitUntil {sleep 0.1; _unit call _exit || lifeState _unit != "HEALTHY" || (_react && behaviour _unit == "COMBAT") || _unit getVariable ["animDone", true]};
 			if (_unit call _exit || lifeState _unit != "HEALTHY" || (_react && behaviour _unit == "COMBAT")) exitWith {};
         };
@@ -51,7 +51,7 @@ tsp_fnc_anim = {  //-- Ambient AI animations
 		if (count _outs > 0 && lifeState _unit == "HEALTHY") then {  //-- Out animation
 			_out = selectRandom _outs; [_unit, [_out, 0, 0]] remoteExec ["switchMove", 0];
 			sleep (abs(1/(getNumber (configFile >> "CfgMovesMaleSdr" >> "States" >> _out >> "speed")+0.1))+0.1);
-			if (animationState _unit == _out) then {[_unit, ["", 0, 0]] remoteExec ["switchMove", 0]};  //-- If out doesn't go to actual out
+			if (animationState _unit == _out) then {[_unit, ["", 0, 0]] remoteExec ["switchMove", 0]};  //-- If out happens to be weird terminal thing
 		};
 		if (_unit call _exit) exitWith {};
 		waitUntil {sleep 5; behaviour _unit != "COMBAT"};  //-- Go back to loop
@@ -77,19 +77,19 @@ tsp_fnc_zombience = {  //-- Constant reinforcements
 tsp_fnc_underground = {  //-- Underground area lighting (Use in triggers)
 	params ["_unit", ["_dark", false], ["_attach", _this#0]];
 	titleCut ["", "BLACK OUT", 0.5]; sleep 0.5; _unit attachTo [_attach, [0,0,0]]; detach _unit;
-	if (_dark && isNil "dark_eh") then {dark_eh = [{setDate [2015, 12, 31, 0, 0]}, 0, []] call CBA_fnc_addPerFrameHandler};
-	if (!_dark) then {[dark_eh] call CBA_fnc_removePerFrameHandler};  
+	if (_dark && isNil "dark_eh") then {dark_eh = [{setDate [2035, 12, 19, 0, 0]}, 0, []] call CBA_fnc_addPerFrameHandler};
+	if (!_dark) then {[dark_eh] call CBA_fnc_removePerFrameHandler; dark_eh = nil};  
 	sleep 0.5; titleCut ["", "BLACK IN", 0.5];
 };
 
 tsp_fnc_intro = {  //-- Custom slideshow intro
 	params ["_timeline", ["_music", ""], ["_exit", {}], ["_sthud", if (!isNil "STHud_UIMode") then {STHud_UIMode} else {0}]]; 
-	addMissionEventHandler ["PreloadFinished", 	{tsp_intro_loaded = true}]; waitUntil {!isNil "tsp_intro_loaded"};
+	titleCut ["", "BLACK OUT", 0.01]; addMissionEventHandler ["PreloadFinished", {tsp_intro_loaded = true}]; waitUntil {sleep 1; !isNil "tsp_intro_loaded"};
 	tsp_skipEH = (findDisplay 46) displayAddEventHandler ["KeyDown", "if ((_this#1) == 57) exitWith {0 fadeSound 1; playSound 'OMCameraPhoto'; tsp_skipped = true}; true"];
 	STHud_UIMode = 0; titleCut ["", "BLACK OUT", 0.01]; 0 fadeSound 0; playMusic _music; 3 fadeMusic 1; sleep 2; ["", "Press [SPACE] to Skip"] spawn BIS_fnc_showSubtitle; 
 	{if (!isNil "tsp_skipped") exitWith {}; _x params ["_time", "_code"]; {_x call bis_fnc_animatedScreen} forEach [[1],[0,[15,5,1],1.05]]; [] spawn _code; uiSleep _time} forEach _timeline;
 	(findDisplay 46) displayRemoveEventHandler ["keyDown", tsp_skipEH];	{_x call bis_fnc_animatedScreen} forEach [[0],[1]];  //-- INIT, DESTROY
-	titleCut ["", "BLACK IN", 3]; 2 fadeSound 1; 5 fadeMusic 0; [] spawn _exit; STHud_UIMode = _sthud; sleep 5; playMusic "";
+	tsp_intro_loaded = nil; titleCut ["", "BLACK IN", 3]; 2 fadeSound 1; 5 fadeMusic 0; [] spawn _exit; STHud_UIMode = _sthud; sleep 5; playMusic "";
 };
 
 tsp_fnc_intro_guide = {  //-- The numbers Mason, what do they mean!?
@@ -208,15 +208,16 @@ tsp_fnc_task = {  //-- Custom task framework, see below
 		["_codeCreate", {}], ["_codeSucceed", {}], ["_codeFail", {}], ["_codeCancel", {}], ["_codeDelete", {}], 
 		["_poll", 5], ["_state", 0]
 	]; _id = if (typeName _task == "ARRAY") then {_task#0} else {_task};
-
+	if (typeName _pos == "STRING") then {waitUntil {(missionNameSpace getVariable [_pos, ""]) isNotEqualTo ""}; _pos = getPos (call compile _pos)};  //-- For sectors
 	waitUntil {uiSleep _poll; call _conditionCreate};
 	[_owner, _task, [_description, _name], _pos, "CREATED", -1, true, _type] call BIS_fnc_taskCreate;  //-- Alright we exist now
-	[] call _codeCreate;
-	while {sleep _poll; !(_id call BIS_fnc_taskState in ["SUCCEEDED", "FAILED", "CANCELED"])} do {  //-- While task active
+	[] call _codeCreate; 
+	while {!(_id call BIS_fnc_taskState in ["SUCCEEDED", "FAILED", "CANCELED"])} do {  //-- While task active
 		_state = missionNameSpace getVariable ["task_save_" + _id, 0];  //-- For loading purposes
 		if ([] call _conditionSuccess || _state == 1) exitWith {_state = 1; [_id, "SUCCEEDED"] call BIS_fnc_taskSetState; call _codeSucceed};  //-- Success state
 		if ([] call _conditionFail || _state == 2) exitWith {_state = 2; [_id, "FAILED"] call BIS_fnc_taskSetState; call _codeFail};          //-- Fail state
 		if ([] call _conditionCancel || _state == 3) exitWith {_state = 3; [_id, "CANCELED"] call BIS_fnc_taskSetState; call _codeCancel};   //-- Cancel state
+		sleep _poll;
 	};
 	call _codeDelete;
 	if (isNil "tsp_tasks") then {tsp_tasks = []}; tsp_tasks pushBack ["task_save_" + _id, _state]; publicVariable "tsp_tasks";  //-- For saving purposes

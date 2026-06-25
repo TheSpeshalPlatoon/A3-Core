@@ -5,7 +5,7 @@ tsp_fnc_crash_handler = {
 	params ["_vehicle"];
 	if !(tsp_cba_crash && local _vehicle && (_vehicle isKindOf 'Helicopter' || _vehicle isKindOf 'Plane')) exitWith {};
 	{_vehicle removeAllEventHandlers _x} forEach ["EpeContactStart", "HandleDamage"];  //-- Remove handlers so we don't double add
-	_vehicle addEventHandler ["EpeContactStart", {_this#0 setVariable ["tsp_crash_lastImpactForce", _this#4]}];  //-- Handle PhysX contact, save force to vehicle
+	_vehicle addEventHandler ["EpeContactStart", {_this#0 setVariable ["tsp_crash_lastImpactForce", _this#4]}];  //-- Handle PhysX contact, save force to vehicle for later
 	_vehicle addEventHandler ["HandleDamage", {  //-- Handle damage
 		params ["_vehicle", "_selection", "_damage", "_source"];
 		if !(_source == driver _vehicle && !alive _vehicle) exitWith {}; _vehicle removeAllEventHandlers "HandleDamage";       //-- Only continue if vehicle crashed and is dead
@@ -27,11 +27,11 @@ tsp_fnc_crash_wreck = {
 
 	if (_vehicle isKindOf "Helicopter") then {  //-- Destroy rotor
 		[getPosASL _vehicle, [vectorDir _vehicle, vectorUp _vehicle], velocity _vehicle] params ["_pos", "_vec", "_vel"];
-		_vehicle setVehiclePosition [[0, 0, 1000], [], 0, "FLY"];
-		_destroyer = createVehicle ["Land_Pier_Box_F", [0,0,0], [], 0, "CAN_COLLIDE"];
+		//_vehicle setVehiclePosition [[0, 0, 1000], [], 0, "FLY"];
+		_destroyer = createVehicleLocal ["Land_Pier_Box_F", [0,0,0], [], 0, "CAN_COLLIDE"];
 		_destroyer attachTo [_vehicle, [12, 0, 0], "main rotor"]; detach _destroyer;
-		_vehicle allowDamage true; sleep 1; _vehicle allowDamage false; deleteVehicle _destroyer;
-		_vehicle setPosASL _pos; _vehicle setVectorDirAndUp _vec; _vehicle setVelocity _vel;
+		_vehicle allowDamage true; sleep 0.1; _vehicle allowDamage false; deleteVehicle _destroyer;
+		//_vehicle setPosASL _pos; _vehicle setVectorDirAndUp _vec; _vehicle setVelocity _vel;
 	};
 
 	_smoke = "test_EmptyObjectForSmoke" createVehicle (getPos _vehicle); _smoke attachTo [_vehicle, [0, 0, 0], "main rotor"];  //-- Smoke
@@ -138,5 +138,4 @@ BIS_fnc_effectKilledAirDestructionStage2 = {  //--  Modified by DINO
 	deleteVehicle _dirt;
 };
 
-{[_x] call tsp_fnc_crash_handler} forEach vehicles; 
 addMissionEventHandler ["EntityCreated", {params ["_entity"]; [_entity] call tsp_fnc_crash_handler}];

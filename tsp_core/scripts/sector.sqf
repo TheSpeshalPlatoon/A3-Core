@@ -1,4 +1,5 @@
 tsp_fnc_sector_automate = {
+	{missionNameSpace setVariable [("sector_"+triggerText _x), _x, true]} forEach allMissionObjects "EmptyDetector";
 	{
 		if !(triggerText _x in getMissionLayers) then {continue};
 		[triggerText _x] call tsp_fnc_sector_save;
@@ -29,7 +30,7 @@ tsp_fnc_sector_load = {
 	params ["_layer", ["_force", false]];
 	if ((count (tsp_sector_info select {_x#0 == _layer && _x#1}) > 0) && !_force) exitWith {};  //-- CANT LOAD CAUSE IT ALREADY EXISTS
 	tsp_sector_info set [tsp_sector_info findIf {_x#0 == _layer}, [_layer, true]]; publicVariable "tsp_sector_info";  //-- Set status to true
-	if !("@" in _layer) then {{([_x] call tsp_fnc_sector_loadEntity) setVariable ["layer", _layer]} foreach (missionNameSpace getVariable "layer_" + _layer)};  //-- Create stuffs, reassign layer variable
+	if !("@" in _layer) then {{[_x, objNull, objNull, _layer] call tsp_fnc_sector_loadEntity} foreach (missionNameSpace getVariable "layer_" + _layer)};  //-- Create stuffs, reassign layer variable
 	if ("@" in _layer) exitWith {{_x params ["_unit", "_sim"]; _unit enableSimulation _sim; _unit hideObjectGlobal false} foreach (missionNameSpace getVariable "layer_" + _layer)};  //-- Simple layers
 };
 
@@ -66,7 +67,7 @@ tsp_fnc_sector_saveEntity = {
 };
 
 tsp_fnc_sector_loadEntity = {
-	params ["_entityData", ["_vehicle", objNull], ["_entity", objNull]];
+	params ["_entityData", ["_vehicle", objNull], ["_entity", objNull], ["_layer", ""]];
 	_entityData params ["_classname", "_position", "_direction", "_simulation", "_damage", "_loadout", "_stance", "_group", "_leader", "_init", "_behaviour", "_hitpoints", "_vehicleAppearence", "_vehicleLock", "_face", "_voice", "_name", "_varName", "_seatData", "_crewData"];
 
 	if (_classname isKindOf "Man") then {  //-- For dudes
@@ -76,7 +77,7 @@ tsp_fnc_sector_loadEntity = {
 		_entity setSpeaker _voice;
 		_entity setName _name;
 		[_entity, _face] remoteExec ["setFace", 0, _entity];
-		if (_leader) then {_entity spawn {sleep 1; group _this selectLeader _this; group _this copyWaypoints group _this}};	
+		if (_leader) then {_entity spawn {sleep 3; group _this selectLeader _this; group _this copyWaypoints group _this}};	
 	} else {  //-- For vehicles
 		_entity = createVehicle [_classname, [0,0,0], [], 0, "CAN_COLLIDE"];		
 		[_entity, _vehicleAppearence#0, _vehicleAppearence#1] call BIS_fnc_initVehicle;
@@ -92,28 +93,36 @@ tsp_fnc_sector_loadEntity = {
 	_entity allowDamage _damage;
 	if (_varName != "") then {missionNamespace setVariable [_varName, _entity, true]};
 	_entity setVariable ["init", _init];  //-- Return init code to unit so we can take it again later
+	if ("Garrison" in groupId group _entity) then {_entity disableAI "PATH"};
+	if ("Civilian" in groupId group _entity) then {doStop _entity};
 	_entity spawn _init;  //-- Run init code
 
 	//-- Passengers and drivers and stuff
 	if (_seatData isNotEqualTo []) then {
 		_seatData params ["_role", "_cargoIndex", "_turretPath"];
-		if (_role == "driver") then {_entity moveInDriver _vehicle; _entity spawn {sleep 5; _grp = group _this; _grp addWaypoint [position _this, 2, 0]; _grp copyWaypoints _grp; deleteWaypoint [_grp, 0]}};
+		if (_role == "driver") then {_entity moveInDriver _vehicle}; 
+		if (_role == "driver") then {_vehicle spawn {sleep 3; if (speed _this < 0.2) then {_this call tsp_fnc_sector_vehicle}; sleep 3; if (speed _this < 0.2) then {_this call tsp_fnc_sector_vehicle2}}};
 		if (_role == "commander") then {_entity moveInCommander _vehicle};
 		if (_role == "gunner") then {_entity moveInGunner _vehicle};
 		if (_role in ["turret", "Turret"]) then {_entity moveInTurret [_vehicle, _turretPath]};
 		if (_role == "cargo") then {_entity moveInCargo [_vehicle, _cargoIndex]};
 	};
-	if (_crewData isNotEqualTo []) then {{[_x, _entity] call tsp_fnc_sector_loadEntity} foreach _crewData};	
-	
+	if (_crewData isNotEqualTo []) then {{[_x, _entity, objNull, _layer] call tsp_fnc_sector_loadEntity} foreach _crewData};	
+
+	_entity setVariable ["layer", _layer];
 	_entity  //-- Return Unit Variable Name
 };
 
 tsp_fnc_sector_variable = {if (missionNameSpace getVariable [_this, objNull] isEqualTo objNull) then {tsp_debug} else {missionNameSpace getVariable _this}};
 tsp_fnc_sector_check = {(tsp_sector_info select {_x#0 == _this})#0#1};
-//tsp_fnc_sector_vehicle = {_grp = group driver _this; _grp leaveVehicle _this; sleep 5; _grp addVehicle _this; _grp copyWaypoints _grp};
 tsp_fnc_sector_vehicle = {_grp = group driver _this; _grp addWaypoint [position _this, 2, 0]; _grp copyWaypoints _grp; deleteWaypoint [_grp, 0]};
+tsp_fnc_sector_vehicle2 = {_grp = group driver _this; _wp = _grp addWaypoint [position _this, 2, 0]; _wp setWaypointType "GETOUT"; _wp = _grp addWaypoint [position _this, 2, 1]; _wp setWaypointType "GETIN NEAREST"};
+tsp_fnc_sector_clear = {  //-- ["sector_airfield_gate_close", "", sector_airfield_gate_close] call tsp_fnc_sector_clear
+	params ["_sector", ["_layer", ""], ["_trigger", objNull], ["_distance", 0], ["_amount", 3], ["_sides", [independent, east]]]; if !(_sector call tsp_fnc_sector_check) exitWith {false};
+	count (allUnits select {(_layer == "" || _x getVariable ["layer", ""] == _layer) && ((_distance == 0 && _x inArea _trigger) || (_x distance _trigger < _distance)) && (side _x in _sides)}) < _amount
+};
 
-tsp_sector_info = [];
-waitUntil {isServer || !isNull (findDisplay 46)};
-if (isServer) then {call tsp_fnc_sector_automate};  //-- Only server can create sectors
-player addEventHandler ["GetInMan", {params ["_unit", "_role", "_vehicle", "_turret"]; _vehicle setVariable ["layer", nil, true]}];  //-- Legitimate salvage
+if (isNil "tsp_sector_info") then {tsp_sector_info = []};  //-- Dont overwrite when JIP
+waitUntil {isDedicated || !isNull (findDisplay 46)};
+if (isServer) then {isNil {call tsp_fnc_sector_automate}};  //-- Only server can create sectors, isNil because must be unscheduled sleep for scripts to run on units/objects before saving
+player addEventHandler ["GetInMan", {params ["_unit", "_role", "_vehicle"]; _vehicle setVariable ["layer", nil, true]}];  //-- Legitimate salvage
