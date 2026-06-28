@@ -1,4 +1,5 @@
 ["tsp_cba_core_chvd", "CHECKBOX", "Enable CHVD", "Enables CHVD menu.", "TSP Core", true] call tsp_fnc_setting;
+if (!tsp_cba_core_chvd) exitWith {};
 chvd_fnc_fovViewDistance = {
 	private ["_ret"];
 	_minViewDistance = [_this, 0, 0, [0]] call BIS_fnc_param;
@@ -743,7 +744,7 @@ chvd_fnc_openDialog = {
 	if (missionNamespace getVariable ["CHVD_loadingDialog",false]) exitWith {true};
 
 	if (isNull (findDisplay 2900)) then {
-		_dialog = createDialog "CHVD_dialog";
+		_dialog = createDialog "CHVD2_dialog";
 		if (!_dialog) exitWith {systemChat "CH View Distance: Error: can't open dialog."};
 	};
 
@@ -982,4 +983,4 @@ chvd_fnc_updateVehType = {
 		};
 	};
 };
-if (tsp_cba_core_chvd) then {[] spawn chvd_fnc_init};
+[] spawn chvd_fnc_init;

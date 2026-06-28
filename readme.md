@@ -34,8 +34,8 @@ Some addons use `tsp_fnc_keybind` and `tsp_fnc_setting` instead. This is to allo
 ## 🔨 Build
 All TSP addons are built using Addon Builder from the [ArmA 3 Tools](https://store.steampowered.com/app/233800/Arma_3_Tools/) using the following settings:
 
-![Addon Builder Settings](https://raw.githubusercontent.com/Venom-au/HALO-Jiralhanae-Project-Brute/development/assets/build.png?token=GHSAT0AAAAAADSCS5CJHSCVPCZBW3U652NW2QBKRKA)  
+![Addon Builder Settings](https://raw.githubusercontent.com/TheSpeshalPlatoon/A3-Core/refs/heads/main/addon%20builder.png)  
 
 ```
-*.paa;*.jpg;*.jpeg;*.png;*.sqf;*.ogg;*.hpp;*.wss;*.ogg;*.wav;*.xml;*.rvmat
+*.paa;*.jpg;*.jpeg;*.png;*.sqf;*.hpp;*.ogg;*.wss;*.wav;*.xml;*.rvmat;
 ```

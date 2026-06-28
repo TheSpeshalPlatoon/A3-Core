@@ -22,7 +22,7 @@ if (tsp_mission && fileExists (tsp_path+'scripts\sector.sqf')) then {[] spawn co
 if (tsp_mission && fileExists (tsp_path+'scripts\skill.sqf')) then {[] call compileScript [tsp_path+'scripts\skill.sqf']};
 if (tsp_mission && fileExists (tsp_path+'scripts\spawn.sqf')) then {[] spawn compileScript [tsp_path+'scripts\spawn.sqf']};
 
-if (tsp_addons || isClass (configFile >> 'CfgPatches' >> 'tsp_immerse') && fileExists (tsp_path+'scripts\chvd.sqf')) then {[] call compileScript [tsp_path+'scripts\chvd.sqf']};
+if (tsp_addons || isClass (configFile >> 'CfgPatches' >> 'tsp_chvd') && fileExists (tsp_path+'scripts\chvd.sqf')) then {[] call compileScript [tsp_path+'scripts\chvd.sqf']};
 if (tsp_addons || isClass (configFile >> 'CfgPatches' >> 'tsp_earplug') && fileExists (tsp_path+'scripts\earplug.sqf')) then {[] spawn compileScript [tsp_path+'scripts\earplug.sqf']};
 if (tsp_addons || isClass (configFile >> 'CfgPatches' >> 'tsp_crash') && fileExists (tsp_path+'scripts\crash.sqf')) then {[] call compileScript [tsp_path+'scripts\crash.sqf']};
 if (tsp_addons || isClass (configFile >> 'CfgPatches' >> 'tsp_light') && fileExists (tsp_path+'scripts\light.sqf')) then {[] call compileScript [tsp_path+'scripts\light.sqf']};

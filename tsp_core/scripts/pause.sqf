@@ -104,6 +104,6 @@ while {tsp_cba_core_pause} do {  //-- Add interface when escape menu is opened,
 	if (_admin) then {call tsp_fnc_pause_admin; call tsp_fnc_pause_sector} else {(findDisplay 49 displayctrl 13184) ctrlShow false};  //-- If not admin, hide original debug console
 	if (!isNil "BIS_EGSpectatorCamera_camera") then {((findDisplay 49) displayCtrl 1010) ctrlEnable false};  //-- Disable respawn button
 	if (!isNil "BIS_EGSpectatorCamera_camera" && !isNil "tsp_param_spectate") then {call tsp_fnc_pause_leave};  //-- Leave spectate button
-	call tsp_fnc_pause_view;  //-- View distance button
+	if (!isNil "chvd_fnc_init") then {call tsp_fnc_pause_view};  //-- View distance button
 	waitUntil {isNull (findDisplay 49)};  //-- Wait for pause screen to close
 };
