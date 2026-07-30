@@ -340,6 +340,14 @@
 		_particle setParticleRandom [0, [0,0,0], [_dispersion/2, _dispersion/2, _dispersion], 5, 0, [0.1, 0.1, 0.1, 0.1], 0, _dispersion*10, _dispersion*10, 0.1];  //-- Randomization (life, pos, velo, rotat, size, color, dir, dir intensity, angle, bounce)
 		_particle setDropInterval _interval; sleep _duration; deleteVehicle _particle;
 	};
+	tsp_fnc_soundset = { 
+		params ["_unit", ["_extension", ".wss"]];
+		_modes = getArray (configFile >> "CfgWeapons" >> currentWeapon _unit >> "modes"); 
+		_soundSets = getArray (configFile >> "CfgWeapons" >> currentWeapon _unit >> _modes#0 >> "StandardSound" >> "soundSetShot");
+		_shaders = getArray (configFile >> "CfgSoundSets" >> _soundSets select 0 >> "soundShaders");
+		_samples = getArray (configFile >> "CfgSoundShaders" >> _shaders#1 >> "samples");
+		(selectRandom _samples)#0+_extension;
+	};
 
 ["tsp_cba_compat", "CHECKBOX", "Gesture Compatibility Mode", "Makes gesture system compatible with other gesture mods.", "TSP Core", false] call tsp_fnc_setting;
 ["tsp_cba_angle", "SLIDER", "Gesture Angle", "Used to determine high/low ready.", "TSP Core", [-1, 1, -0.1], {}, false] call tsp_fnc_setting;

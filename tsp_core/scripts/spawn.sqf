@@ -7,8 +7,8 @@
 
 tsp_fnc_spawn = {
 	//{_x#0 enableChannel [false, _x#1]} forEach [[0,true],[1,true],[2,false]];  //-- Disable global completely, disable chat for side, command and group, leave voice on so we can place markers
-	titleCut ["", "BLACK OUT", 0.01]; addMissionEventHandler ["PreloadFinished", {tsp_spawn_loaded = true}]; waitUntil {sleep 0.5; !isNil "tsp_spawn_loaded"};
-	if (!isNil "tsp_intro_loaded") exitWith {}; titleCut ["", "BLACK IN", 3];  //-- If in intro, dont run
+	if (time < 5) then {titleCut ["", "BLACK OUT", 0.01]; addMissionEventHandler ["PreloadFinished", {tsp_spawn_loaded = true}]; waitUntil {sleep 0.5; !isNil "tsp_spawn_loaded"}};
+	if (!isNil "tsp_intro_loaded") exitWith {}; if (time < 5) then {titleCut ["", "BLACK IN", 3]};  //-- If in intro, dont run
 	if (isNil "tsp_loadout_original") then {  //-- First spawn
 		if (tsp_param_roleStart) then {[true] call tsp_fnc_role};  //-- Code suspended while role selection active
 		tsp_loadout_original = getUnitLoadout player; tsp_loadout_saved = getUnitLoadout player;

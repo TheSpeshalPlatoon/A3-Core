@@ -6,7 +6,7 @@ if (!isNil "CBA_fnc_addPlayerEventHandler") then {["unit", {playa = _this#0}, tr
 tsp_path = if (isClass (configFile >> 'CfgPatches' >> 'tsp_core')) then {"\tsp_core\"} else {""};
 tsp_mission = (getMissionConfigValue ["tsp_param_mission", false]) isEqualTo "true";  //-- desciption.ext param to load mission scripts
 tsp_addons = (getMissionConfigValue ["tsp_param_addons", false]) isEqualTo "true";   //-- desciption.ext param to load addon scripts
-tsp_debug = createVehicleLocal ["Land_HelipadEmpty_F", getPos player];
+tsp_debug = createVehicleLocal ["Land_InvisibleBarrier_F", getPos player];  //-- No helipad cause other scripts commonly use it
 
 if (fileExists (tsp_path+'scripts\common.sqf')) then {[] call compileScript [tsp_path+'scripts\common.sqf']};
 if (fileExists (tsp_path+'scripts\utility.sqf')) then {[] call compileScript [tsp_path+'scripts\utility.sqf']};

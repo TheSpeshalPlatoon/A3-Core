@@ -6,17 +6,17 @@ tsp_fnc_role = {
 	params [["_force", false], ["_roles", missionNameSpace getVariable ["tsp_roles", getMissionConfigValue "tsp_roles"]], ["_display", findDisplay 46 createDisplay "RscDisplayEmpty"]];
 	if (_force && count _roles > 0) then {_display displayAddEventHandler ["KeyDown", {_this#1 == 1 && !(_this#3)}]; titleCut ["", "BLACK OUT", 0.01]};  //-- Prevent ESC
 
-	_title = _display ctrlCreate ["RscText", 9998]; _w = 0.6; _h = 0.042; _y = 0.6; _title ctrlSetPosition [(1.0-_w)*0.5,((1.0-_h)*0.5)-_y,_w,_h];
+	_title = _display ctrlCreate ["RscText", 9998]; _w = 0.676; _h = 0.042; _y = 0.6; _title ctrlSetPosition [(1.0-_w)*0.5,((1.0-_h)*0.5)-_y,_w,_h];
 	_title ctrlSetFont "PuristaMedium"; _title ctrlSetText "ROLE SELECTION"; _title ctrlSetBackgroundColor [11/100,50/100,20/100,0.9]; _title ctrlCommit 0;	
 	
-	_box = _display ctrlCreate ["RscText", 9998]; _w = 0.6; _h = 0.1; _y = 0.525; _box ctrlSetPosition [(1.0-_w)*0.5,((1.0-_h)*0.5)-_y,_w,_h];
+	_box = _display ctrlCreate ["RscText", 9998]; _w = 0.676; _h = 0.1; _y = 0.525; _box ctrlSetPosition [(1.0-_w)*0.5,((1.0-_h)*0.5)-_y,_w,_h];
 	_box ctrlSetBackgroundColor [0,0,0,0.7]; _box ctrlCommit 0;
 	
-	tsp_role_roles = []; tsp_role_trees = []; tsp_role_pictures = []; _offset = 0.33;
+	tsp_role_roles = []; tsp_role_trees = []; tsp_role_pictures = []; _offset = 0.37;
 	{  //-- Create tree, picture and invisible button for each faction, hide all but the first
 		_x params ["_name", "_icon", "_side", "_children"]; if (playerSide != call compile _side) then {continue}; _offset = _offset - 0.0735;
 
-		_tree = _display ctrlCreate ["tsp_treeview", 9998]; _w = 0.6; _h = 1.05; _y = -0.053; _tree ctrlSetPosition [(1.0-_w)*0.5,((1.0-_h)*0.5)-_y,_w,_h];
+		_tree = _display ctrlCreate ["tsp_treeview", 9998]; _w = 0.676; _h = 1.05; _y = -0.053; _tree ctrlSetPosition [(1.0-_w)*0.5,((1.0-_h)*0.5)-_y,_w,_h];
 		_tree ctrlSetBackgroundColor [0,0,0,0.7]; if (count tsp_role_roles > 0) then {_tree ctrlShow false}; _tree ctrlCommit 0; tsp_role_trees pushBack _tree;
 		
 		_picture = _display ctrlCreate ["RscPicture", -1]; _w = 0.051; _h = 0.07; _y = 0.525; _picture ctrlSetPosition [((1.0-_w)*0.5)-_offset,((1.0-_h)*0.5)-_y,_w,_h];
@@ -33,7 +33,7 @@ tsp_fnc_role = {
 		{[_tree, _x, [], _name, _name] call tsp_fnc_role_recursive} forEach _children; tvExpandAll _tree;  //-- Populate the tree with groups and roles
 	} forEach _roles;
 
-	_button = _display ctrlCreate ["RscButtonMenu", 9998]; _w = 0.6; _h = 0.042; _y = -0.602; _button ctrlSetPosition [(1.0-_w)*0.5,((1.0-_h)*0.5)-_y,_w,_h];
+	_button = _display ctrlCreate ["RscButtonMenu", 9998]; _w = 0.676; _h = 0.042; _y = -0.602; _button ctrlSetPosition [(1.0-_w)*0.5,((1.0-_h)*0.5)-_y,_w,_h];
 	_button ctrlSetText "CONTINUE"; _button ctrlSetFont "PuristaLight"; _button ctrlEnable false; _button ctrlCommit 0;
 	_button setVariable ["display", _display]; _button ctrlAddEventHandler ["buttonClick", {params ["_control"]; _control getVariable "display" closeDisplay 1}];
 
@@ -114,8 +114,8 @@ tsp_fnc_role_vehicle = {  //-- Vehicle restriction
 	}];
 };
 
-waitUntil {isDedicated && !isNull (findDisplay 46)};
+waitUntil {!isNull (findDisplay 46)};
 player addEventHandler ["Take", {params ["_unit"]; if (tsp_param_roleCheck) then {[_unit] call tsp_fnc_role_check}}];
 [missionNamespace, "arsenalClosed", {if (tsp_param_roleCheck) then {[_unit] call tsp_fnc_role_check}}] call BIS_fnc_addScriptedEventHandler;
 if (isServer) then {["Initialize", [true]] call BIS_fnc_dynamicGroups};
-if (hasInterface) then {["InitializePlayer", [player, true]] call BIS_fnc_dynamicGroups};
+if (hasInterface) then {waitUntil {speed player > 0}; ["InitializePlayer", [player, true]] call BIS_fnc_dynamicGroups};

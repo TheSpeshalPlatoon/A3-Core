@@ -55,12 +55,13 @@ tsp_fnc_sector_saveEntity = {
 		getAllHitPointsDamage _entity,                            //-- 11: Hitpoints
 		[_entity] call BIS_fnc_getVehicleCustomization,           //-- 12: Vehicle Appearence
 		locked _entity,                                           //-- 13: Vehicle Locks
-		face _entity,                                             //-- 14: Face
-		speaker _entity,                                          //-- 15: Voice
-		name _entity,                                             //-- 16: Name
-		vehicleVarName _entity,                                   //-- 17: Variable
-		_seatData,                                                //-- 18: Seat
-		_crewData                                                 //-- 19: Crew
+		getPylonMagazines _entity,                               //-- 14: Vehicle Pylons
+		face _entity,                                             //-- 15: Face
+		speaker _entity,                                          //-- 16: Voice
+		name _entity,                                             //-- 17: Name
+		vehicleVarName _entity,                                   //-- 18: Variable
+		_seatData,                                                //-- 19: Seat
+		_crewData                                                 //-- 20: Crew
 	];
 	{deletevehicle _x} forEach crew _entity; deletevehicle _entity;
 	_entityData
@@ -68,7 +69,7 @@ tsp_fnc_sector_saveEntity = {
 
 tsp_fnc_sector_loadEntity = {
 	params ["_entityData", ["_vehicle", objNull], ["_entity", objNull], ["_layer", ""]];
-	_entityData params ["_classname", "_position", "_direction", "_simulation", "_damage", "_loadout", "_stance", "_group", "_leader", "_init", "_behaviour", "_hitpoints", "_vehicleAppearence", "_vehicleLock", "_face", "_voice", "_name", "_varName", "_seatData", "_crewData"];
+	_entityData params ["_classname", "_position", "_direction", "_simulation", "_damage", "_loadout", "_stance", "_group", "_leader", "_init", "_behaviour", "_hitpoints", "_vehicleAppearence", "_vehicleLock", "_vehiclePylons", "_face", "_voice", "_name", "_varName", "_seatData", "_crewData"];
 
 	if (_classname isKindOf "Man") then {  //-- For dudes
 		_entity = _group createUnit [_classname, [0,0,0], [], 0, "CAN_COLLIDE"];
@@ -79,8 +80,9 @@ tsp_fnc_sector_loadEntity = {
 		[_entity, _face] remoteExec ["setFace", 0, _entity];
 		if (_leader) then {_entity spawn {sleep 3; group _this selectLeader _this; group _this copyWaypoints group _this}};	
 	} else {  //-- For vehicles
-		_entity = createVehicle [_classname, [0,0,0], [], 0, "CAN_COLLIDE"];		
+		_entity = createVehicle [_classname, [0,0,0], [], 0, "CAN_COLLIDE"];
 		[_entity, _vehicleAppearence#0, _vehicleAppearence#1] call BIS_fnc_initVehicle;
+		{_entity setPylonLoadout ["pylon"+str (_forEachIndex+1), _x]} forEach _vehiclePylons;
 		_entity lock _vehicleLock;
 	};	
 	
