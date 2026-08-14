@@ -1,15 +1,25 @@
 ["tsp_cba_ragdoll", "CHECKBOX", "Enable Ragdolling", "Enables ragdolling on button press.", ["TSP Core", "Ragdoll"], true] call tsp_fnc_setting;
 ["tsp_cba_ragdoll_freefall", "CHECKBOX", "Enable Free Falling", "Enables free falling when jumping from height.", ["TSP Core", "Ragdoll"], true] call tsp_fnc_setting;
 ["tsp_cba_ragdoll_blood", "CHECKBOX", "Enable Blood", "Enables blood decal when impacting surfaces.", ["TSP Core", "Ragdoll"], true] call tsp_fnc_setting;
+["tsp_cba_ragdoll_drop", "CHECKBOX", "Drop Weapons", "Drop weapons on tackle.", ["TSP Core", "Ragdoll"], true] call tsp_fnc_setting;
 
 tsp_fnc_ragdoll_start = {
 	params ["_unit", ["_launch", false]];
-	if (_unit getVariable ["tsp_ragdoll", false] || lifeState _unit == "INCAPACITATED" || vehicle _unit != _unit) exitWith {}; _unit setVariable ["tsp_ragdoll", true];
-	if (_launch && speed _unit > 17 && stance _unit == "STAND") then {_unit setVelocityModelSpace [0, (speed _unit) * 0.22, 4.5]; [_unit, "AmovPercMsprSlowWrflDf_AmovPpneMstpSrasWrflDnon"] remoteExec ["switchMove", 0]; sleep 0.6};
+	if (_unit getVariable ["tsp_ragdoll", false] || lifeState _unit == "INCAPACITATED" || vehicle _unit != _unit) exitWith {}; _unit setVariable ["tsp_ragdoll", true, true];
+	if (_launch && speed _unit > 17 && stance _unit == "STAND") then {_unit setVelocityModelSpace [0, (speed _unit) * 0.22, 4.5]; [_unit, "AmovPercMsprSlowWrflDf_AmovPpneMstpSrasWrflDnon"] remoteExec ["switchMove", 0]; sleep 0.7};
 	[_unit] spawn tsp_fnc_ragdoll_collision;  //-- Collision ragdoll
 	[_unit] spawn tsp_fnc_ragdoll_effects;
-	sleep 3; waitUntil {(vectorMagnitude velocity _unit) < 0.1 && [_unit] call tsp_fnc_height < 0.2};  //-- Only start uncon loop when stationary	
+	while {sleep 0.1; (vectorMagnitude velocity _unit) > 0.1 || [_unit] call tsp_fnc_height > 0.2} do {  //-- While flying
+		{
+			playSound3D ["A3\Sounds_F\characters\movements\bodyfalls\bodyfall_concrete_2.wss", _unit, true, getPosASL _unit, 0.5, 0.5];
+			_slings = if (isNil "tsp_fnc_animate_sling_get") then {[]} else {[_x, true] call tsp_fnc_animate_sling_get};
+			if (tsp_cba_ragdoll_drop && count _slings == 0) then {[_x, currentWeapon _x] remoteExec ["tsp_fnc_throw", _x]};
+			if (isPlayer _x) then {[_x] remoteExec ["tsp_fnc_ragdoll_start", _x]; _x setVariable ["tsp_ragdoll", true]; continue};
+			_x spawn {_this setVariable ["tsp_ragdoll", true, true]; [_this, true] remoteExec ["setUnconscious", 0]; sleep 3; [_this] remoteExec ["tsp_fnc_ragdoll_stop", 0]};
+		} forEach (allUnits select {_x != _unit && _x distance _unit < 2 && !(_x getVariable ["tsp_ragdoll", false]) && (vectorMagnitude velocity _unit) > 2});
+	};
 	_startPos = getPos _unit;  //-- Save position before uncon ragdoll to check later
+	if (isPlayer _unit) then {["", "Press "+(((["TSP Core", "tsp_ragdoll_ragdollKeyDouble"] call CBA_fnc_getKeybind)#5) call CBA_fnc_localizeKey)+" to get up"] call tsp_fnc_hint};
 	while {_unit getVariable "tsp_ragdoll" && alive _unit} do {  //-- Unconscious ragdoll loop
 		_unit setUnconscious true; sleep 3; _unit setUnconscious false; sleep 0.01;
 		if (getPos _unit distance _startPos > 2) exitWith {[_unit] spawn tsp_fnc_ragdoll_stop};  //-- Emergency exit if playa got launched by the ragdoll as the camera doesnt move with him
@@ -18,7 +28,7 @@ tsp_fnc_ragdoll_start = {
 
 tsp_fnc_ragdoll_stop = {
 	params ["_unit", ["_check", true], ["_out", ""]]; [((_unit selectionPosition "camera")#2) < ((_unit selectionPosition "head")#2)] params ["_facingUp"];
-	if (_check && !(_unit getVariable ["tsp_ragdoll", false])) exitWith {}; _unit setVariable ["tsp_ragdoll", false]; 
+	if (_check && !(_unit getVariable ["tsp_ragdoll", false])) exitWith {}; _unit setVariable ["tsp_ragdoll", false, true]; 
 	playSound3D ["A3\Sounds_F\characters\movements\bodyfalls\bodyfall_concrete_1.wss", _unit, true, getPosASL _unit, 0.1, 1];
 	_unit setPosASL (getPosASL _unit);  //-- Forgot why this is needed but it is 	
 	if (currentWeapon _unit == primaryWeapon _unit) then {_out = "ainvppnemstpsraswrfldnon_amovppnemstpsraswrfldnon"};

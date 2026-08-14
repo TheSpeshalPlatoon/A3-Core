@@ -308,7 +308,7 @@
 			{  //-- For all selections
 				[_x, _house modelToWorld (_house selectionPosition _x)] params ["_selection", "_selectionPos"];
 				if (_selectionPos distance (getPosASL _unit) > _distance || _damage#_forEachIndex == 1 || !("glass" in _selection || "window" in _selection)) then {continue};  //-- Skip
-				[_house, [_selection, 1]] remoteExec ["setHit", 0]; playSound3D [format ["A3\Sounds_F\arsenal\sfx\bullet_hits\glass_0%1.wss", (floor random 8) + 1], _selectionPos, false, AGLtoASL _selectionPos, 3, 1, 25];
+				[_house, [_selection, 1]] remoteExec ["setHit", 0]; playSound3D [format ["A3\Sounds_F\arsenal\sfx\bullet_hits\glass_0%1.wss", (floor random 8) + 1], objNull, false, AGLtoASL _selectionPos, 3, 1, 25];
 			} forEach _selections;
 		} forEach (nearestObjects [getPosASL _unit, ["BUILDING", "HOUSE", "CHURCH", "CHAPEL", "BUNKER", "FORTRESS", "VIEW-TOWER", "LIGHTHOUSE", "FUELSTATION", "HOSPITAL", "TOURISM"], _search]);
 	};
@@ -347,6 +347,14 @@
 		_shaders = getArray (configFile >> "CfgSoundSets" >> _soundSets select 0 >> "soundShaders");
 		_samples = getArray (configFile >> "CfgSoundShaders" >> _shaders#1 >> "samples");
 		(selectRandom _samples)#0+_extension;
+	};
+	tsp_fnc_throwables = {
+		params ["_unit", ["_muzzles", []]];
+		{
+			_muzzle = _x;
+			{if (_x in magazines _unit) then {_muzzles pushBack _muzzle}} forEach getArray (configFile >> "CfgWeapons" >> "Throw" >> _x >> "magazines");
+		} forEach getArray (configFile >> "CfgWeapons" >> "Throw" >> "muzzles");
+		_muzzles
 	};
 
 ["tsp_cba_compat", "CHECKBOX", "Gesture Compatibility Mode", "Makes gesture system compatible with other gesture mods.", "TSP Core", false] call tsp_fnc_setting;

@@ -7,7 +7,7 @@
 
 tsp_fnc_spawn = {
 	//{_x#0 enableChannel [false, _x#1]} forEach [[0,true],[1,true],[2,false]];  //-- Disable global completely, disable chat for side, command and group, leave voice on so we can place markers
-	if (time < 5) then {titleCut ["", "BLACK OUT", 0.01]; addMissionEventHandler ["PreloadFinished", {tsp_spawn_loaded = true}]; waitUntil {sleep 0.5; !isNil "tsp_spawn_loaded"}};
+	if (time < 5) then {titleCut ["", "BLACK OUT", 0.01]; addMissionEventHandler ["PreloadFinished", {tsp_spawn_loaded = true}]; waitUntil {sleep 0.5; time > 5 || !isNil "tsp_spawn_loaded"}};
 	if (!isNil "tsp_intro_loaded") exitWith {}; if (time < 5) then {titleCut ["", "BLACK IN", 3]};  //-- If in intro, dont run
 	if (isNil "tsp_loadout_original") then {  //-- First spawn
 		if (tsp_param_roleStart) then {[true] call tsp_fnc_role};  //-- Code suspended while role selection active
@@ -719,6 +719,7 @@ bis_fnc_click_mod = {  //-- Modified BIS function, \\// indicates me
 if (isServer) then {tsp_chat_spectator = radioChannelCreate [[0.92, 0.25, 0.2, 1], "Spectator", "%UNIT_NAME", [], false]; publicVariable "tsp_chat_spectator"};
 if (isServer) then {addMissionEventHandler ["HandleDisconnect", {params ["_unit", "_id", "_uid"]; missionNameSpace setVariable [_uid, [if (!isObjectHidden _unit) then {getPosASL _unit} else {[]}, getUnitLoadout _unit], true]; false}]};
 {_x setMarkerAlphaLocal 0} forEach (allMapMarkers select {"respawn" in markerType _x && "bis" in _x});
+
 waitUntil {isDedicated || !isNull (findDisplay 46)};
 {createMarkerLocal ["respawn_" + _x, player]} forEach ["west", "east", "resistance", "civilian"]; 
 player addEventHandler ["Respawn", {[] spawn tsp_fnc_spawn}]; [] spawn tsp_fnc_spawn; 

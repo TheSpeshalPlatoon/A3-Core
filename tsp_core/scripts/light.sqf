@@ -23,10 +23,10 @@ tsp_fnc_light_night = {  //-- tsp_param_brightness = 1; [] call tsp_fnc_light_ni
 };
 
 tsp_fnc_light_flare = {
-	params ["_unit", "_weapon", "_muzzle", "_mode", "_ammo", "_magazine", "_projectile", "_vehicle", ["_timeStop", time + tsp_cba_light_flare_time], ["_altitudeStop", tsp_cba_light_flare_altitude]];
+	params ["_unit", "_weapon", "_muzzle", "_mode", "_ammo", "_magazine", "_projectile", "_vehicle", ["_timeStop", time + tsp_cba_light_flare_time], ["_altitudeStop", tsp_cba_light_flare_altitude], ["_burn", -1]];
 	if (getNumber(configFile >> 'CfgAmmo' >> (typeOf _projectile) >> 'brightness') < 10) exitWith {}; sleep 3;
-	if (tsp_cba_light_flare_sound && local _projectile) then {playSound3D [tsp_path + "data\sounds\pop.ogg", _projectile, false, getPosASL _projectile, 3, 1, 5000]};
-	if (tsp_cba_light_flare_sound && local _projectile) then {_projectile spawn {while {sleep 10; alive _this} do {playSound3D [tsp_path + "data\sounds\burn.ogg", _this, false, getPosASL _this, 1, 1, 50]}}};
+	if (tsp_cba_light_flare_sound) then {_pop = playSound3D [tsp_path + "data\sounds\pop.ogg", _projectile, false, getPosASL _projectile, 3, 1, 5000, 0, true]};
+	if (tsp_cba_light_flare_sound) then {_burn = playSound3D [tsp_path + "data\sounds\burn.ogg", _projectile, false, getPosASL _projectile, 5, 1, 200, 0, true, true]};
 
 	_fake = createVehicleLocal ["Land_PencilGreen_F", getPos _projectile, [], 0, "CAN_COLLIDE"]; _projectile attachTo [_fake, [0,0,0]];	
 	getArray(configFile >> "CfgAmmo" >> typeOf _projectile >> "lightColor") params ["_r","_g","_b","_a"];;
@@ -40,7 +40,7 @@ tsp_fnc_light_flare = {
 		_light setLightIntensity tsp_cba_light_flare_intensity + random tsp_cba_light_flare_fluctuation;
 	};
 
-	{if (!isNull _x) then {_x setPos [0,0,0]; deleteVehicle _x}} forEach [_projectile, _fake, _light];  //-- Set pos to stop/move the sound instantly
+	stopSound _burn; {if (!isNull _x) then {deleteVehicle _x}} forEach [_projectile, _fake, _light];  //-- Bye bye
 };
 
 tsp_fnc_light_muzzle = {
