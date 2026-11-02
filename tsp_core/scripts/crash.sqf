@@ -1,7 +1,7 @@
 ["tsp_cba_crash", "CHECKBOX", "Enable Crash Landings", "Enable/disable addon.", ["TSP Core", "Crash"], true] call tsp_fnc_setting;
 ["tsp_cba_crash_force", "SLIDER", "Survivable Impact Force", "Amount of force helicopter can endure.", ["TSP Core", "Crash"], [0, 10000, 3000]] call tsp_fnc_setting;
 
-tsp_fnc_crash_handler = {
+tsp_fnc_crash_handler = {  //-- Add all the eventhandlers to the vehicle
 	params ["_vehicle"];
 	if !(tsp_cba_crash && local _vehicle && (_vehicle isKindOf 'Helicopter' || _vehicle isKindOf 'Plane')) exitWith {};
 	{_vehicle removeAllEventHandlers _x} forEach ["EpeContactStart", "HandleDamage"];  //-- Remove handlers so we don't double add
@@ -19,7 +19,7 @@ tsp_fnc_crash_handler = {
 	}];
 };
 
-tsp_fnc_crash_wreck = {
+tsp_fnc_crash_wreck = {  //-- Crash the helicopter yo
 	params ["_vehicle"];
 
  	_vehicle setDamage 0.8; _vehicle setFuel 0;
@@ -37,26 +37,26 @@ tsp_fnc_crash_wreck = {
 	_smoke = "test_EmptyObjectForSmoke" createVehicle (getPos _vehicle); _smoke attachTo [_vehicle, [0, 0, 0], "main rotor"];  //-- Smoke
 	waitUntil {isTouchingGround _vehicle || !alive _vehicle};                                                   //-- Effects that should happen on touching ground
 	playSound3D ["A3\Sounds_F\air\noises\crash-heli2.wss", _vehicle, false, getPosASL _vehicle, 4.9, 1, 150];  //-- BIG impact noise
-	[_vehicle] spawn BIS_fnc_effectKilledAirDestructionStage2;                                                //-- BIS craters and dust
+	[_vehicle] spawn BIS_fnc_effectKilledAirDestructionStage_mod;                                           //-- BIS craters and dust
 	waitUntil {speed _vehicle < 0.1 || !alive _vehicle};  //-- Only do cleanup when vehicle has settled
 	_vehicle removeAllEventHandlers "EpeContactStart";   //-- Remove the PhysX handler responsible for impact noises	
 	sleep 60; deleteVehicle _smoke;                     //-- Dont want the smoke to disapate just yet
 	_vehicle allowDamage ((vectorUp _vehicle)#2 > 0);  //-- If not upside down, allowDamage again so it can be detonated, else dont cause ArmA will just blow it up
 };
 
-BIS_fnc_effectKilledAirDestructionStage2 = {  //--  Modified by DINO
+BIS_fnc_effectKilledAirDestructionStage_mod = {  //-- Modified BIS function, //\\// indicates me
 	params ["_vehicle"];
 
-	//-- Added by DINO
+	//\\//-- Added by DINO
 	_shards = '#particlesource' createVehicleLocal [0,0,0]; _shards setParticleClass 'HeliDestructionShards1'; _shards attachto [_vehicle, [0,0,0]];
 	_dust = '#particlesource' createVehicleLocal [0,0,0]; _dust setParticleClass 'HouseDestrSmokeLong'; _dust attachto [_vehicle, [0,0,0]];
 	_shards spawn {sleep 1.5; deleteVehicle _this}; _dust spawn {waitUntil {speed _this < 0.1}; sleep 10; deleteVehicle _this};
-	//-- Added by DINO
+	//\\//-- Added by DINO
 
 	private _pos = getpos _vehicle;
 	private _createCraters = true;
 
-	//particle effects
+	//-- particle effects
 	private _smoke = createVehicle ["#particlesource", getpos _vehicle, [], 0, "CAN_COLLIDE"];
 	_smoke attachto [_vehicle,[0,0,0],"destructionEffect1"];
 	_smoke setParticleParams [
@@ -79,53 +79,30 @@ BIS_fnc_effectKilledAirDestructionStage2 = {  //--  Modified by DINO
 
 	private ["_pos","_speed","_dir","_tv","_dr","_craterType"];
 
-	while {abs(speed _vehicle) > 0.1} do
-	{
-		//wait for the vehicle to get down to the ground
+	while {abs(speed _vehicle) > 0.1} do {  //-- wait for the vehicle to get down to the ground
 		_pos = getpos _vehicle;
-
-		if (_pos select 2 >= 3) then
-		{
+		if (_pos select 2 >= 3) then {
 			private _timeout = time + 60;
-
-			waitUntil
-			{
-				sleep 0.05;
-				_pos = getpos _vehicle;
-
-				_pos select 2 < 3 || {time > _timeout}
-			};
+			waitUntil {sleep 0.05; _pos = getpos _vehicle; _pos select 2 < 3 || {time > _timeout}};
 		};
+		
+		if (_pos select 2 >= 3) exitWith {};  //-- exit if timeout and still not on the ground
+		
+		_pos set [2, 0];  //-- set crater position to ground
 
-		//exit if timeout and still not on the ground
-		if (_pos select 2 >= 3) exitWith {};
-
-		//set crater position to ground
-		_pos set [2, 0];
-
-		//create and repos the crater
+		//-- create and repos the crater
 		(velocity _vehicle) params ["_xv","_yv","_zv"];
 		_dir = abs(_xv atan2 _yv);
 		_speed = abs speed _vehicle;
 
-		if (_createCraters) then
-		{
+		if (_createCraters) then {
 			_craterType = if (_speed > 60) then {"CraterLong"} else {"CraterLong_small"};
-
 			private _crater = createVehicle [_craterType, _pos, [], 0, "CAN_COLLIDE"];
-
-			if (random 1 > 0.5) then
-			{
-				_crater setdir (_dir + 170 + (random 20));
-			}
-			else
-			{
-				_crater setdir (_dir - 10 + (random 20));
-			};
+			if (random 1 > 0.5) then {_crater setdir (_dir + 170 + (random 20))} else {_crater setdir (_dir - 10 + (random 20))};
 			_crater setPos _pos;
 		};
 
-		//update the particle effects
+		//-- update the particle effects
 		_tv = abs(_xv) + abs(_yv) + abs(_zv);
 		_dr = if (_tv > 2) then {1/_tv} else {1};
 		_smoke setDropInterval _dr * 1.5;

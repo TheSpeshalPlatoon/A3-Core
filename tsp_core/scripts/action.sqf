@@ -3,11 +3,12 @@ tsp_fnc_action_hold = {
 	[_object, _title, _icon, _icon, _condition + " && _this distance _target < "+str _distance, _condition, {}, {}, _code, {}, _args, _duration, _priority, _once, false] call BIS_fnc_holdActionAdd;
 };
 
-tsp_fnc_action_arsenal = {
+tsp_fnc_action_arsenal = {  //-- Open a limited BI arsenal
 	params ["_unit", ["_data", tsp_arsenal]];
 	{[_unit, _data, false, false] call _x} forEach [BIS_fnc_addVirtualWeaponCargo, BIS_fnc_addVirtualMagazineCargo, BIS_fnc_addVirtualItemCargo, BIS_fnc_addVirtualBackpackCargo];	
-	[missionnamespace, "arsenalOpened", {params ["_display"]; uiNameSpace setVariable ["BIS_fnc_arsenal_display", _display]}] call BIS_fnc_addScriptedEventHandler;
-	["Open", [false, _unit]] call BIS_fnc_arsenal; waitUntil {uiNameSpace getVariable ["BIS_fnc_arsenal_display", displayNull] isNotEqualTo displayNull};
+	[missionNamespace, "arsenalOpened", {params ["_display"]; uiNameSpace setVariable ["BIS_fnc_arsenal_display", _display]}] call BIS_fnc_addScriptedEventHandler;
+	["Open", [false, _unit]] call BIS_fnc_arsenal; 
+	waitUntil {uiNameSpace getVariable ["BIS_fnc_arsenal_display", displayNull] isNotEqualTo displayNull};
 	{(uiNameSpace getVariable "BIS_fnc_arsenal_display" displayCtrl _x) ctrlShow false} forEach [44151,44150,44146,44147,44148,44149,44346];
 	uiNameSpace getVariable "BIS_fnc_arsenal_display" displayAddEventHandler ["keydown", "_this#3"]; 
 };
@@ -51,12 +52,16 @@ tsp_fnc_action = {  //-- Changes for public release in here [boks, "Arsenal"] ca
 			[_object, "Arsenal (ACE)", "\a3\missions_f_oldman\data\img\holdactions\holdAction_box_ca.paa", {[player, player, true] call ace_arsenal_fnc_openBox}, "!isNil 'ace_arsenal_fnc_openBox'"] call tsp_fnc_action_hold;
 			[_object, "Arsenal", "\a3\missions_f_oldman\data\img\holdactions\holdAction_box_ca.paa", {["Open", [true]] call BIS_fnc_arsenal}] call tsp_fnc_action_hold;
 		} else {
-			[_object, "Arsenal (ACE)", "\a3\missions_f_oldman\data\img\holdactions\holdAction_box_ca.paa", {[player, true, false] call ace_arsenal_fnc_removeVirtualItems; [player, tsp_arsenal] call ace_arsenal_fnc_addVirtualItems; [player, player] call ace_arsenal_fnc_openBox}, "!isNil 'ace_arsenal_fnc_openBox'"] call tsp_fnc_action_hold;
+			[_object, "Arsenal (ACE)", "\a3\missions_f_oldman\data\img\holdactions\holdAction_box_ca.paa", {
+				[player, true, false] call ace_arsenal_fnc_removeVirtualItems;  //-- Remove stale items from the box
+				[player, tsp_arsenal] call ace_arsenal_fnc_addVirtualItems;    //-- Add new items
+				[player, player] call ace_arsenal_fnc_openBox;                //-- Open that shi
+			}, "!isNil 'ace_arsenal_fnc_openBox'"] call tsp_fnc_action_hold;
 			[_object, "Arsenal", "\a3\missions_f_oldman\data\img\holdactions\holdAction_box_ca.paa", {[player] spawn tsp_fnc_action_arsenal}] call tsp_fnc_action_hold;
 		};
-		[_object, "Save", "\a3\ui_f\data\IGUI\Cfg\holdactions\holdAction_unloaddevice_ca.paa", {tsp_loadout_saved = getUnitLoadout player; ["", "Loadout Saved"] spawn (missionNameSpace getVariable ["tsp_fnc_hint", BIS_fnc_showSubtitle])}] call tsp_fnc_action_hold;		
-		[_object, "Load", "\a3\ui_f\data\IGUI\Cfg\holdactions\holdAction_loaddevice_ca.paa", {player setUnitLoadout tsp_loadout_saved; ["", "Loadout Loaded"] spawn (missionNameSpace getVariable ["tsp_fnc_hint", BIS_fnc_showSubtitle])}, "!isNil 'tsp_loadout_saved'"] call tsp_fnc_action_hold;
-		[_object, "Reset", "\a3\ui_f\data\IGUI\Cfg\holdactions\holdAction_unbind_ca.paa", {player setUnitLoadout tsp_loadout_original; ["", "Loadout Original"] spawn (missionNameSpace getVariable ["tsp_fnc_hint", BIS_fnc_showSubtitle])}, "!isNil 'tsp_loadout_original'"] call tsp_fnc_action_hold
+		[_object, "Save", "\a3\ui_f\data\IGUI\Cfg\holdactions\holdAction_unloaddevice_ca.paa", {tsp_loadout_saved = getUnitLoadout player; ["", "Loadout Saved"] spawn tsp_fnc_hint}] call tsp_fnc_action_hold;		
+		[_object, "Load", "\a3\ui_f\data\IGUI\Cfg\holdactions\holdAction_loaddevice_ca.paa", {player setUnitLoadout tsp_loadout_saved; ["", "Loadout Loaded"] spawn tsp_fnc_hint}, "!isNil 'tsp_loadout_saved'"] call tsp_fnc_action_hold;
+		[_object, "Reset", "\a3\ui_f\data\IGUI\Cfg\holdactions\holdAction_unbind_ca.paa", {player setUnitLoadout tsp_loadout_original; ["", "Loadout Original"] spawn tsp_fnc_hint}, "!isNil 'tsp_loadout_original'"] call tsp_fnc_action_hold
 	};
 	if (_type == "Weather") then {[_object, "Weather", tsp_path+"data\actions\weather.paa", {[] spawn {sleep 0.2; findDisplay 46 createDisplay "RscDisplayAttributesModuleWeather"}}, "true"] call tsp_fnc_action_hold};
 	if (_type == "Music") then {[_object, "Music", tsp_path+"data\actions\music.paa", {[] spawn {sleep 0.2; findDisplay 46 createDisplay "RscDisplayAttributesModuleMusic"}}, "true"] call tsp_fnc_action_hold};

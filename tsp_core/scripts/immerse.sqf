@@ -61,7 +61,8 @@ tsp_fnc_immerse_sprint = {
 	};
 };
 
-waitUntil {isDedicated || !isNull (findDisplay 46)}; if (!tsp_cba_immerse) exitWith {};
+waitUntil {isDedicated || !isNull (findDisplay 46)};
+if (!tsp_cba_immerse) exitWith {};
 with uiNameSpace do {
 	tsp_immerse_blur = ppEffectCreate ["DynamicBlur", 500]; tsp_immerse_blur ppEffectEnable true;
 	tsp_immerse_vignette = findDisplay 46 ctrlCreate ["RscPicture", -1]; tsp_immerse_vignette ctrlSetPosition [safeZoneX, safezoneY, safeZoneW, safezoneH];
@@ -69,6 +70,6 @@ with uiNameSpace do {
 };
 player addEventHandler ["OpticsSwitch", {params ["_unit", "_ads"]; if (_ads) then {[_unit, true] call tsp_fnc_immerse_poll} else {[] spawn {sleep 0.1; resetCamShake}}}];  //-- Call immediately
 player addEventHandler ["Suppressed", {_this spawn tsp_fnc_immerse_suppress}];
-player addEventHandler ["Hit", {params ["_unit", "_source", "_damage"]; [10*_damage, 2*_damage, 25*_damage] spawn tsp_fnc_shake}];
+player addEventHandler ["Hit", {params ["_unit", "_source", "_damage"]; [(10*_damage) min 50, (2*_damage) min 5, (25*_damage) min 50] spawn tsp_fnc_shake}];
 //player addEventHandler ["Explosion", {params ["_vehicle", "_damage"]; [10*_damage, 5*_damage, 25*_damage] spawn tsp_fnc_shake}];
 [] spawn {while {sleep 1; tsp_cba_immerse} do {[player, false] call tsp_fnc_immerse_poll}}; [] spawn tsp_fnc_immerse_sprint;

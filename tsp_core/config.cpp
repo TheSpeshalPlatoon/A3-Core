@@ -1,11 +1,11 @@
 class CfgPatches {
-    class tsp_core {requiredAddons[] = {"cba_common"}; units[] = {"tsp_holder"};};
-	class tsp_earplug {requiredAddons[] = {}; units[] = {};};
+    class tsp_core {requiredAddons[] = {"cba_common", "3DEN", "A3_Data_F_Decade_Loadorder"}; units[] = {"tsp_holder"};};
+	/*class tsp_earplug {requiredAddons[] = {}; units[] = {};};
 	class tsp_chvd {requiredAddons[] = {}; units[] = {};};
 	class tsp_crash {requiredAddons[] = {}; units[] = {};};
 	class tsp_light {requiredAddons[] = {"A3_Weapons_F"}; units[]={}; ammo[]= {"FlareBase", "F_40mm_White", "Flare_82mm_AMOS_White", "Sh_155mm_AMOS"};};
 	class tsp_immerse {requiredAddons[] = {}; units[] = {};};
-	class tsp_faction {requiredAddons[] = {}; units[] = {};};
+	class tsp_faction {requiredAddons[] = {}; units[] = {};};*/
 };
 
 #include "\a3\ui_f\hpp\definecommongrids.inc"
@@ -13,7 +13,7 @@ class CfgPatches {
 #include "scripts\gui.hpp"
 
 class Extended_PreInit_EventHandlers {class tsp_core {init = "[] call compileScript ['\tsp_core\initFramework.sqf']";};};
-class CfgFunctions {class A3 {class effects {file = "tsp_core\crash";};};};  //-- Remove fn_effectKilled so that RHS helis work
+class CfgFunctions {class A3 {class effects {file = "tsp_core\crash";};};};  //-- Remove fn_effectKilled to disable RHS custom crash scripts
 
 class CfgVehicles {  //-- Weapon holder that doesn't act as shield, used by throw func, animate sling
     class WeaponHolderSimulated;
@@ -23,16 +23,16 @@ class CfgVehicles {  //-- Weapon holder that doesn't act as shield, used by thro
 			class ACE_Equipment	{
 				class tsp_ace_earplug_insert {
 					displayName = "Use Earplugs"; icon = "\z\ace\addons\hearing\UI\ACE_earplugs_x_ca.paa";
-					condition = "!isNil 'tsp_earplug_insert' && 'ACE_EarPlugs' in items player && !(missionNameSpace getVariable ['tsp_earplug_insert', false])";
+					condition = "!isNil 'tsp_earplug_inserted' && 'ACE_EarPlugs' in items player && !(missionNameSpace getVariable ['tsp_earplug_inserted', false])";
 					statement = "call tsp_fnc_earplug_toggle"; exceptions[] = {"isNotInside", "isNotSitting"};
 				};
-				class tsp_ace_earplug_remove: tsp_ace_earplug_insert {displayName = "Remove Earplugs"; condition = "!isNil 'tsp_earplug_insert' && soundVolume < 1 && (missionNameSpace getVariable ['tsp_earplug_insert', false])";};
+				class tsp_ace_earplug_remove: tsp_ace_earplug_insert {displayName = "Remove Earplugs"; condition = "!isNil 'tsp_earplug_inserted' && soundVolume < 1 && (missionNameSpace getVariable ['tsp_earplug_inserted', false])";};
 			};
 		};
 	};
 };
 
-class CfgAmmo {
+class CfgAmmo {  //-- For brighter/longer flares
     class FlareCore;
     class FlareBase: FlareCore {timeToLive = 999;};
     class F_40mm_White: FlareBase {timeToLive = 999;};
@@ -198,51 +198,35 @@ class CfgGesturesMale {
     };
 };
 
-class CfgEditorSubCategories {
-	class tsp_inf_sf {displayName = "Infantry (Special Forces)";};
-	class tsp_inf_navy {displayName = "Infantry (Navy)"};
-	class tsp_inf_seal {displayName = "Infantry (Seal)"};
-	class tsp_inf_crew {displayName = "Infantry (Crew)";};
-	class tsp_inf_1990 {displayName = "Infantry (1990)";};
-	class tsp_inf_death {displayName = "Infantry (Death Squads)";};
-	class tsp_inf_police {displayName = "Infantry (Police)";};
-	class tsp_men_contractor {displayName = "Contractors";};
-	class tsp_men_guard {displayName = "Guards";}; 
-	class tsp_men_formal {displayName = "Formal";}; 
-	class tsp_men_thug {displayName = "Men (Thug)";};
-	class tsp_men_para {displayName = "Men (Paramilitary)";};
-    class tsp_men_chernarus {displayName = "Men (Chernarus)";}; 
-    class tsp_men_sahrani {displayName = "Men (Sahrani)";};
-    class tsp_men_takistan {displayName = "Men (Takistan)";};
-    class tsp_cars_chernarus {displayName = "Cars (Chernarus)";};
-    class tsp_cars_sahrani {displayName = "Cars (Sahrani)";};
-    class tsp_cars_takistan {displayName = "Cars (Takistan)";};
-};
-
-class CfgWorlds {
-    class genericNames {
-        class SahraniMen {
-            class FirstNames {
-                diego = "Diego";
-                mateo = "Mateo";
-                antonio = "Antonio";
-                santiago = "Santiago";
-                juan = "Juan";
-                manuel = "Manual";
-                miguel = "Miguel";
-                carlos = "Carlos";
-                alejandro = "Alejandro";
+class ctrlStatic;
+class Cfg3DEN {  //-- I WANT BIGGER CODING BOXES
+    class Attributes {
+        class Default;
+        class Title: Default {class Controls {class Title;};};
+        class Edit: Title {class Controls: Controls {class Title; class Value;};};
+        class EditMulti3: Edit {class Controls: Controls {class Background; class Title; class Value;};};
+        class EditMulti5: EditMulti3 {
+            h = "6 * 5 * (pixelH * pixelGrid * 0.50)";
+            class Controls: Controls {
+                class Background: Background {h = "5.1 * 5 * (pixelH * pixelGrid * 0.50)";};
+                class Title: Title {h = "5.5 * 5 * (pixelH * pixelGrid * 0.50)";};
+                class Value: Value {h = "4.5 * 5 * (pixelH * pixelGrid * 0.50)";};
             };
-            class LastNames {                
-                garcia = "Garcia";
-                martinez = "Matinez";
-                lopez = "Lopez";
-                gomez = "Gomez";
-                rodriguez = "Rodriguez";
-                perez = "Perez";
-                hernandez = "Hernandez";
-                fernandez = "Fernandez";
-                sanchez = "Sanchez";
+        };
+        class EditCodeMulti3: EditMulti3 {
+            h = "57.5 * (pixelH * pixelGrid * 0.50)";
+            class Controls: Controls {
+                class Background: Background {h = "55.5 * (pixelH * pixelGrid * 0.50)";};
+                class Title: Title {h = "57.5 * (pixelH * pixelGrid * 0.50)";};
+                class Value: Value {h = "52.5 * (pixelH * pixelGrid * 0.50) - (pixelH * pixelGrid * 0.50)";};
+            };
+        };
+        class EditCodeMulti5: EditMulti5 {
+            h = "75 * (pixelH * pixelGrid * 0.50)";
+            class Controls: Controls {
+                class Background: Background {h = "73 * (pixelH * pixelGrid * 0.50)";};
+                class Title: Title {h = "75 * (pixelH * pixelGrid * 0.50)";};
+                class Value: Value {h = "69 * (pixelH * pixelGrid * 0.50)";};
             };
         };
     };

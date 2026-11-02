@@ -9,7 +9,7 @@
 ["tsp_cba_light_flare_size", "SLIDER", "Size", "Size of the lens flare.", ["TSP Light", "Flare"], [0, 1000, 10]] call tsp_fnc_setting;
 ["tsp_cba_light_flare_distance", "SLIDER", "Distance", "How far the lens flare can been seen from.", ["TSP Light", "Flare"], [0, 12000, 8000]] call tsp_fnc_setting;
 ["tsp_cba_light_flare_time", "SLIDER", "Time", "How long the flare will last in seconds.", ["TSP Light", "Flare"], [0, 600, 240]] call tsp_fnc_setting;
-["tsp_cba_light_flare_velocity", "SLIDER", "Velocity", "How slowly the flare descends.", ["TSP Light", "Flare"], [0, 10, 10]] call tsp_fnc_setting;
+["tsp_cba_light_flare_velocity", "SLIDER", "Velocity", "How slowly the flare descends.", ["TSP Light", "Flare"], [0, 10, 1]] call tsp_fnc_setting;
 ["tsp_cba_light_flare_jitter", "SLIDER", "Jitter", "Flare movement in air.", ["TSP Light", "Flare"], [0, 10, 1]] call tsp_fnc_setting;
 ["tsp_cba_light_flare_sound", "CHECKBOX", "Sound", "Enables pop and burning sounds.", ["TSP Light", "Flare"], true] call tsp_fnc_setting;
 
@@ -29,7 +29,7 @@ tsp_fnc_light_flare = {
 	if (tsp_cba_light_flare_sound) then {_burn = playSound3D [tsp_path + "data\sounds\burn.ogg", _projectile, false, getPosASL _projectile, 5, 1, 200, 0, true, true]};
 
 	_fake = createVehicleLocal ["Land_PencilGreen_F", getPos _projectile, [], 0, "CAN_COLLIDE"]; _projectile attachTo [_fake, [0,0,0]];	
-	getArray(configFile >> "CfgAmmo" >> typeOf _projectile >> "lightColor") params ["_r","_g","_b","_a"];;
+	getArray(configFile >> "CfgAmmo" >> typeOf _projectile >> "lightColor") params [["_r",1],["_g",1],["_b",1],["_a",1]];;
 	_light = "#lightpoint" createVehicleLocal [0,0,0]; _light attachTo [_fake, [0, 0, 0]]; 
 	_light setLightAmbient [_r,_g,_b]; _light setLightColor [_r,_g,_b];	_light setLightUseFlare true; 
 	_light setLightFlareMaxDistance tsp_cba_light_flare_distance; _light setLightFlareSize tsp_cba_light_flare_size;
@@ -46,24 +46,11 @@ tsp_fnc_light_flare = {
 tsp_fnc_light_muzzle = {
 	params ["_unit", "_weapon", "_muzzle", "_mode", "_ammo", "_magazine", "_projectile", "_vehicle"];
 	if (getNumber (configFile >> "CfgWeapons" >> (_unit weaponAccessories currentWeapon _unit)#0 >> "ItemInfo" >> "soundTypeIndex") == 1) exitWith {};
+	if ("vss" in _weapon || "val" in _weapon) exitWith {};
 	_barrel = (ASLtoATL eyePos _unit vectorAdd ((_unit weaponDirection (currentWeapon _unit)) vectorMultiply 2)) vectorAdd [0, 0, -0.1];
 	_light = "#lightpoint" createVehicleLocal _barrel; _light setLightColor [1,0.8,0.5]; _light setLightAmbient [1,0.8,0.5];
 	_light setLightBrightness (if ((_unit weaponAccessories currentWeapon _unit)#0 != "") then {tsp_cba_light_muzzle/1.5} else {tsp_cba_light_muzzle}); 
 	sleep 0.1; deleteVehicle _light;
-};
-
-tsp_fnc_light_tracer_old = {
-	params ["_unit", "_weapon", "_muzzle", "_mode", "_ammo", "_magazine", "_projectile", "_vehicle", ["_colour", [1,0.3,0.3]]];	sleep 0.01;
-	_every = getNumber (configFile >> "CfgMagazines" >> _magazine >> "tracersEvery");
-  	_last = getNumber (configFile >> "CfgMagazines" >> _magazine >> "lastRoundsTracer");
-	if (_every + _last == 0) exitWith {};
-	if !(((_unit ammo currentWeapon _unit) + 1) <= _last || (_every > 0 && {((_unit ammo currentWeapon _unit) + 1) mod _every == 0})) exitWith {};
-	if ("yellow" in toLower str _projectile) then {_colour = [1,1,0.3]};
-	if ("green" in toLower str _projectile) then {_colour = [0.3,1,0.3]};
-	_light = "#lightpoint" createVehicleLocal (getPos _projectile); _light attachTo [_projectile, [0,0,0]]; _light setLightColor _colour; _light setLightAmbient _colour; 
-	_light setLightUseFlare true; _light setLightFlareSize 1; _light setLightFlareMaxDistance 1000; _light setLightBrightness tsp_cba_light_tracer; _light setLightDayLight false;
-	_end = time + getNumber (configFile >> "CfgAmmo" >> _ammo >> "tracerEndTime");
-	waitUntil {!alive _projectile || time > _end}; deleteVehicle _light;
 };
 
 tsp_fnc_light_tracer = {
@@ -89,7 +76,7 @@ addMissionEventHandler ["EntityCreated", {params ["_entity"]; if (tsp_cba_light_
 addMissionEventHandler ["EntityCreated", {params ["_entity"]; if (tsp_cba_light_tracer > 0) then {_entity addEventHandler ["Fired", {_this spawn tsp_fnc_light_tracer}]}}];
 addMissionEventHandler ["EntityCreated", {params ["_entity"]; if (tsp_cba_light_flare_intensity > 0) then {_entity addEventHandler ["Fired", {_this spawn tsp_fnc_light_flare}]}}];
 
-[] spawn {waitUntil {isDedicated || !isNull (findDisplay 46)}; [] call tsp_fnc_light_night};
+[] spawn {waitUntil {isDedicated || !isNull (findDisplay 46)}; [] call tsp_fnc_light_night};  //-- Spawn because the stuff above must be called
 
 //ai fullauto
 //smoke launchers
@@ -98,4 +85,4 @@ addMissionEventHandler ["EntityCreated", {params ["_entity"]; if (tsp_cba_light_
 //tracers
 //explosions
 //150Rnd_762x54_Box
-["aimpoint","footstepr","footstepl","rightfoot","leftfoot","aiming_axis","spine3","weapon","head_axis","pilot","head","rearm","rearm2","granat","righthandmiddle1","granat2","lefthandmiddle1","camera","lelbow","lwrist","relbow","rwrist","rfemur","lfemur","lknee","rknee","rankle","lankle","lelbow_axis","relbow_axis","rknee_axis","lknee_axis","righthand","lefthand","launcher","neck","pelvis","leaning_axis","leftshoulder","rightshoulder","leftforearm","rightforearm","leftforearmroll","rightforearmroll","proxy:\a3\characters_f\proxies\weapon.001","proxy:\a3\characters_f\proxies\pistol.001","proxy:\a3\characters_f\proxies\binoculars.001","proxy:\a3\characters_f\proxies\launcher.001","bubbleseffect","bubblesdir","water_surface","leftupleg","leftleg","rightupleg","rightleg"]
+//["aimpoint","footstepr","footstepl","rightfoot","leftfoot","aiming_axis","spine3","weapon","head_axis","pilot","head","rearm","rearm2","granat","righthandmiddle1","granat2","lefthandmiddle1","camera","lelbow","lwrist","relbow","rwrist","rfemur","lfemur","lknee","rknee","rankle","lankle","lelbow_axis","relbow_axis","rknee_axis","lknee_axis","righthand","lefthand","launcher","neck","pelvis","leaning_axis","leftshoulder","rightshoulder","leftforearm","rightforearm","leftforearmroll","rightforearmroll","proxy:\a3\characters_f\proxies\weapon.001","proxy:\a3\characters_f\proxies\pistol.001","proxy:\a3\characters_f\proxies\binoculars.001","proxy:\a3\characters_f\proxies\launcher.001","bubbleseffect","bubblesdir","water_surface","leftupleg","leftleg","rightupleg","rightleg"]

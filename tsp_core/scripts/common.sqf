@@ -198,8 +198,10 @@
 		_targets = (_unit nearEntities [["AllVehicles"], _distanceMax]) select {            //-- Get units in _distanceMax
 			(_x distance _unit < _distanceAuto || _unit knowsAbout _x > _knowsAbout) &&    //-- Select any units in _autoDetectDistance or any units that he knowsAbout
 			(count (crew vehicle _x select {alive _x}) > 0) && (vehicle _unit !=  _x) &&  //-- Dont include empty vehicles and dont include his vehicle
-			_x !=  _unit && !(_x isKindOf "Animal") && (_x call _code)                   //-- Exclude himself, animals and others in _ignore
-		}; 
+			_x != (missionNameSpace getVariable ["zen_placement_object", objNull]) &&    //-- Exclude ZEN placement preview
+			_x !=  _unit && !(_x isKindOf "Animal") && (_x call _code) &&               //-- Exclude himself, animals and others in _ignore
+			!(isObjectHidden _x)                                                       //-- Invisible people
+		};
 		_targets = _targets apply {  //-- Create 2D array with distance
 			_distance = _x distance _unit;
 			if !([_unit, "VIEW"] checkVisibility [eyePos _unit, eyePos _x] > 0.5) then {_distance = _distance + _addToInvisible};  //-- If not visible, add more distance, dont prioritize
@@ -220,11 +222,18 @@
 		//for "_i" from 1 to ((abs _amountToRotate)/abs _step) do {_unit setDir ((getDir _unit) + _step); sleep _duration};  //(_duration/((abs _amountToRotate)/abs _step))
 		_unit enableAI "ANIM";
 	}; 
+	tsp_fnc_fearless = {
+		params ["_unit", ["_behave", ""], ["_flee", 0]]; 
+		if (_behave != "") then {(group _unit) setBehaviourStrong _behave};
+		_unit allowFleeing _flee; _unit setUnitPos "UP"; (group _unit) setSpeedMode "FULL";
+		{_unit disableAI _x} forEach ["MINEDETECTION", "WEAPONAIM", "AIMINGERROR", "AUTOCOMBAT", "FSM", "RADIOPROTOCOL", "COVER", "SUPPRESSION", "TARGET"];
+		{_unit setskill [_x, 1]} forEach ["spotDistance", "spotTime", "commanding"];  //"courage"
+	};
 
 //-- Misc
-	[[], {if ("tsp_animate" in activatedAddons) then {tsp_server_animate = true; publicVariable "tsp_server_animate"}}] remoteExec ["call", 2];  //-- Dumfuk fix for dum problem
+	if (isServer) then {[[], {if ("tsp_animate" in activatedAddons) then {tsp_server_animate = true; publicVariable "tsp_server_animate"}}] remoteExec ["call", 2]};  //-- Dumfuk fix for dum problem
 	tsp_fnc_shake = {params ["_power", "_duration", "_frequency"]; resetCamShake; tsp_shake = true; addCamShake _this; sleep (_duration+0.1); tsp_shake = nil};
-	tsp_fnc_throw = {
+	tsp_fnc_throw = {  //-- Throw/drop a weapon
 		params ["_unit", "_weapon", ["_orient", true], ["_remove", true], ["_class", "WeaponHolderSimulated"], ["_select", true], ["_local", isNil "tsp_server_animate"]]; 
 		if (typeName _weapon == "STRING") then {_weapon = weaponsItems _unit select {_x#0 == _weapon} select 0}; if (isNil "_weapon") exitWith {};  //-- Convert strings to full weapon array
 		_dir = vectorNormalized ((_unit weaponDirection _weapon#0) vectorCrossProduct [0, 0, 1]);
@@ -237,7 +246,7 @@
 		if (_remove) then {_unit removeWeapon [_weapon#0, _select]};
 		_holder
 	};
-	tsp_fnc_decal = {
+	tsp_fnc_decal = {  //-- Spawn a decal on a surface
 		params ["_pos", ["_decals", ["BloodPool_01_Medium_New_F","BloodSplatter_01_Small_New_F","BloodSplatter_01_Medium_New_F","BloodSpray_01_New_F","BloodSplatter_01_Large_New_F"]], ["_radius", 2]];
 		if (count ((ASLtoATL _pos nearObjects _radius) select {_x getVariable ["tsp_decal", false]}) > 0) exitWith {}; 
 		_decal = (selectRandom _decals) createVehicle [0,0,0]; _decal setDir (random 360); _decal setPosASL (_pos vectorAdd [0,0,3]); 
@@ -312,9 +321,9 @@
 			} forEach _selections;
 		} forEach (nearestObjects [getPosASL _unit, ["BUILDING", "HOUSE", "CHURCH", "CHAPEL", "BUNKER", "FORTRESS", "VIEW-TOWER", "LIGHTHOUSE", "FUELSTATION", "HOSPITAL", "TOURISM"], _search]);
 	};
-	tsp_fnc_particle = {
+	tsp_fnc_particle = {  //-- Mostly used by tsp_blood for blood particles
 		params ["_unit", "_selection", "_class", ["_interval", 0.1], ["_duration", 1], ["_dispersion", 0], ["_velocity", [0,0,0]], ["_life", 0.5], ["_weight", 40], ["_size", [1,1,1]], ["_offset", [0,0,0]], 
-		["_color", [[0.2,0,0.1,1], [0.3,0,0.1,1]]], ["_model", ["\a3\Data_f\ParticleEffects\Universal\Universal", 16, 13, 1]], ["_type", "Billboard"]];
+		["_color", [[0.05,0,0,1], [0.05,0,0,1]]], ["_model", ["\a3\Data_f\ParticleEffects\Universal\Universal", 16, 13, 1]], ["_type", "Billboard"]];
 		_particle = createVehicle ["#particlesource", position _unit, [], 0, "CAN_COLLIDE"]; _particle attachTo [_unit, _offset, _selection];
 		if (_class == "") then {_particle setParticleParams [  //-- Parameters
 			_model,                    //-- Shape 
@@ -340,7 +349,7 @@
 		_particle setParticleRandom [0, [0,0,0], [_dispersion/2, _dispersion/2, _dispersion], 5, 0, [0.1, 0.1, 0.1, 0.1], 0, _dispersion*10, _dispersion*10, 0.1];  //-- Randomization (life, pos, velo, rotat, size, color, dir, dir intensity, angle, bounce)
 		_particle setDropInterval _interval; sleep _duration; deleteVehicle _particle;
 	};
-	tsp_fnc_soundset = { 
+	tsp_fnc_soundset = {  //-- Attempt to get a weapons sound file
 		params ["_unit", ["_extension", ".wss"]];
 		_modes = getArray (configFile >> "CfgWeapons" >> currentWeapon _unit >> "modes"); 
 		_soundSets = getArray (configFile >> "CfgWeapons" >> currentWeapon _unit >> _modes#0 >> "StandardSound" >> "soundSetShot");
@@ -348,7 +357,7 @@
 		_samples = getArray (configFile >> "CfgSoundShaders" >> _shaders#1 >> "samples");
 		(selectRandom _samples)#0+_extension;
 	};
-	tsp_fnc_throwables = {
+	tsp_fnc_throwables = {  //-- Get all of a unit's throwable muzzles
 		params ["_unit", ["_muzzles", []]];
 		{
 			_muzzle = _x;

@@ -7,27 +7,31 @@
 
 tsp_fnc_spawn = {
 	//{_x#0 enableChannel [false, _x#1]} forEach [[0,true],[1,true],[2,false]];  //-- Disable global completely, disable chat for side, command and group, leave voice on so we can place markers
-	if (time < 5) then {titleCut ["", "BLACK OUT", 0.01]; addMissionEventHandler ["PreloadFinished", {tsp_spawn_loaded = true}]; waitUntil {sleep 0.5; time > 5 || !isNil "tsp_spawn_loaded"}};
-	if (!isNil "tsp_intro_loaded") exitWith {}; if (time < 5) then {titleCut ["", "BLACK IN", 3]};  //-- If in intro, dont run
+	if (time < 5) then {
+		titleCut ["", "BLACK OUT", 0.01]; 
+		sleep 2; waitUntil {isNil "tsp_intro_loaded"};  //-- If in intro, wait
+		titleCut ["", "BLACK IN", 3];
+	};
 	if (isNil "tsp_loadout_original") then {  //-- First spawn
 		if (tsp_param_roleStart) then {[true] call tsp_fnc_role};  //-- Code suspended while role selection active
 		tsp_loadout_original = getUnitLoadout player; tsp_loadout_saved = getUnitLoadout player;
-		(missionNameSpace getVariable [getPlayerUID player, [[], []]]) params ["_location", "_loadout"];
-		missionNameSpace setVariable [getPlayerUID player, nil, true];
-		if (count _loadout > 0) then {player setUnitLoadout _loadout}; 
-		if (count _location > 0) exitWith {player setPosASL _location; tsp_spawn_location = _location};
+		(missionNameSpace getVariable [getPlayerUID player, [[], []]]) params ["_location", "_loadout"];  //-- Get saved location + loadout from server
+		missionNameSpace setVariable [getPlayerUID player, nil, true];  //-- Save location + loadout to server
+		if (count _loadout > 0) then {player setUnitLoadout _loadout};  //-- Restore loadout
+		if (count _location > 0) exitWith {player setPosASL _location};  //-- Restore location, and exit
 		if (time > tsp_param_spectateTime && tsp_param_spectate == "Forced") exitWith {[true] call tsp_fnc_spectate};  //-- Late joiners go to spectate
-		if (tsp_param_spawnStart && tsp_param_spawn) then {[] spawn tsp_fnc_spawn_map};
-	} else {  //-- Next spawns
+		if (tsp_param_spawnStart && tsp_param_spawn) then {[] spawn tsp_fnc_spawn_map};  //-- Normal joiners get spawn map, if enabled
+	} else {  //-- Subsequent spawns
 		if (tsp_param_spectate == "Disabled" && tsp_param_spawn) then {[] spawn tsp_fnc_spawn_map};  //-- If spectate disabled, show spawn map
-		sleep 0.5; player setUnitLoadout (missionNameSpace getVariable "tsp_loadout_" + tsp_param_spawnLoadout);
+		sleep 0.5; player setUnitLoadout (missionNameSpace getVariable ("tsp_loadout_" + tsp_param_spawnLoadout));
 	};
 };
 
 tsp_fnc_spawn_killed = {
 	tsp_loadout_retain = getUnitLoadout player;
-	titleCut ["", "BLACK OUT", 1.5]; sleep 1.5; titleCut ["", "BLACK IN", 3];
-	if (tsp_param_spectate in ["Dynamic", "Forced"]) then {[true] call tsp_fnc_spectate};		
+	titleCut ["", "BLACK OUT", 1.5]; sleep 1.5; 
+	if (tsp_param_spectate in ["Dynamic", "Forced"]) then {[true] call tsp_fnc_spectate};
+	titleCut ["", "BLACK IN", 3];		
 };
 
 tsp_fnc_spawn_map = {
@@ -39,20 +43,20 @@ tsp_fnc_spawn_map = {
 		_cond = _x getVariable ["condition", {true}];
 		if (_x call _cond) then {_spawns pushBack [getPos _x, _code, _name, _desc, "", "", 1, [_unit, _x]]};
 	} forEach ([_unit] call BIS_fnc_getRespawnPositions) + ((entities [["Respawn_TentDome_F", "B_Patrol_Respawn_tent_F"], []]) select {side (_x getVariable "group") == side _unit});
-	[call bis_fnc_displayMission, position _center, _spawns, [], [], [], overcast, if (daytime > 19.5 || daytime < 4.75) then {true} else {false}, 2, true, "Spawns"] call bis_fnc_map_mod;  //-- Create map
-	if (_force) then {findDisplay 506 displayAddEventHandler ["KeyDown", {_this#1 == 1 && !(_this#3)}]};  //-- prevent using ESC button, ctrl, ESC will close it though
+	[call bis_fnc_displayMission, position _center, _spawns, [], [], [], overcast, if (daytime > 19.5 || daytime < 4.75) then {true} else {false}, 2, true, "Spawns"] call bis_fnc_map_mod;  //-- Open map
+	if (_force) then {findDisplay 506 displayAddEventHandler ["KeyDown", {_this#1 == 1 && !(_this#3)}]};  //-- Prevent using ESC button, ctrl + ESC will close it though
 	if (_force) then {findDisplay 506 displayCtrl 2 ctrlEnable false};  //-- Disable close button
 };
 
 tsp_fnc_spectate = {
 	params ["_spectate"];
-	[if (_spectate) then {"Initialize"} else {"Terminate"}, [player, [], false, true, true, true, true, true, true, true]] call BIS_fnc_EGSpectator; waitUntil {alive player};
+	[if (_spectate) then {"Initialize"} else {"Terminate"}, [player, [], false, true, true, true, true, true, true, true]] call BIS_fnc_EGSpectator;
 	if (_spectate) then {tsp_chat_spectator radioChannelAdd [player]} else {tsp_chat_spectator radioChannelRemove [player]};
 	if !(isNil "acre_api_fnc_setSpectator") then {[_spectate] call acre_api_fnc_setSpectator};
-	[player, _spectate] remoteExec ["hideObjectGlobal", 2];
+	waitUntil {alive player}; [player, _spectate] remoteExec ["hideObjectGlobal", 2];  //-- Must wait for unit to respawn before hiding
 };
 
-bis_fnc_map_mod = {  //-- Modified BIS function, \\// indicates me
+bis_fnc_map_mod = {  //-- Modified BIS function, //\\// indicates me
 	private ["_parentDisplayDefault","_parentDisplay","_mapCenter","_missions","_ORBAT","_markers","_images","_overcast","_scale","_defaultScale","_simulationEnabled","_displayClass","_display","_playerIcon","_playerColor","_cloudTextures","_cloudsGrid","_cloudsMax","_cloudsSize","_map","_fade","_actionText","_missionIcon","_showIconText"];
 	disableserialization;
 
@@ -626,7 +630,7 @@ bis_fnc_map_mod = {  //-- Modified BIS function, \\// indicates me
 	_display
 };
 
-bis_fnc_click_mod = {  //-- Modified BIS function, \\// indicates me
+bis_fnc_click_mod = {  //-- Modified BIS function, //\\// indicates me
 	_var = _this param [0,"BIS_fnc_strategicMapOpen",[""]];
 	_this = _this param [1,[controlnull],[[]]];
 
@@ -717,11 +721,16 @@ bis_fnc_click_mod = {  //-- Modified BIS function, \\// indicates me
 };
 
 if (isServer) then {tsp_chat_spectator = radioChannelCreate [[0.92, 0.25, 0.2, 1], "Spectator", "%UNIT_NAME", [], false]; publicVariable "tsp_chat_spectator"};
-if (isServer) then {addMissionEventHandler ["HandleDisconnect", {params ["_unit", "_id", "_uid"]; missionNameSpace setVariable [_uid, [if (!isObjectHidden _unit) then {getPosASL _unit} else {[]}, getUnitLoadout _unit], true]; false}]};
-{_x setMarkerAlphaLocal 0} forEach (allMapMarkers select {"respawn" in markerType _x && "bis" in _x});
+if (isServer) then {addMissionEventHandler ["HandleDisconnect", {
+	params ["_unit", "_id", "_uid"]; 
+	missionNameSpace setVariable [_uid, [if (!isObjectHidden _unit) then {getPosASL _unit} else {[]}, getUnitLoadout _unit], true]; 
+	false
+}]};
 
+{_x setMarkerAlphaLocal 0} forEach (allMapMarkers select {"respawn" in markerType _x && "bis" in _x});  //-- Go away
 waitUntil {isDedicated || !isNull (findDisplay 46)};
-{createMarkerLocal ["respawn_" + _x, player]} forEach ["west", "east", "resistance", "civilian"]; 
+{_x setMarkerAlphaLocal 0} forEach (allMapMarkers select {"respawn" in markerType _x && "bis" in _x});  //-- I SAID GO AWAY
+
 player addEventHandler ["Respawn", {[] spawn tsp_fnc_spawn}]; [] spawn tsp_fnc_spawn; 
 player addEventHandler ["Killed", {[] spawn tsp_fnc_spawn_killed}];
 player addEventHandler ["WeaponAssembled", {  //-- Respawn tents
@@ -730,3 +739,5 @@ player addEventHandler ["WeaponAssembled", {  //-- Respawn tents
 	_rally = (group _unit) getVariable ["rally", objNull]; if (_rally != objNull) then {deleteVehicle _rally}; 	(group _unit) setVariable ["rally", _tent];
 	{_x params ["_name", "_data"]; _tent setVariable [_name, _data, true]} forEach [["name", "Rally Point"], ["description", "Placed by: " + groupid group _unit], ["group", group _unit]];
 }];
+
+{if ((getMarkerPos ("respawn_" + _x))#0 == 0) then {createMarkerLocal ["respawn_" + _x, player]}} forEach ["west", "east", "resistance", "civilian"];  //-- Create them if they dont exist

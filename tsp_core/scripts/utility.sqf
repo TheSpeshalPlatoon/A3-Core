@@ -64,7 +64,7 @@ tsp_fnc_zombience = {  //-- Constant reinforcements
     while {uiSleep z_time; call _condition} do {
         if ([_unit, _zones] call tsp_fnc_zone_triggers) then {
             if (count (units (missionNameSpace getVariable ["zGrp", group objNull])) < 1) then {zGrp = createGroup _side; zGrp setGroupIdGlobal ["Zombies ("+name _unit+")"]};  //-- Create/recreate group            
-            if (count (units zGrp select {alive _x}) < z_max) then {  //-- If group not full, create new guy and give waypoint
+            if (count (units zGrp select {alive _x}) <= z_max) then {  //-- If group not full, create new guy and give waypoint
                 _spawnPos = [((getpos player)#0) + (sin (random 360)) * (z_dist + random z_dist), ((getpos player)#1) + (cos (random 360)) * (z_dist + random z_dist), 0];
                 _zUnit = zGrp createUnit [selectRandom z_zombies, _spawnPos, [], 1, "NONE"];  //-- Make guy
                 _zUnit spawn _init; {_x doMove position _unit} forEach (units zGrp);         //-- Custom code and waypoint
@@ -74,7 +74,7 @@ tsp_fnc_zombience = {  //-- Constant reinforcements
     };
 };
 
-tsp_fnc_underground = {  //-- Underground area lighting (Use in triggers)
+tsp_fnc_underground = {  //-- Underground area lighting (Used in triggers)
 	params ["_unit", ["_dark", false], ["_attach", _this#0]];
 	titleCut ["", "BLACK OUT", 0.5]; sleep 0.5; _unit attachTo [_attach, [0,0,0]]; detach _unit;
 	if (_dark && isNil "dark_eh") then {dark_eh = [{setDate [2035, 12, 19, 0, 0]}, 0, []] call CBA_fnc_addPerFrameHandler};
@@ -83,13 +83,22 @@ tsp_fnc_underground = {  //-- Underground area lighting (Use in triggers)
 };
 
 tsp_fnc_intro = {  //-- Custom slideshow intro
-	params ["_timeline", ["_music", ""], ["_exit", {}], ["_sthud", if (!isNil "STHud_UIMode") then {STHud_UIMode} else {0}]]; 
-	titleCut ["", "BLACK OUT", 0.01]; addMissionEventHandler ["PreloadFinished", {tsp_intro_loaded = true}]; waitUntil {sleep 1; !isNil "tsp_intro_loaded"};
-	tsp_skipEH = (findDisplay 46) displayAddEventHandler ["KeyDown", "if ((_this#1) == 57) exitWith {0 fadeSound 1; playSound 'OMCameraPhoto'; tsp_skipped = true}; true"];
-	STHud_UIMode = 0; titleCut ["", "BLACK OUT", 0.01]; 0 fadeSound 0; playMusic _music; 3 fadeMusic 1; sleep 2; ["", "Press [SPACE] to Skip"] spawn BIS_fnc_showSubtitle; 
-	{if (!isNil "tsp_skipped") exitWith {}; _x params ["_time", "_code"]; {_x call bis_fnc_animatedScreen} forEach [[1],[0,[15,5,1],1.05]]; [] spawn _code; uiSleep _time} forEach _timeline;
+	params ["_timeline", ["_music", ""], ["_exit", {}], ["_sthud", if (!isNil "STHud_UIMode") then {STHud_UIMode} else {0}]];
+	tsp_intro_loaded = true; addMissionEventHandler ["PreloadFinished", {tsp_intro_loaded = true}]; waitUntil {!isNil "tsp_intro_loaded"};
+ 	STHud_UIMode = 0; titleCut ["", "BLACK OUT", 0.01]; sleep 2; 
+	tsp_skipEH = (findDisplay 46) displayAddEventHandler ["KeyDown", "if ((_this#1) == 57) exitWith {1 fadeEnvironment 1; playSound 'OMCameraPhoto'; tsp_skipped = true}; true"];
+	["", "Press [SPACE] to Skip"] spawn BIS_fnc_showSubtitle; 
+	0 fadeEnvironment 0; playMusic _music; 3 fadeMusic 1;
+	{
+		_x params ["_duration", "_code"]; 
+		if (!isNil "tsp_skipped") exitWith {}; 
+		{_x call bis_fnc_animatedScreen} forEach [[1],[0,[15,5,1],1.05]]; 
+		[] spawn _code; uiSleep _duration;
+	} forEach _timeline;
 	(findDisplay 46) displayRemoveEventHandler ["keyDown", tsp_skipEH];	{_x call bis_fnc_animatedScreen} forEach [[0],[1]];  //-- INIT, DESTROY
-	tsp_intro_loaded = nil; titleCut ["", "BLACK IN", 3]; 2 fadeSound 1; 5 fadeMusic 0; [] spawn _exit; STHud_UIMode = _sthud; sleep 5; playMusic "";
+	STHud_UIMode = _sthud; titleCut ["", "BLACK IN", 3];
+	tsp_intro_loaded = nil; [] spawn _exit;
+	2 fadeEnvironment 1; 10 fadeMusic 0; sleep 10; playMusic "";
 };
 
 tsp_fnc_intro_guide = {  //-- The numbers Mason, what do they mean!?
@@ -111,8 +120,7 @@ tsp_fnc_intro_guide = {  //-- The numbers Mason, what do they mean!?
 
 tsp_fnc_guide = {  //-- Helicopter hand signal guidance
     params ["_unit", ["_area", [heli_far,heli_center,heli_left,heli_right]]];
-    _unit disableAI "ANIM"; _unit disableAI "MOVE";
-	[_unit, "Acts_JetsCrewaidR_idle"] remoteExec ["switchMove"];
+    _unit disableAI "ANIM"; _unit disableAI "MOVE";	[_unit, "Acts_JetsCrewaidR_idle"] remoteExec ["switchMove"];
 	_unit addEventHandler ["AnimDone", {params ["_unit", "_anim"]; _unit setVariable ["animDone", true]}];  //-- So we know when an anim ends
     while {sleep 1; alive _unit} do {
         _helis = vehicles select {_veh = _x; _veh isKindOf "Helicopter" && isEngineOn _veh && count (_area select {_veh inArea _x}) > 0};
@@ -120,9 +128,12 @@ tsp_fnc_guide = {  //-- Helicopter hand signal guidance
         while {isEngineOn _heli && count (_area select {_heli inArea _x}) > 0} do {
             if (!_depart && isTouchingGround _heli) exitWith {[_unit, "Acts_JetsMarshallingEmergencyStop", {false}] call tsp_fnc_guide_anim};
             if (!_depart && _heli inArea heli_far) then {[_unit, "Acts_JetsMarshallingStraight", {!_depart && _heli inArea heli_far && count (_area select {_heli inArea _x}) > 0}] call tsp_fnc_guide_anim; continue};
-            if (!_depart && _heli inArea heli_center && !isTouchingGround _heli) then {[_unit, "Acts_JetsMarshallingSlow", {!_depart && _heli inArea heli_center  && !isTouchingGround _heli && count (_area select {_heli inArea _x}) > 0}] call tsp_fnc_guide_anim; continue};
             if (!_depart && _heli inArea heli_left) then {[_unit, "Acts_JetsMarshallingLeft", {!_depart && _heli inArea heli_left && count (_area select {_heli inArea _x}) > 0}] call tsp_fnc_guide_anim; continue};
             if (!_depart && _heli inArea heli_right) then {[_unit, "Acts_JetsMarshallingRight", {!_depart && _heli inArea heli_right && count (_area select {_heli inArea _x}) > 0}] call tsp_fnc_guide_anim; continue};
+            if (!_depart && _heli inArea heli_center && !isTouchingGround _heli) then {
+				[_unit, "Acts_JetsMarshallingSlow", {!_depart && _heli inArea heli_center  && !isTouchingGround _heli && count (_area select {_heli inArea _x}) > 0}] call tsp_fnc_guide_anim; 
+				continue;
+			};
             if (_depart && isTouchingGround _heli) then {[_unit, "Acts_JetsMarshallingEnginesOn", {_depart && isTouchingGround _heli && count (_area select {_heli inArea _x}) > 0}] call tsp_fnc_guide_anim; continue};
             if (_depart && !isTouchingGround _heli) then {[_unit, "Acts_JetsMarshallingStraight", {_depart && !isTouchingGround _heli && count (_area select {_heli inArea _x}) > 0}] call tsp_fnc_guide_anim; continue};
         };
@@ -131,19 +142,44 @@ tsp_fnc_guide = {  //-- Helicopter hand signal guidance
 };
 
 tsp_fnc_guide_anim = {
-    params ["_unit", "_anim", "_stop"]; if (toLower _anim in toLower animationState _unit) exitWith {};
+    params ["_unit", "_anim", "_condition"]; if (toLower _anim in toLower animationState _unit) exitWith {};
     [_unit, _anim + "_in"] remoteExec ["switchMove"]; _unit setVariable ["animDone", false]; waitUntil {_unit getVariable "animDone"};
     [_unit, _anim + "_loop"] remoteExec ["switchMove"]; _unit setVariable ["animDone", false]; waitUntil {_unit getVariable "animDone"};
-    _unit setVariable ["stop", false]; waitUntil {!(call _stop)};
+    _unit setVariable ["stop", false]; waitUntil {!(call _condition)};
     [_unit, _anim + "_out"] remoteExec ["switchMove"]; _unit setVariable ["animDone", false]; waitUntil {_unit getVariable "animDone"};
 };
 
-tsp_fnc_suppress = {  //-- Suppress target ([this, player, {triggerActivated suppress}, currentWeapon this] spawn tsp_fnc_suppress)
+tsp_fnc_suppress = {  //-- Suppress target forever ([this, player, {triggerActivated suppress}, currentWeapon this] spawn tsp_fnc_suppress)
 	params ["_unit", "_target", ["_condition", {triggerActivated suppress}], ["_weap", currentWeapon (_this#0)], ["_mode", "Close"], ["_dir", getDir (_this#0)]];
     (group _unit) setBehaviour "COMBAT"; 
     while {sleep random 0.3 max 0.1; alive _unit} do {
 		if (call _condition) then {_unit lookAt _target; _unit setDir _dir; vehicle _unit setVehicleAmmo 1; _unit setAmmo [_weap, 30]; _unit forceWeaponFire [_weap, _mode]} else {sleep 2};
 	};
+};
+
+tsp_fnc_justmove = {  //-- justfuckinggotothewaypointyouretaredcantbelievebohemiacantevengetthisright
+    params ["_vehicle", "_position", ["_brake", false], ["_speed", 20], ["_acceleration", 4], ["_turn", 1], ["_duration", 240], ["_turnU", 1]]; _timeStop = time + _duration;
+	(driver _vehicle) disableAI "PATH";
+    while {sleep 0.3; alive _vehicle && _vehicle distance2D _position > 7 && time < _timeStop} do {
+        if !(isTouchingGround _vehicle || surfaceIsWater position _vehicle) then {continue};
+
+        _vehicle disableBrakes true; _vehicle engineOn true;
+        _targetDir = (_vehicle getRelDir _position) + getDir _vehicle;
+        _vehicle setVelocityModelSpace [0, (((velocityModelSpace _vehicle)#1) + _acceleration) min _speed, 0.2];
+           
+        if ([getPos _vehicle, getDir _vehicle, 5, _position] call BIS_fnc_inAngleSector) then {continue};
+        if ([getPos _vehicle, getDir _vehicle, 360, _position] call BIS_fnc_inAngleSector) then {_turnU = _turn*5};
+        if ([getPos _vehicle, getDir _vehicle, 270, _position] call BIS_fnc_inAngleSector) then {_turnU = _turn*4};
+        if ([getPos _vehicle, getDir _vehicle, 180, _position] call BIS_fnc_inAngleSector) then {_turnU = _turn*3};
+        if ([getPos _vehicle, getDir _vehicle, 120, _position] call BIS_fnc_inAngleSector) then {_turnU = _turn*2};
+        if ([getPos _vehicle, getDir _vehicle, 90, _position] call BIS_fnc_inAngleSector) then {_turnU = _turn*1};
+        if ([getPos _vehicle, getDir _vehicle, 50, _position] call BIS_fnc_inAngleSector) then {_turnU = _turn*0.5};
+        if ([getPos _vehicle, getDir _vehicle, 10, _position] call BIS_fnc_inAngleSector) then {_turnU = _turn*0.1};
+	    [_targetDir - getDir _vehicle, (360 - _targetDir) + getDir _vehicle] params ["_clockwise", "_counterClockwise"];     
+        _vehicle setAngularVelocity [0,0,if (_clockwise > _counterClockwise) then {-_turnU} else {_turnU}];
+    };    
+	if (_brake) then {_vehicle disableBrakes false; sleep 2; _vehicle setVelocityModelSpace [0,0,0]};
+	(driver _vehicle) enableAI "PATH";
 };
 
 tsp_fnc_fastrope = {  //-- Static ACE fastrope
@@ -201,23 +237,22 @@ tsp_fnc_cof = {  //-- Course of fire
 	_original#0 setVariable ["cof", false, true]; playSound3D ["A3\Missions_F_Oldman\Data\sound\beep.ogg", _unit, false, getPosASL _unit, 5, 1, 100];  //-- BEEP
 };
 
-tsp_fnc_task = {  //-- Custom task framework, see below
+tsp_fnc_task = {  //-- Custom task framework
 	params [
 		"_owner", "_task", "_name", "_description", "_type", "_pos",
 		["_conditionCreate", {true}], ["_conditionSuccess", {false}], ["_conditionFail", {false}], ["_conditionCancel", {false}],
 		["_codeCreate", {}], ["_codeSucceed", {}], ["_codeFail", {}], ["_codeCancel", {}], ["_codeDelete", {}], 
-		["_poll", 5], ["_state", 0]
+		["_poll", 2], ["_state", 0]
 	]; _id = if (typeName _task == "ARRAY") then {_task#0} else {_task};
 	if (typeName _pos == "STRING") then {waitUntil {(missionNameSpace getVariable [_pos, ""]) isNotEqualTo ""}; _pos = getPos (call compile _pos)};  //-- For sectors
-	waitUntil {uiSleep _poll; call _conditionCreate};
+	waitUntil {call _conditionCreate};
 	[_owner, _task, [_description, _name], _pos, "CREATED", -1, true, _type] call BIS_fnc_taskCreate;  //-- Alright we exist now
 	[] call _codeCreate; 
-	while {!(_id call BIS_fnc_taskState in ["SUCCEEDED", "FAILED", "CANCELED"])} do {  //-- While task active
+	while {sleep _poll; !(_id call BIS_fnc_taskState in ["SUCCEEDED", "FAILED", "CANCELED"])} do {  //-- While task active
 		_state = missionNameSpace getVariable ["task_save_" + _id, 0];  //-- For loading purposes
 		if ([] call _conditionSuccess || _state == 1) exitWith {_state = 1; [_id, "SUCCEEDED"] call BIS_fnc_taskSetState; call _codeSucceed};  //-- Success state
 		if ([] call _conditionFail || _state == 2) exitWith {_state = 2; [_id, "FAILED"] call BIS_fnc_taskSetState; call _codeFail};          //-- Fail state
 		if ([] call _conditionCancel || _state == 3) exitWith {_state = 3; [_id, "CANCELED"] call BIS_fnc_taskSetState; call _codeCancel};   //-- Cancel state
-		sleep _poll;
 	};
 	call _codeDelete;
 	if (isNil "tsp_tasks") then {tsp_tasks = []}; tsp_tasks pushBack ["task_save_" + _id, _state]; publicVariable "tsp_tasks";  //-- For saving purposes
@@ -230,9 +265,9 @@ tsp_fnc_simple = {  //-- Create simple objects (Used for hidden arma models)
 	if (canSuspend) then {sleep 1};	_obj setObjectScale _scale;
 };
 
-tsp_fnc_replace = {
-    params ["_base", "_class", ["_model", ""], ["_scale", 1], ["_obj", _this#0], ["_hide", true]]; if (!isServer) exitWith {}; if (canSuspend) then {sleep 1};
-    if (isClass (configFile >> "CfgVehicles" >> _class)) then {_obj = createVehicle [_class, getPosASL _base, [], 0, "CAN_COLLIDE"]; [_base, _hide] remoteExec ["hideObjectGlobal", 2]}; 
+tsp_fnc_replace = {  //-- Replace object with fallback or p3d
+    params ["_base", ["_new", ""], ["_model", ""], ["_scale", 1], ["_obj", _this#0]]; if (!isServer) exitWith {}; if (canSuspend) then {sleep 1};
+    if (isClass (configFile >> "CfgVehicles" >> _new)) then {_obj = createVehicle [_new, getPosASL _base, [], 0, "CAN_COLLIDE"]; [_base, true] remoteExec ["hideObjectGlobal", 2]}; 
     if (_model != "") then {_obj = createSimpleObject [_model, getPosASL _base, false]};
     _obj setPosASL (getPosASL _base); _obj setObjectScale _scale;
     _obj setVectorDirAndUp [vectorDir _base, vectorUp _base];
@@ -255,23 +290,9 @@ tsp_fnc_wake = {  //-- https://www.youtube.com/watch?v=7vObEK3Lbp4
 	sleep 3; ["ace_medical_WakeUp", _unit] call CBA_fnc_localEvent;
 };
 
-if (true) exitWith {};  //-- Notes past this point
+if (true) exitWith {};  //-- Just notes past this point
 
-//-- Fun faces: Adams,Conway,Hladas,Dwarden,Ivan,Jay,Miller,Nikos,Pettka,kerry_B2
-
-[
-	west, ["bari", "primary"], "Kill Bari", "Kill that boi.", 
-	"Kill", objNull, 
-	{true},  //-- Condition create
-	{!alive task_bari},  //-- Condition succeed
-	{false},  //-- Condition fail
-	{task_bari distance task_location > 100}  //-- Condition cancel
-] spawn tsp_fnc_task;
-
-profileNamespace setVariable ["tsp_tasks", tsp_tasks];  //-- Save
-{missionNameSpace setVariable [_x#0, _x#1, 0]} forEach (profileNameSpace getVariable "tsp_tasks");  //-- Load
-
-/*
+/* A bunch of animations
 	Acts_Watching_Fire_Loop,
 	Acts_AidlPercMstpSnonWnonDnon_warmup_1_loop,
 	Acts_AidlPercMstpSnonWnonDnon_warmup_2_loop,
@@ -353,3 +374,4 @@ this setVariable ["init",{[_this,["Acts_listeningToRadio_Loop"],["Acts_listening
 this setVariable ["init",{[_this,["Acts_ShieldFromSun_loop"],["Acts_ShieldFromSun_out"]] spawn tsp_fnc_anim}];  //-- Shield from sun
 this setVariable ["init",{[_this,["Acts_TreatingWounded0"+str(round random 5+1)],["Acts_TreatingWounded_Out"]] spawn tsp_fnc_anim}];  //-- Treating wounded
 this setVariable ["init",{[_this,["Acts_LyingWounded_loop1","Acts_LyingWounded_loop2","Acts_LyingWounded_loop3"],[],false] spawn tsp_fnc_anim}];  //-- Wounded
+this setVariable ["init",{[_this,["Acts_carFixingWheel"],["Acts_TreatingWounded_Out"],false] spawn tsp_fnc_anim}];  //-- Wounded
