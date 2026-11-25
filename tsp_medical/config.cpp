@@ -69,7 +69,7 @@ class ace_medical_treatment_actions {  //-- New Medical menu
 	//class PackingBandage: BasicBandage {treatmentTime = "0.3 * (_this call ace_medical_treatment_fnc_getBandageTime)";};
 	//class QuikClot: BasicBandage {treatmentTime = "0.3 * (_this call ace_medical_treatment_fnc_getBandageTime)";};
 	class tsp_ace_medical_fak: Tourniquet {
-		allowedSelections[] = {"All"};
+		allowedSelections[] = {"Body"};
 		allowSelfTreatment = 1;
 		animationMedic = "";
 		animationMedicProne = "";
@@ -103,7 +103,7 @@ class ace_medical_treatment_actions {  //-- New Medical menu
 		items[] = {"tsp_ifak"};
 	};
 };
-class ACE_Medical_Actions {  //-- Old Medical menu
+/*class ACE_Medical_Actions {  //-- Old Medical menu
 	class Advanced {
 		class Tourniquet;
 		class tsp_ace_medical_fak: Tourniquet {
@@ -141,7 +141,7 @@ class ACE_Medical_Actions {  //-- Old Medical menu
 			items[] = {"tsp_ifak"};
 		};
 	};
-};
+};*/
 class CfgActions {  //-- Remove scroll menu options
     class None;
     class Heal: None {show = false;};
