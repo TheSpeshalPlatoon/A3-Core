@@ -1,4 +1,5 @@
 ["tsp_cba_core_pause", "CHECKBOX", "Enable Pause Menu", "Enables pause menu.", "TSP Core", tsp_mission] call tsp_fnc_setting;
+["tsp_cba_core_walk", "CHECKBOX", "Auto Walk", "Keep walking in Zeus/ESC menu.", "TSP Core", tsp_mission] call tsp_fnc_setting;
 
 tsp_fnc_pause_zeus = {
 	params ["_unit"];
@@ -102,7 +103,7 @@ tsp_fnc_pause_walk = {
 	if (isNil "tsp_pause_anim") then {tsp_pause_anim = ""; (findDisplay 46) displayAddEventHandler ["KeyDown", {params ["", "_key"]; if (_key in [1, 21]) then {tsp_pause_anim = animationState player}}]};
 	if (count (["mrun","mwlk","meva","mtac"] select {_x in tsp_pause_anim}) > 0 && isNil "tsp_pause_animEH") then {player playMoveNow tsp_pause_anim};
 	if (count (["mrun","mwlk","meva","mtac"] select {_x in tsp_pause_anim}) > 0 && isNil "tsp_pause_animEH") then {tsp_pause_animEH = player addEventHandler ["AnimDone", {player playMoveNow tsp_pause_anim}]};
-	waitUntil {sleep 0.1; isNull (findDisplay 49) && isNull (findDisplay 312)};  //-- Wait for pause screen to close
+	waitUntil {sleep 0.1; isNull (findDisplay 49) && isNull (findDisplay 312)};  //-- Wait for pause screen / zeus to close
 	if (!isNil "tsp_pause_animEH") then {player playMoveNow ""; player removeEventHandler ["AnimDone", tsp_pause_animEH]; tsp_pause_animEH = nil};
 };
 
@@ -112,9 +113,9 @@ tsp_fnc_pause = {
 	if (!isNil "BIS_EGSpectatorCamera_camera") then {((findDisplay 49) displayCtrl 1010) ctrlEnable false};  //-- Disable respawn button
 	if (!isNil "BIS_EGSpectatorCamera_camera" && !isNil "tsp_param_spectate") then {call tsp_fnc_pause_leave};  //-- Leave spectate button
 	if (!isNil "chvd_fnc_init") then {call tsp_fnc_pause_view};  //-- View distance button
-	[] spawn tsp_fnc_pause_walk;
+	if (tsp_cba_core_walk) then {[] spawn tsp_fnc_pause_walk};
 };
 
 waitUntil {isDedicated || !isNull (findDisplay 46)};
-(findDisplay 46) displayAddEventHandler ["KeyDown", {params ["", "_key"]; if (tsp_cba_core_pause && _key in [1, 21]) then {[] spawn {sleep 0.01; [] spawn tsp_fnc_pause_walk}}}];  //-- For Zeus
+(findDisplay 46) displayAddEventHandler ["KeyDown", {params ["", "_key"]; if (tsp_cba_core_walk && _key in [1, 21]) then {[] spawn {sleep 0.01; [] spawn tsp_fnc_pause_walk}}}];  //-- For Zeus
 while {tsp_cba_core_pause} do {waitUntil {!isNull (findDisplay 49)}; [] call tsp_fnc_pause; waitUntil {isNull (findDisplay 49)}};

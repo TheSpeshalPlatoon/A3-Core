@@ -7,31 +7,27 @@
 
 tsp_fnc_spawn = {
 	//{_x#0 enableChannel [false, _x#1]} forEach [[0,true],[1,true],[2,false]];  //-- Disable global completely, disable chat for side, command and group, leave voice on so we can place markers
-	if (time < 5) then {
-		titleCut ["", "BLACK OUT", 0.01]; 
-		sleep 2; waitUntil {isNil "tsp_intro_loaded"};  //-- If in intro, wait
-		titleCut ["", "BLACK IN", 3];
-	};
+	if (time < 5) then {titleCut ["", "BLACK OUT", 0.01]; sleep 2; waitUntil {isNil "tsp_intro_loaded"}};  //-- If in intro, wait
 	if (isNil "tsp_loadout_original") then {  //-- First spawn
 		if (tsp_param_roleStart) then {[true] call tsp_fnc_role};  //-- Code suspended while role selection active
 		tsp_loadout_original = getUnitLoadout player; tsp_loadout_saved = getUnitLoadout player;
 		(missionNameSpace getVariable [getPlayerUID player, [[], []]]) params ["_location", "_loadout"];  //-- Get saved location + loadout from server
 		missionNameSpace setVariable [getPlayerUID player, nil, true];  //-- Save location + loadout to server
 		if (count _loadout > 0) then {player setUnitLoadout _loadout};  //-- Restore loadout
-		if (count _location > 0) exitWith {player setPosASL _location};  //-- Restore location, and exit
+		if (count _location > 0) exitWith {player setPosASL _location; titleCut ["", "BLACK IN", 3]};  //-- Restore location, and exit
 		if (time > tsp_param_spectateTime && tsp_param_spectate == "Forced") exitWith {[true] call tsp_fnc_spectate};  //-- Late joiners go to spectate
-		if (tsp_param_spawnStart && tsp_param_spawn) then {[] spawn tsp_fnc_spawn_map};  //-- Normal joiners get spawn map, if enabled
+		if (tsp_param_spawnStart && tsp_param_spawn) exitWith {[] spawn tsp_fnc_spawn_map};  //-- Normal joiners get spawn map, if enabled
+		titleCut ["", "BLACK IN", 3];  //-- If spawn map disabled and we aren't going into spectate, just fade in
 	} else {  //-- Subsequent spawns
 		if (tsp_param_spectate == "Disabled" && tsp_param_spawn) then {[] spawn tsp_fnc_spawn_map};  //-- If spectate disabled, show spawn map
-		sleep 0.5; player setUnitLoadout (missionNameSpace getVariable ("tsp_loadout_" + tsp_param_spawnLoadout));
+		sleep 0.5; player setUnitLoadout (missionNameSpace getVariable ("tsp_loadout_" + tsp_param_spawnLoadout)); titleCut ["", "BLACK IN", 3];
 	};
 };
 
 tsp_fnc_spawn_killed = {
 	tsp_loadout_retain = getUnitLoadout player;
-	titleCut ["", "BLACK OUT", 1.5]; sleep 1.5; 
+	titleCut ["", "BLACK OUT", 1.4]; sleep 1.5; 
 	if (tsp_param_spectate in ["Dynamic", "Forced"]) then {[true] call tsp_fnc_spectate};
-	titleCut ["", "BLACK IN", 3];		
 };
 
 tsp_fnc_spawn_map = {
@@ -49,7 +45,7 @@ tsp_fnc_spawn_map = {
 };
 
 tsp_fnc_spectate = {
-	params ["_spectate"];
+	params ["_spectate"]; titleCut ["", "BLACK IN", 3];	
 	[if (_spectate) then {"Initialize"} else {"Terminate"}, [player, [], false, true, true, true, true, true, true, true]] call BIS_fnc_EGSpectator;
 	if (_spectate) then {tsp_chat_spectator radioChannelAdd [player]} else {tsp_chat_spectator radioChannelRemove [player]};
 	if !(isNil "acre_api_fnc_setSpectator") then {[_spectate] call acre_api_fnc_setSpectator};

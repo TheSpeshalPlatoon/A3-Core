@@ -74,13 +74,12 @@ tsp_fnc_role_poll = {  //-- Select role if available and is currently selected, 
 		player setVariable ["role", _roleId, true];  //-- Just for reference to get player role
 		{[player, _x, true] call tsp_fnc_faction} forEach (if (typeName _loadout == "STRING") then {[_loadout]} else {_loadout});  //-- To support multiple different unit fallbacks
 		tsp_arsenal = [player, _arsenal] call tsp_fnc_role_arsenal;
-		_groups = allGroups select {groupId _x == _parentName}; 
-		if (count _groups > 0) then {[player] join (_groups#0); ["AddGroupMember", [_groups#0, player]] remoteExec ["BIS_fnc_dynamicGroups", 0]};
-		if (count _groups > 0) exitWith {["InitializePlayer", [player, true]] call BIS_fnc_dynamicGroups};
-		_group = createGroup [playerSide, true]; _group setGroupIdGlobal [_parentName]; [player] join _group;
-		["RegisterGroup", [_group, leader _group, [nil, _parentName, false]]] remoteExec ["BIS_fnc_dynamicGroups", 0]; 
-		["InitializePlayer", [player, true]] call BIS_fnc_dynamicGroups;		
 		if (_code != "") then {player call compile _code};
+		_groups = allGroups select {groupId _x == _parentName}; 
+		if (count _groups > 0) exitWith {[player] join (_groups#0); ["AddGroupMember", [_groups#0, player]] remoteExec ["BIS_fnc_dynamicGroups", 0]};
+		_group = createGroup [playerSide, true]; _group setGroupIdGlobal [_parentName]; [player] join _group;
+		["RegisterGroup", [_group, leader _group, [nil, _parentName, false]]] remoteExec ["BIS_fnc_dynamicGroups", 0];
+		_group spawn {sleep 2; _this setVariable ["BIS_dg_ins", [player] call BIS_fnc_getUnitInsignia, true]; {["OnPlayerGroupChanged", [_x, _this]] call BIS_fnc_dynamicGroups} forEach units _this}
 	};
 	_tree tvSetText [_leaf, _name+(if ([_roleId, _roleId] call tsp_fnc_role_available) then {""} else {" ["+name(missionNameSpace getVariable _roleId call BIS_fnc_getUnitByUID)+"]"})];  //-- If occupied
 	_tree tvSetColor [_leaf, [1,1,1, if ([_roleId, _leadId] call tsp_fnc_role_available) then {1} else {0.5}]];  //-- Opacity based on availability
@@ -132,8 +131,8 @@ tsp_fnc_role_vehicle = {  //-- Vehicle restriction
 	}];
 };
 
+if (isServer) then {["Initialize", [true]] call BIS_fnc_dynamicGroups};
 waitUntil {!isNull (findDisplay 46)};
 {player addEventHandler [_x, {params ["_unit"]; [_unit] call tsp_fnc_role_check}]} forEach ["Take", "Put", "InventoryClosed", "InventoryOpened"];
 [missionNamespace, "arsenalClosed", {[_unit] call tsp_fnc_role_check}] call BIS_fnc_addScriptedEventHandler;
-if (isServer) then {["Initialize", [true]] call BIS_fnc_dynamicGroups};
-if (hasInterface) then {waitUntil {speed player > 0}; ["InitializePlayer", [player, true]] call BIS_fnc_dynamicGroups};
+if (hasInterface) then {["InitializePlayer", [player, true]] call BIS_fnc_dynamicGroups};

@@ -5,12 +5,12 @@ tsp_fnc_faction = {  //-- Check if type exists in CfgLoadouts and apply it
 	if (!isNil "BIS_fnc_arsenal_center" || !isNil "ace_arsenal_center") exitWith {};  //-- Dont apply to arsenal when new unit created (like in 3DEN)
 	if (!_force && (_unit getVariable ["saved3DENInventory", false] || _unit get3DENAttribute 'ReceiveRemoteTargets' isEqualTo [true] || vehicleReceiveRemoteTargets _unit)) exitWith {};  //-- Dont overwrite custom loadouts
 	
-	_loadout = missionNamespace getVariable [_loadout, [configfile >> "CfgLoadouts" >> _loadout, "", [missionConfigFile >> _loadout, "", str _loadout] call BIS_fnc_returnConfigEntry] call BIS_fnc_returnConfigEntry];
-	_unit setUnitLoadout (call compile _loadout); _goggles = goggles _unit;
+	_loadout = missionNamespace getVariable [_loadout, [configfile >> "CfgLoadouts" >> _loadout, "", [missionConfigFile >> _loadout, "", ""] call BIS_fnc_returnConfigEntry] call BIS_fnc_returnConfigEntry];
+	if (_loadout != "") then {_unit setUnitLoadout (_unit call compile _loadout)}; _goggles = goggles _unit;
 
 	if ("NoVoice" in getArray (configFile >> "CfgVehicles" >> typeOf _unit >> "identityTypes")) then {_unit spawn {sleep 0.1; _this setSpeaker "NoVoice"}};  //-- Force NoVoice
-	[_unit, _goggles] spawn {sleep 0.1; (_this#0) addGoggles (_this#1)};  //-- Force add goggles
-	if (is3DEN && vehicle _unit == _unit) then {_unit switchMove _anim};  //-- Set anim as setUnitLoadout resets anim
+	if (_loadout != "") then {[_unit, _goggles] spawn {sleep 0.1; (_this#0) addGoggles (_this#1)}};  //-- Force add goggles
+	if (is3DEN && _loadout != "" && vehicle _unit == _unit) then {_unit switchMove _anim};  //-- Set anim as setUnitLoadout resets anim
 };
 
 if (is3DEN && tsp_param_faction) then {[missionNamespace, 'arsenalPreOpen', {(_this#1) set3DENAttribute ['ReceiveRemoteTargets', true]}] call BIS_fnc_addScriptedEventHandler};  //-- If loadout edited, set flag so it doesn't get changed back

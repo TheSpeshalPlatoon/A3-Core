@@ -84,10 +84,10 @@ tsp_fnc_underground = {  //-- Underground area lighting (Used in triggers)
 
 tsp_fnc_intro = {  //-- Custom slideshow intro
 	params ["_timeline", ["_music", ""], ["_exit", {}], ["_sthud", if (!isNil "STHud_UIMode") then {STHud_UIMode} else {0}]];
-	tsp_intro_loaded = true; addMissionEventHandler ["PreloadFinished", {tsp_intro_loaded = true}]; waitUntil {!isNil "tsp_intro_loaded"};
- 	STHud_UIMode = 0; titleCut ["", "BLACK OUT", 0.01]; sleep 2; 
+	tsp_intro_loaded = false; addMissionEventHandler ["PreloadFinished", {tsp_intro_loaded = true}]; waitUntil {tsp_intro_loaded};
+ 	STHud_UIMode = 0; titleCut ["", "BLACK OUT", 0.01];
 	tsp_skipEH = (findDisplay 46) displayAddEventHandler ["KeyDown", "if ((_this#1) == 57) exitWith {1 fadeEnvironment 1; playSound 'OMCameraPhoto'; tsp_skipped = true}; true"];
-	["", "Press [SPACE] to Skip"] spawn BIS_fnc_showSubtitle; 
+	["", "Press [SPACE] to Skip"] spawn BIS_fnc_showSubtitle; sleep 4;
 	0 fadeEnvironment 0; playMusic _music; 3 fadeMusic 1;
 	{
 		_x params ["_duration", "_code"]; 

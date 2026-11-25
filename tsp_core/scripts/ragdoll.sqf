@@ -2,7 +2,7 @@
 ["tsp_cba_ragdoll_freefall", "CHECKBOX", "Enable Free Falling", "Enables free falling when jumping from height.", ["TSP Core", "Ragdoll"], true] call tsp_fnc_setting;
 ["tsp_cba_ragdoll_blood", "CHECKBOX", "Enable Blood", "Enables blood decal when impacting surfaces.", ["TSP Core", "Ragdoll"], true] call tsp_fnc_setting;
 ["tsp_cba_ragdoll_drop", "CHECKBOX", "Drop Weapons", "Drop weapons on tackle.", ["TSP Core", "Ragdoll"], true] call tsp_fnc_setting;
-["tsp_cba_ragdoll_explosion", "SLIDER", "Explosion Force", "Force multiplier for explosion ragdoll, 0 to disable.", ["TSP Core", "Ragdoll"], [0, 1000, 100]] call tsp_fnc_setting;
+["tsp_cba_ragdoll_explosion", "SLIDER", "Explosion Force", "Force multiplier for explosion ragdoll, 0 to disable.", ["TSP Core", "Ragdoll"], [0, 1000, 200]] call tsp_fnc_setting;
 
 tsp_fnc_ragdoll_start = {
 	params ["_unit", ["_launch", false]];
@@ -68,27 +68,26 @@ tsp_fnc_ragdoll_effects = {  //-- Detect violent deceleration
 };
 
 tsp_fnc_ragdoll_explosion = {
-	params ["_unit", "_damage", "_explosive"];
-	if (tsp_cba_ragdoll_explosion == 0) exitWith {};
+	params ["_unit", "_damage", "_explosive"]; 
+
 	_indirectHit = getNumber (configFile >> "CfgAmmo" >> typeOf _explosive >> "indirectHit");
 	_indirectHitRange = getNumber (configFile >> "CfgAmmo" >> typeOf _explosive >> "indirectHitRange");
+
+	if (tsp_cba_ragdoll_explosion == 0) exitWith {};
 	if (_indirectHit == 0 || _indirectHitRange == 0) exitWith {};
 	if (_unit distance _explosive > _indirectHitRange) exitWith {};
-	_force = ((_indirectHit min 30) * (((_indirectHitRange - (_unit distance _explosive)) / _indirectHitRange) max 0))*tsp_cba_ragdoll_explosion;
-	_force = (getPosWorld _explosive vectorFromTo getPosWorld _unit) vectorMultiply (_force);  //-- Horizontal
-	if (alive _unit) exitWith {_unit setVelocityModelSpace [0,0,0]; _unit addForce [_force, [random 0.1,0,0], false]};
-	[getPosASL _unit, getUnitloadout _unit, face _unit, animationState _unit] params ["_pos", "_loadout", "_face", "_anim"];
-	[_unit, true] remoteExec ["hideObjectGlobal", 2]; deleteVehicle _unit;
-	_new = (createGroup [civilian, true]) createUnit ["B_recon_F", [0,0,0], [], 1, "CAN_COLLIDE"];
-	_new setUnitLoadout _loadout; _new removeWeapon (currentWeapon _new); 
-	_new setFace _face; _new switchMove _anim; _new setPosASL _pos;
-	[_new, _force] spawn {sleep 0.1; (_this#0) setDamage 1; (_this#0) addForce [_this#1, [random 0.1,0,0], false]};
-};
 
-player addEventHandler ["Explosion", {_this call tsp_fnc_ragdoll_explosion}];
+	_force = ((_indirectHit min 30) * (((_indirectHitRange - (_unit distance _explosive)) / _indirectHitRange) max 0))*tsp_cba_ragdoll_explosion;
+	_force = (getPosWorld _explosive vectorFromTo (_unit modelToWorldWorld (_unit selectionPosition "Spine"))) vectorMultiply _force;
+
+	_unit addForce [_force, [random 0.1,0,0]];
+};
 
 ["tsp_ragdoll_ragdollKeyDouble", ["TSP Core", "Ragdoll"], "Ragdoll (Double Tap)", 57, true, false, false, {	
 	if (playa getVariable ["tsp_ragdoll", false]) exitWith {[playa] spawn tsp_fnc_ragdoll_stop};	
 	if (isNil "tsp_ragdoll_firstTap") exitWith {[] spawn {tsp_ragdoll_firstTap = true; sleep 0.5; tsp_ragdoll_firstTap = nil}};  //-- Double tap
 	if (tsp_cba_ragdoll) then {[playa, true] spawn tsp_fnc_ragdoll_start};
 }] call tsp_fnc_keybind;
+
+waitUntil {isDedicated || !isNull (findDisplay 46)};
+player addEventHandler ["Explosion", {_this call tsp_fnc_ragdoll_explosion}];

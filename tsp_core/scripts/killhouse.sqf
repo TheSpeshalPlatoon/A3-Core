@@ -8,10 +8,10 @@ tsp_fnc_killhouse = {
         ["_targetChance", 0], ["_targetTypes", ["Target_F"]],
         ["_furnitureChance", 0.5], ["_furnitureTypes", furniture_altis],
 
-        ["_lockChance", 0.5], ["_openingChance", 0.2], ["_doorChance", 0.95], ["_maxRelations", 1],
+        ["_lockChance", 0.5], ["_openingChance", 0.8], ["_doorChance", 0.95], ["_maxRelations", 1],
 
         ["_wallTypes", ["Bro_MSW_2m"]], ["_outerWallType", "Bro_MSW_2m_conc"], ["_wallLength", 2],
-        ["_doorTypes", ["Bro_MSW_2m_d", "Bro_MSW_2m_d", "Bro_MSW_2m_de"]], ["_openDoorTypes", ["Bro_MSW_2m_de"]], ["_outerDoorTypes", ["Bro_MSW_2m_d_conc"]], 
+        ["_doorTypes", ["Bro_MSW_2m_d"]], ["_openDoorTypes", ["Bro_MSW_2m_de"]], ["_outerDoorTypes", ["Bro_MSW_2m_d_conc"]], 
 
         ["_deadType", "Sign_Pointer_Yellow_F"], ["_helperTypes", [
             "Sign_Arrow_F","Sign_Arrow_Blue_F","Sign_Arrow_Cyan_F","Sign_Arrow_Green_F","Sign_Arrow_Pink_F","Sign_Arrow_Yellow_F",
@@ -43,18 +43,16 @@ tsp_fnc_killhouse = {
     for "_h" from 1 to _height-1 do {for "_w" from 0 to _width-1 do {
         _pos = _start getPos [_wallLength*_h, getDir _start] getPos [(_wallLength*_w)+(_wallLength/2), getDir _start + 90];
         _wall = createVehicle [selectRandom _wallTypes, _pos, [], 0, "CAN_COLLIDE"]; _wall allowDamage false;
-        _wall setPosASL [(getPosASL _wall)#0, (getPosASL _wall)#1, (getPosASL _startDoor)#2];  //-- Set it to the same Y level as _startDoor
-        _wall setDir (getDir _start);
-        _walls pushBack _wall;
+        _wall setPosASL [_pos#0, _pos#1, (getPosASL _startDoor)#2];  //-- Set it to the same Y level as _startDoor
+        _wall setDir (getDir _start); _walls pushBack _wall;
     }}; 
 
     //-- Create vertical walls
     for "_h" from 1 to _height do {for "_w" from 1 to _width-1 do {
         _pos = _start getPos [(_wallLength*_h)-(_wallLength/2), getDir _start] getPos [_wallLength*_w, getDir _start + 90]; 
         _wall = createVehicle [selectRandom _wallTypes, _pos, [], 0, "CAN_COLLIDE"]; _wall allowDamage false; 
-        _wall setPosASL [(getPosASL _wall)#0, (getPosASL _wall)#1, (getPosASL _startDoor)#2];  //-- Set it to the same Y level as _startDoor
+        _wall setPosASL [_pos#0, _pos#1, (getPosASL _startDoor)#2];  //-- Set it to the same Y level as _startDoor
         _wall setDir (getDir _start+90); _walls pushBack _wall;
-        _walls pushBack _wall;
     }}; 
 
     //-- Create helpers to represent rooms
@@ -119,7 +117,7 @@ tsp_fnc_killhouse = {
         };
     } forEach _helpers;
 
-    //-- Flood fill rooms to reach the end, to make sure that there is a path from beningging to end - basicly from each room / helperType, we will try and find a way out
+    //-- Flood fill rooms to reach the end, to make sure that there is a path from beningging to end - basicly from each room / helperType, we will try and find a way out, if not - make openings
     tsp_fnc_killhouse_flood_old = {  //-- Fucky wucky recursive stuff below
         params ["_helper", "_helperTypes", "_wallLengthLoose", "_end"]; //_helper hideObjectGlobal true; sleep 0.1;  //-- For display purposes
         if (_helper distance2D _end < tsp_kh_closest distance2D _end) then {tsp_kh_closest = _helper};  //-- If this helper is closer to exit than tsp_kh_closest, it is now tsp_kh_closest
@@ -148,7 +146,7 @@ tsp_fnc_killhouse = {
     _usedTypes = [];  //-- Used to store which helper types we have already used
     {  //-- For each helper / cell
         _helper = _x; 
-        if (typeOf _helper in _usedTypes) then {continue};  //-- Only for each type 
+        if (typeOf _helper in _usedTypes) then {continue};  //-- Only once for each type 
         if (typeOf _helper != _deadType) then {_usedTypes pushBack typeOf _helper};  //-- We are now about to use this type, so store it in _usedTypes
         //systemChat (typeOf _helper + " Start");
         while {true} do {  //-- While we have not found the end (while loop is here because we may need multiple openings to get out)
@@ -163,19 +161,35 @@ tsp_fnc_killhouse = {
             _openings pushBack (_intersect#0#2);  //-- Save it in _openings so we can fill it later
         };
     } forEach _helpers;
-    {_x hideObjectGlobal true} forEach _helpers;
+
+    {_x hideObjectGlobal true} forEach _helpers;  //-- Bai bai
     
     //-- Fill some of the holes with doors
+    //myDebugLines = [];
     _doors = [];  //-- Used to keep track of all the actual door objects we're about to create (so we can delete them later)
     {  //-- For each wall that is marked as an opening
         if (random 1 > _doorChance) then {continue};
         _opening = _x;
-        _doorType = selectRandom (if (count (_doors select {_x distance2D _opening < (_wallLength+1)}) == 0) then {_doorTypes} else {_openDoorTypes});
-        _door = createVehicle [_doorType, [0,0,0], [], 0, "CAN_COLLIDE"]; _door attachTo [_opening, [0,0,0]]; detach _door; _door allowDamage false;
+        _door = createVehicle [selectRandom _doorTypes, [0,0,0], [], 0, "CAN_COLLIDE"]; _door attachTo [_opening, [0,0,0]]; detach _door;
         if (random 1 < _lockChance) then {_door setVariable ["bis_disabled_Door_1", 1, true]};  //-- Random locking
         if (random 1 > 0.5) then {_door setDir (getDir _door + 180)};  //-- Random door swing direction
-        _doors pushBack _door; 
+
+        //myDebugLines pushBack [_door modelToWorldWorld [0,0,0], _door modelToWorldWorld [0,2,0]];
+        //myDebugLines pushBack [_door modelToWorldWorld [0,0,0], _door modelToWorldWorld [sin -45 * 2, cos -45 * 2, 0]];
+
+        _blockedFront = lineIntersectsSurfaces [_door modelToWorldWorld [0,0,0], _door modelToWorldWorld [0,2,0], _door, objNull, true, 1];
+        _blockedSwing = lineIntersectsSurfaces [_door modelToWorldWorld [0,0,0], _door modelToWorldWorld [sin -45 * 2, cos -45 * 2, 0], _door, objNull, true, 1];
+        _nearAnotherOpening = count (_doors select {_x distance2D _opening < (_wallLength+1)}) > 0;
+
+        if (_nearAnotherOpening || (count _blockedFront > 0 && count _blockedSwing == 0)) then {  //-- If this door swing would block a path or would be awkwardly close to another door
+            deleteVehicle _door;
+            _door = createVehicle [selectRandom _openDoorTypes, [0,0,0], [], 0, "CAN_COLLIDE"]; 
+            _door attachTo [_opening, [0,0,0]]; detach _door; 
+        };
+
+       _door allowDamage false; _doors pushBack _door; 
     } forEach _openings;
+    //addMissionEventHandler ["EachFrame", {{drawLine3D [ASLToAGL (_x select 0), ASLToAGL (_x select 1), [1,0,0,1],10]} forEach myDebugLines}];
 
     //-- Populate with targets, furniture
     _units = [];  //-- Used to keep track of all the units we're about to create (so we can delete them later)
@@ -361,7 +375,7 @@ tsp_killhouse_civilians = 0.05;
 tsp_killhouse_furniture = 0.2;
 tsp_killhouse_targets = 0;
 tsp_killhouse_locks = 0.5;
-tsp_killhouse_walls = [["Bro_MSW_2m"],"Bro_MSW_2m_conc",2,["Bro_MSW_2m_d", "Bro_MSW_2m_d", "Bro_MSW_2m_de"],["Bro_MSW_2m_de"],["Bro_MSW_2m_d_conc"]];
+tsp_killhouse_walls = [["Bro_MSW_2m"],"Bro_MSW_2m_conc",2,["Bro_MSW_2m_d","Bro_MSW_2m_d","Bro_MSW_2m_de"],["Bro_MSW_2m_de"],["Bro_MSW_2m_d_conc"]];  //-- walls, outer, length, doors, opendoors, outerdoors
 
 enemy_altis = ["O_G_Soldier_AR_F","O_G_medic_F","O_G_Soldier_GL_F","O_G_Soldier_M_F","O_G_officer_F","O_G_Soldier_F","O_G_Soldier_lite_F","O_G_Soldier_SL_F","O_G_Soldier_TL_F"];
 enemy_tanoa = ["I_C_Soldier_Bandit_7_F","I_C_Soldier_Bandit_3_F","I_C_Soldier_Bandit_5_F","I_C_Soldier_Bandit_1_F","I_C_Soldier_Bandit_4_F","I_C_Soldier_Bandit_8_F","I_C_Soldier_Para_7_F","I_C_Soldier_Para_2_F","I_C_Soldier_Para_4_F","I_C_Soldier_Para_1_F"];

@@ -7,7 +7,7 @@ tsp_fnc_sector_automate = {
 	} forEach allMissionObjects "EmptyDetector";
 };
 
-tsp_fnc_sector_save = {	
+tsp_fnc_sector_save = {
 	params ["_layer", ["_sectorData", []]];	
 
 	{_x setVariable ["layer", _layer]} foreach (getMissionLayerEntities _layer#0);  //-- Set variable on each object
@@ -133,7 +133,9 @@ tsp_fnc_sector_clear = {  //-- ["sector_airfield_gate_close", "", sector_airfiel
 };
 
 if (isNil "tsp_sector_info") then {tsp_sector_info = []};  //-- Dont initialize when JIP
+
 {missionNameSpace setVariable [("sector_"+triggerText _x), _x, true]} forEach allMissionObjects "EmptyDetector";  //-- Name all triggers sector_x
+{if (triggerText _x != "") then {createMarker ["sector_"+triggerText _x, position _x]}} forEach allMissionObjects "EmptyDetector";  //-- Create markers for all triggers sector_x
 
 waitUntil {isDedicated || !isNull (findDisplay 46)};
 
