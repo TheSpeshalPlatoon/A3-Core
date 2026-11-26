@@ -6,7 +6,9 @@ tsp_fnc_faction = {  //-- Check if type exists in CfgLoadouts and apply it
 	if (!_force && (_unit getVariable ["saved3DENInventory", false] || _unit get3DENAttribute 'ReceiveRemoteTargets' isEqualTo [true] || vehicleReceiveRemoteTargets _unit)) exitWith {};  //-- Dont overwrite custom loadouts
 	
 	_loadout = missionNamespace getVariable [_loadout, [configfile >> "CfgLoadouts" >> _loadout, "", [missionConfigFile >> _loadout, "", ""] call BIS_fnc_returnConfigEntry] call BIS_fnc_returnConfigEntry];
-	if (_loadout != "") then {_unit setUnitLoadout (_unit call compile _loadout)}; _goggles = goggles _unit;
+	if (_loadout != "") then {_unit setUnitLoadout (_unit call compile _loadout)}; 
+	if (_force && _loadout == "" && isClass (configFile >> "CfgVehicles" >> (_this#1))) then {_unit setUnitLoadout (_this#1)};
+	_goggles = goggles _unit;
 
 	if ("NoVoice" in getArray (configFile >> "CfgVehicles" >> typeOf _unit >> "identityTypes")) then {_unit spawn {sleep 0.1; _this setSpeaker "NoVoice"}};  //-- Force NoVoice
 	if (_loadout != "") then {[_unit, _goggles] spawn {sleep 0.1; (_this#0) addGoggles (_this#1)}};  //-- Force add goggles
